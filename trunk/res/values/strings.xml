@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Repeater.MY</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+    <string name="action_suggest">Suggest&#8230;</string>
+    <string name="action_wrongInfo">Wrong Info?</string>
+    <string name="title_activity_display_map">Display Map</string>
+    <string name="title_activity_repeater_details">Details</string>
+    <string name="txtLicense">Copyright © 2013 Mohammad Hafiz Ismail\nEmail: &lt;mypapit@gmail.com&gt;\nWeb: repeater-my.googlecode.com\n\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\nLicense: http://www.gnu.org/licenses\n\nDISCLAIMER: The latitude/longitude listed is only approximate and is only used for distance calculation and does not reflect the actual repeater location."</string>
+    <string name="title_activity_contrib">Contributors</string>
+    <string name="action_contrib">Contributors</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

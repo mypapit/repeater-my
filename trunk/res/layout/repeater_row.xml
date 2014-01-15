@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="5dip"
+    android:paddingBottom="5dip"
+     >
+
+    <TextView
+        android:id="@+id/tvCallsign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="12dip"
+        android:text="9M4RKG"
+        android:textSize="22sp"
+        android:textColor="@color/text_color"
+        />
+
+    <TextView
+        android:id="@+id/tvTone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvFreq"
+        android:layout_alignBottom="@+id/tvFreq"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="12dip"
+        android:text="103.5"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvTone"
+        android:layout_toLeftOf="@+id/tvTone"
+        android:paddingRight="5dip"
+        android:src="@drawable/tone" />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvCallsign"
+        android:layout_below="@+id/tvCallsign"
+        android:text="Alor Setar" />
+
+    <TextView
+        android:id="@+id/tvFreq"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvLocation"
+        android:layout_below="@+id/tvLocation"
+        android:text="145.525 MHz (-0.600)" />
+
+    <TextView
+        android:id="@+id/tvDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="12dip"
+        android:layout_below="@+id/tvClub"
+        android:layout_alignParentRight="true"
+        android:text="13.5 km" />
+
+    <TextView
+        android:id="@+id/tvClub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvCallsign"
+        android:layout_alignBottom="@+id/tvCallsign"
+        
+        android:layout_alignParentRight="true"
+        android:text="KSARC" 
+        android:textStyle="bold"
+        android:layout_marginRight="12dip"
+        />
+
+</RelativeLayout>
