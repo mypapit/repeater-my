@@ -53,8 +53,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -66,6 +64,7 @@ public class RepeaterListActivity extends ListActivity {
 	RepeaterAdapter adapter;
 	RepeaterList rl;
 
+	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 
@@ -96,6 +95,7 @@ public class RepeaterListActivity extends ListActivity {
 
 	}
 
+	@Override
 	protected void onListItemClick(ListView lv, View view, int position, long id) {
 
 		// Toast.makeText(getBaseContext(), rl.get(position).getCallsign() +
@@ -121,6 +121,7 @@ public class RepeaterListActivity extends ListActivity {
 
 		}
 
+		@Override
 		public void run() {
 
 			LocationManager locationManager;
@@ -235,10 +236,9 @@ public class RepeaterListActivity extends ListActivity {
 
 	public static RepeaterList loadData(int resource, Activity activity) {
 		RepeaterList mlist = new RepeaterList(200);
-		int line=0;
+		int line = 0;
 		try {
-			
-			
+
 			InputStream stream = activity.getResources().openRawResource(
 					resource);
 			InputStreamReader is = new InputStreamReader(stream);
@@ -263,8 +263,8 @@ public class RepeaterListActivity extends ListActivity {
 			Log.e("Read CSV Error", "Some CSV Error: ", ioe.getCause());
 
 		} catch (NumberFormatException nfe) {
-			Log.e("Number error", "parse number error - line: "+line +"  " + nfe.getMessage(),
-					nfe.getCause());
+			Log.e("Number error", "parse number error - line: " + line + "  "
+					+ nfe.getMessage(), nfe.getCause());
 		} catch (Exception ex) {
 			Log.e("Some Exception", "some exception: ", ex.getCause());
 		}
@@ -273,12 +273,14 @@ public class RepeaterListActivity extends ListActivity {
 
 	}
 
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.display_map, menu);
 		return true;
 	}
 
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		Intent intent;
@@ -295,102 +297,110 @@ public class RepeaterListActivity extends ListActivity {
 
 			return true;
 		case R.id.action_about:
-			try{
+			try {
 				showDialog();
-			} catch (NameNotFoundException ex){
-    			Toast toast = Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
-    			toast.show();
-		
-    		}
-		
+			} catch (NameNotFoundException ex) {
+				Toast toast = Toast.makeText(this, ex.toString(),
+						Toast.LENGTH_SHORT);
+				toast.show();
+
+			}
+
 			return true;
 		case R.id.action_suggest:
-			//Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:mypapit+new_repeater@gmail.com"));
+			// Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
+			// Uri.parse("mailto:mypapit+new_repeater@gmail.com"));
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
-		
-			
+
 			emailIntent.setType("text/plain");
-			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {"mypapit+new_repeater_suggest@gmail.com"});
-			
-			/* emailIntent.putExtra(Intent.EXTRA_EMAIL,"mypapit+new_repeater_suggest@gmail.com");
-			*/
-			  emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - new Repeater");
-				emailIntent.putExtra(Intent.EXTRA_TEXT, "Please put the repeater details you want to suggest --\n\nRepeater Callsign : \nFreq: \nShift: \nTone: \nClosest Known Location or Coordinates: \nOwner or Club:\n");
-				
-			
-			/*String uriText =
-				    "mailto:mypapit+new_repeater@gmail.com" + 
-				    "?subject=" + Uri.encode("Repeater.MY: New Repeater Suggestion") + 
-				    "&body=" + Uri.encode("Please put the repeater details you want to suggest --\n\nRepeater Callsign : \nFreq: \nShift: \nTone: \nClosest Known Location or Coordinates: \nOwner or Club:\n");
+			emailIntent.putExtra(Intent.EXTRA_EMAIL,
+					new String[] { "mypapit+new_repeater_suggest@gmail.com" });
 
-				Uri uri = Uri.parse(uriText);
+			/*
+			 * emailIntent.putExtra(Intent.EXTRA_EMAIL,
+			 * "mypapit+new_repeater_suggest@gmail.com");
+			 */
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT,
+					"Repeater.MY - new Repeater");
+			emailIntent
+					.putExtra(
+							Intent.EXTRA_TEXT,
+							"Please put the repeater details you want to suggest --\n\nRepeater Callsign : \nFreq: \nShift: \nTone: \nClosest Known Location or Coordinates: \nOwner or Club:\n");
 
-				
-				emailIntent.setData(uri);*/
-				//startActivity(Intent.createChooser(sendIntent, "Send email")); 
+			/*
+			 * String uriText = "mailto:mypapit+new_repeater@gmail.com" +
+			 * "?subject=" + Uri.encode("Repeater.MY: New Repeater Suggestion")
+			 * + "&body=" + Uri.encode(
+			 * "Please put the repeater details you want to suggest --\n\nRepeater Callsign : \nFreq: \nShift: \nTone: \nClosest Known Location or Coordinates: \nOwner or Club:\n"
+			 * );
+			 * 
+			 * Uri uri = Uri.parse(uriText);
+			 * 
+			 * 
+			 * emailIntent.setData(uri);
+			 */
+			// startActivity(Intent.createChooser(sendIntent, "Send email"));
 
-			startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest new Repeater"));
+			startActivity(createEmailOnlyChooserIntent(emailIntent,
+					"Suggest new Repeater"));
+
+			return true;
+
 		case R.id.action_contrib:
 			intent = new Intent();
 			intent.setClassName(getBaseContext(),
 					"net.mypapit.mobile.myrepeater.ContribActivity");
 			startActivity(intent);
-			
-			break;	
+
+			return true;
 		}
-		
-		
 
 		return false;
 	}
-	
-	public void showDialog() throws NameNotFoundException
-	{
+
+	public void showDialog() throws NameNotFoundException {
 		final Dialog dialog = new Dialog(this);
-    	dialog.setContentView(R.layout.about_dialog);
-    	dialog.setTitle("About Repeater.MY "+ getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-    	dialog.setCancelable(true);
-    	
-    	//text
-    	TextView text = (TextView) dialog.findViewById(R.id.tvAbout);
-    	text.setText(R.string.txtLicense);
-    	
-    	//icon image
-    	ImageView img = (ImageView) dialog.findViewById(R.id.ivAbout);
-    	img.setImageResource(R.drawable.ic_launcher);
-    	
-    	
-    	
-    	dialog.show();
-		
-		
+		dialog.setContentView(R.layout.about_dialog);
+		dialog.setTitle("About Repeater.MY "
+				+ getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+		dialog.setCancelable(true);
+
+		// text
+		TextView text = (TextView) dialog.findViewById(R.id.tvAbout);
+		text.setText(R.string.txtLicense);
+
+		// icon image
+		ImageView img = (ImageView) dialog.findViewById(R.id.ivAbout);
+		img.setImageResource(R.drawable.ic_launcher);
+
+		dialog.show();
+
 	}
-	
-	 public Intent createEmailOnlyChooserIntent(Intent source,
-		        CharSequence chooserTitle) {
-		        Stack<Intent> intents = new Stack<Intent>();
-		        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto",
-		                "mypapit+new_repeater_suggest@gmail.com", null));
-		        List<ResolveInfo> activities = getPackageManager()
-		                .queryIntentActivities(i, 0);
 
-		        for(ResolveInfo ri : activities) {
-		            Intent target = new Intent(source);
-		            target.setPackage(ri.activityInfo.packageName);
-		            intents.add(target);
-		        }
+	public Intent createEmailOnlyChooserIntent(Intent source,
+			CharSequence chooserTitle) {
+		Stack<Intent> intents = new Stack<Intent>();
+		Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto",
+				"mypapit+new_repeater_suggest@gmail.com", null));
+		List<ResolveInfo> activities = getPackageManager()
+				.queryIntentActivities(i, 0);
 
-		        if(!intents.isEmpty()) {
-		            Intent chooserIntent = Intent.createChooser(intents.remove(0),
-		                    chooserTitle);
-		            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
-		                    intents.toArray(new Parcelable[intents.size()]));
+		for (ResolveInfo ri : activities) {
+			Intent target = new Intent(source);
+			target.setPackage(ri.activityInfo.packageName);
+			intents.add(target);
+		}
 
-		            return chooserIntent;
-		        } else {
-		            return Intent.createChooser(source, chooserTitle);
-		        }
-		    }
-	
+		if (!intents.isEmpty()) {
+			Intent chooserIntent = Intent.createChooser(intents.remove(0),
+					chooserTitle);
+			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS,
+					intents.toArray(new Parcelable[intents.size()]));
+
+			return chooserIntent;
+		} else {
+			return Intent.createChooser(source, chooserTitle);
+		}
+	}
 
 }
