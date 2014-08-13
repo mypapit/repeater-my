@@ -37,8 +37,10 @@ import android.os.Bundle;
 
 
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 
 
@@ -52,6 +54,9 @@ public class DisplayMap extends FragmentActivity implements OnMarkerClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_map);
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
 
@@ -105,7 +110,7 @@ public class DisplayMap extends FragmentActivity implements OnMarkerClickListene
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.display_map, menu);
+		//getMenuInflater().inflate(R.menu.display_map, menu);
 		return true;
 	}
 
@@ -118,5 +123,20 @@ public class DisplayMap extends FragmentActivity implements OnMarkerClickListene
 
 		return false;
 	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+	
+		
+
+		}
+		return false;
+		
+	}
+		
+	
 
 }

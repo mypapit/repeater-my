@@ -76,4 +76,15 @@
         android:layout_marginRight="12dip"
         />
 
+    <TextView
+        android:id="@+id/tvdLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvFreq"
+        android:layout_marginLeft="3dp"
+        android:layout_toRightOf="@+id/tvFreq"
+        android:text="*link"
+        android:textColor="@color/bright_yellow"
+        android:textStyle="italic" />
+
 </RelativeLayout>

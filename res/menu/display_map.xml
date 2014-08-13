@@ -26,5 +26,16 @@
         android:titleCondensed="Map" android:orderInCategory="101" 
         android:showAsAction="ifRoom|withText"
         android:title="Map"></item>
+    
+         <item android:id="@+id/search"
+          android:title="@string/search_title"
+          android:icon="@android:drawable/ic_menu_search"
+          android:showAsAction="collapseActionView|ifRoom"
+          android:actionViewClass="android.widget.SearchView" />
+         
+         <item android:id="@+id/manual_settings"
+          android:title="@string/manual_settings_title"
+          android:showAsAction="never" />
+          
 
 </menu>
