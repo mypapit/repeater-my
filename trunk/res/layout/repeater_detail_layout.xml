@@ -2,38 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:paddingTop="10dip"
+    android:orientation="vertical"
+    android:paddingTop="10dip" 
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     >
-
-    <TextView
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Repeater Callsign"
-        android:textStyle="bold"
-        android:layout_marginLeft="10dip"
-       
-        
-         android:textColor="@color/holo_blue"
-        android:paddingBottom="3dip"
-        
-       />
-
-    <View style="@style/Divider"/>
 
     <TextView
         android:id="@+id/tvdCallsign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="9M2RKG" 
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
-        android:textColor="@color/text_color"
         android:paddingBottom="6dip"
-        
-        
-        />
+        android:text="9M2RKG"
+        android:textColor="@color/text_color"
+        android:textSize="30sp" />
+
     <TextView
 
         android:layout_width="wrap_content"
@@ -194,5 +177,21 @@
         
         
         />
+        
+        <RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    
+      <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_unit_id"/>       
+    
+</RelativeLayout>
+        
     
 </LinearLayout>

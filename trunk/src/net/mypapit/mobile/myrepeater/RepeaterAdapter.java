@@ -32,12 +32,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
-public class RepeaterAdapter extends BaseAdapter {
+public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	private static LayoutInflater inflater=null;
-	private RepeaterList data;
+	private RepeaterList data,realdata;
 	//private Activity activity;
 
 
@@ -45,6 +47,7 @@ public class RepeaterAdapter extends BaseAdapter {
 	public RepeaterAdapter(Activity activity, RepeaterList rl){
 		//this.activity = activity;
 		data = rl;
+		realdata=rl;
 		inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
@@ -62,6 +65,10 @@ public class RepeaterAdapter extends BaseAdapter {
 		// TODO Auto-generated method stub
 		return position;
 	}
+	
+	public Repeater getRepeater(int position){
+		return data.get(position);
+	}
 
 	@Override
 	public long getItemId(int position) {
@@ -73,7 +80,8 @@ public class RepeaterAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		View vi = convertView;
-
+		//LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		
 		if (convertView ==null) {
 			vi = inflater.inflate(R.layout.repeater_row, null);
 		}
@@ -84,6 +92,7 @@ public class RepeaterAdapter extends BaseAdapter {
 		TextView tvTone = (TextView) vi.findViewById(R.id.tvTone);
 		TextView tvClub = (TextView) vi.findViewById(R.id.tvClub);
 		TextView tvLocation = (TextView) vi.findViewById(R.id.tvLocation);
+		TextView tvLink = (TextView) vi.findViewById(R.id.tvdLink);
 
 
 		Repeater repeater = data.get(position);
@@ -99,6 +108,12 @@ public class RepeaterAdapter extends BaseAdapter {
 		tvTone.setText(Double.toString(repeater.getTone()));
 		tvLocation.setText(repeater.getLocation());
 		tvClub.setText(repeater.getClub());
+		if (repeater.getLink().length()>0) {
+				
+				tvLink.setText("*link");
+		} else {
+			tvLink.setText("");
+		}
 
 		double distance = repeater.getDistance()/1000.0; 
 		tvDistance.setText(nf.format(distance)+" km");
@@ -116,6 +131,61 @@ public class RepeaterAdapter extends BaseAdapter {
 
 
 		return vi;
+	}
+
+	@Override
+	public Filter getFilter() {
+		// TODO Auto-generated method stub
+		
+		return new Filter() {
+
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				// TODO Auto-generated method stub
+				FilterResults results = new FilterResults();
+				RepeaterList i = new RepeaterList();
+				
+				if (constraint!=null && constraint.toString().length()>2){
+					for(int index=0;index < realdata.size();index++){
+						Repeater repeater = realdata.get(index);
+						if(repeater.getCallsign().contains(constraint.toString().toUpperCase())){
+							
+							
+							i.add(repeater);
+						}
+						
+						
+						
+					}
+					
+					results.values=i;
+					results.count=i.size();
+					
+				} else {
+						results.values=realdata;
+						results.count=realdata.size();
+						
+					}
+					
+					
+				
+				return results;
+			}
+
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				// TODO Auto-generated method stub
+				data=(RepeaterList) results.values;
+				
+				RepeaterAdapter.this.notifyDataSetChanged();
+				
+				
+				
+				
+			}
+			
+		};
+		
 	}
 
 }

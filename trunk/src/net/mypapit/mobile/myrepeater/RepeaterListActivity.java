@@ -29,16 +29,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Stack;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
 import android.location.Criteria;
@@ -46,15 +52,21 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.provider.Settings;
+import android.provider.Settings.SettingNotFoundException;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import au.com.bytecode.opencsv.CSVReader;
@@ -63,10 +75,14 @@ public class RepeaterListActivity extends ListActivity {
 	Repeater xlocation;
 	RepeaterAdapter adapter;
 	RepeaterList rl;
+	ListView lv;
+	
 
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
+		
+		
 
 		// Repeater repeater = (Repeater)
 		// this.getIntent().getExtras().getSerializable("RepeaterList");
@@ -87,11 +103,71 @@ public class RepeaterListActivity extends ListActivity {
 		rl.sort();
 
 		adapter = new RepeaterAdapter(this, rl);
+		
+		lv=this.getListView();
+		
+		lv.setTextFilterEnabled(true);
+		//Toast.makeText(this, "Please enable Location Services", Toast.LENGTH_LONG).show();
+		SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
+		
+		//need to put token to avoid app from popping up annoying select manual location dialog
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
+		Date date = new Date();
+		
+		if (!this.isLocationEnabled(this)&& !dateFormat.format(date).equalsIgnoreCase(prefs.getString("token", "28/10"))){
+			
+			
+			
+			
 
+			
+			//show dialog if Location Services is not enabled
+			
+			 AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		        builder.setTitle(R.string.gps_not_found_title);  // GPS not found
+		        builder.setMessage(R.string.gps_not_found_message); // Want to enable?
+		        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+		            public void onClick(DialogInterface dialogInterface, int i) {
+		            	
+		            	Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		            	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		            	
+		                getApplicationContext().startActivity(intent);
+		            }
+		        });
+		        
+		        //if no - bring user to selecting Static Location Activity
+		        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+						intent.setClassName(getBaseContext(),
+								"net.mypapit.mobile.myrepeater.StaticLocationActivity");
+						startActivity(intent);
+
+						
+					}
+		        	
+		        	
+		        });
+		        builder.create().show();
+		        
+			
+		
+		}
+		
+
+		
+		
+		
 		GPSThread thread = new GPSThread(this);
 		thread.start();
 
+			
 		this.setListAdapter(adapter);
+		
+		
 
 	}
 
@@ -104,7 +180,10 @@ public class RepeaterListActivity extends ListActivity {
 		Intent intent = new Intent();
 		intent.setClassName(getBaseContext(),
 				"net.mypapit.mobile.myrepeater.RepeaterDetailsActivity");
-		intent.putExtra("Repeater", rl.get(position).toArrayString());
+		
+		Repeater rpt = (Repeater) adapter.getRepeater(position);
+		
+		intent.putExtra("Repeater", rpt.toArrayString());
 		startActivity(intent);
 
 		super.onListItemClick(lv, view, position, id);
@@ -141,8 +220,14 @@ public class RepeaterListActivity extends ListActivity {
 
 			if (location == null) {
 				location = new Location("");
-				location.setLatitude(3.0);
-				location.setLongitude(101.5);
+				SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE); 
+				float lat = prefs.getFloat("DefaultLat", 3.0f);
+				float lon = prefs.getFloat("DefaultLon", 101.0f);
+				
+				location.setLatitude(lat);
+				location.setLongitude(lon);
+				
+				
 
 			}
 
@@ -153,7 +238,11 @@ public class RepeaterListActivity extends ListActivity {
 
 			} else {
 
-				xlocation = new Repeater("", 3.0, 101.5);
+				SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE); 
+				float lat = prefs.getFloat("DefaultLat", 3.0f);
+				float lon = prefs.getFloat("DefaultLon", 101.0f);
+
+				xlocation = new Repeater("", lat, lon);
 
 			}
 
@@ -277,7 +366,41 @@ public class RepeaterListActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.display_map, menu);
-		return true;
+		
+		
+		  SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+	        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+	        searchView.setIconifiedByDefault(false);
+	        searchView.setQueryHint("part of repeater callsign");
+	        
+	        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
+				
+				@Override
+				public boolean onQueryTextSubmit(String searchText) {
+					// TODO Auto-generated method stub
+					adapter.getFilter().filter(searchText);
+					Log.d("MYRepeater","search: "+ searchText);
+					adapter.notifyDataSetChanged();
+					return true;
+				}
+				
+				@Override
+				public boolean onQueryTextChange(String searchText) {
+					// TODO Auto-generated method stub
+					adapter.getFilter().filter(searchText);
+					adapter.notifyDataSetChanged();
+					return true;
+				}
+			};
+	        	        
+	        searchView.setOnQueryTextListener(textChangeListener);
+	        
+	        
+	        
+	        
+		
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -296,6 +419,17 @@ public class RepeaterListActivity extends ListActivity {
 			startActivity(intent);
 
 			return true;
+		case R.id.manual_settings:
+			if (!this.isLocationEnabled(this)) {
+			intent = new Intent();
+			intent.setClassName(getBaseContext(),
+					"net.mypapit.mobile.myrepeater.StaticLocationActivity");
+			startActivity(intent);
+		  } else {
+			  this.showAlertDialog();
+		  }
+			return true;
+			
 		case R.id.action_about:
 			try {
 				showDialog();
@@ -376,6 +510,21 @@ public class RepeaterListActivity extends ListActivity {
 		dialog.show();
 
 	}
+	
+	public void showAlertDialog() {
+		AlertDialog alertDialog = new AlertDialog.Builder(
+                this).create();
+
+        // Setting Dialog Title
+        alertDialog.setTitle("Manual Location");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("This feature is only available when Location Service is disabled");
+
+        alertDialog.show();
+
+		
+	}
 
 	public Intent createEmailOnlyChooserIntent(Intent source,
 			CharSequence chooserTitle) {
@@ -402,5 +551,15 @@ public class RepeaterListActivity extends ListActivity {
 			return Intent.createChooser(source, chooserTitle);
 		}
 	}
+	
+	public  boolean isLocationEnabled(Context context) {
+		 LocationManager lm = (LocationManager)
+	                getSystemService(Context.LOCATION_SERVICE);
+	        String provider = lm.getBestProvider(new Criteria(), true);
+	        return (!TextUtils.isEmpty(provider) &&
+	                !LocationManager.PASSIVE_PROVIDER.equals(provider));
+
+
+	} 
 
 }

@@ -32,3 +32,5 @@
 #-keep public class com.google.android.gms.maps.model.MarkerOptions
 
 -keep interface com.google.android.gms.maps.** { *; }
+
+-dontwarn com.google.android.gms.**

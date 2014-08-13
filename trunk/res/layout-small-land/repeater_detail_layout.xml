@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    >
+
+    <TextView
+        android:id="@+id/tvdCallsign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:text="9M2RBK"
+        android:textColor="@color/text_color"
+        android:textSize="18sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Downlink Frequency"
+                android:textColor="@color/holo_blue"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="5dip"
+                android:text="Shift"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" />
+
+        </TableRow>
+
+        <TableRow
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tvdFreq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="145.525 MHz" 
+                   android:layout_weight="1"
+                android:paddingTop="2dip"
+                android:paddingBottom="2dip"
+                android:paddingLeft="5dip"
+                />
+
+            <TextView
+                android:id="@+id/tvdShift"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-0.600 MHz" 
+                   android:layout_weight="1"
+                android:paddingTop="2dip"
+                android:paddingBottom="2dip"
+                android:paddingLeft="5dip"
+                />
+
+        </TableRow>
+
+        <TableRow
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tone"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" 
+                   android:layout_weight="1"
+                android:padding="5dip"
+                />
+
+            <TextView
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                                android:textColor="@color/holo_blue"
+                android:textStyle="bold" 
+                
+                android:text="Club" 
+                   android:layout_weight="1"
+                android:padding="5dip"
+                />
+
+
+         
+        </TableRow>
+
+        <TableRow
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tvdTone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="103.5 Hz" 
+                                   android:layout_weight="1"
+                android:paddingTop="2dip"
+                android:paddingBottom="2dip"
+
+                android:paddingLeft="5dip"
+                  
+                />
+
+            <TextView
+                android:id="@+id/tvdClub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MARTS"
+                                   android:layout_weight="1"
+                                android:paddingTop="2dip"
+                android:paddingBottom="2dip"
+
+                android:paddingLeft="5dip"
+                
+                  
+                
+                 />
+
+        </TableRow>
+        
+        <TableRow
+              android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            
+             <TextView
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" 
+                   android:layout_weight="1"
+                android:padding="5dip"
+                />
+
+            <TextView
+                
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                                android:textColor="@color/holo_blue"
+                android:textStyle="bold" 
+                
+                android:text="Distance" 
+                   android:layout_weight="1"
+                android:padding="5dip"
+                />
+
+            
+            
+        </TableRow>
+        
+         <TableRow
+            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/tvdLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="KELANTAN" 
+                                   android:layout_weight="1"
+                                android:paddingTop="2dip"
+                android:paddingBottom="2dip"
+
+                android:paddingLeft="5dip"
+                
+                  
+                />
+
+            <TextView
+                android:id="@+id/tvdDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="203.5 km"
+                                   android:layout_weight="1"
+                                android:paddingTop="2dip"
+                android:paddingBottom="2dip"
+
+                android:paddingLeft="5dip"
+                
+                  
+                
+                 />
+
+        </TableRow>
+        
+    </TableLayout>
+ <RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    
+      <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/ad_unit_id"/>       
+    
+</RelativeLayout>
+        
+</LinearLayout>

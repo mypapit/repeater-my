@@ -12,5 +12,15 @@
     <string name="title_activity_contrib">Contributors</string>
     <string name="action_contrib">Contributors</string>
     <string name="hello_world">Hello world!</string>
+    <string name="search_title">Search</string>
+    <string name="manual_settings_title">Set Location...</string>
+    <string name="gps_not_found_message">This app works better with GPS or Location Service. Enabling these allow automatic detection of Amateur Radio Repeater near you.\n\nWould you like to enable Location Service now?\n</string>
+    <string name="gps_not_found_title">Location Service Not Enabled</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ad_unit_id">ca-app-pub-3163716613766876/9826701476</string>
+    <string name="title_activity_static_location">Select Location (Manual)</string>
+    <string name="notice_enable_location">Location Service for enhanced experience</string>
+    <string name="label_enable">Enable</string>
 
 </resources>

@@ -26,12 +26,19 @@ package net.mypapit.mobile.myrepeater;
 import java.util.List;
 import java.util.Stack;
 
+
+
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -42,6 +49,12 @@ public class RepeaterDetailsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		
+	
+	    
 
 		repeater = (String[]) getIntent().getExtras().get("Repeater");
 		if(repeater == null){
@@ -67,6 +80,10 @@ public class RepeaterDetailsActivity extends Activity {
 		tvLocation.setText(repeater[4]);
 		tvTone.setText(""+repeater[5]+ " Hz");
 		tvDistance.setText(""+repeater[6]+ " km");
+		
+		AdView mAdView = (AdView) findViewById(R.id.adView);
+	    mAdView.loadAd(new AdRequest.Builder().build());
+	     
 
 
 
@@ -106,6 +123,11 @@ public class RepeaterDetailsActivity extends Activity {
 			startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest new Repeater"));
 
 			return true;
+		case android.R.id.home:
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+			
+			
 
 		}
 
