@@ -50,7 +50,10 @@ public class RepeaterDetailsActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		if (android.os.Build.VERSION.SDK_INT >=android.os.Build.VERSION_CODES.HONEYCOMB){
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+			
 		
 		
 	
@@ -82,6 +85,7 @@ public class RepeaterDetailsActivity extends Activity {
 		tvDistance.setText(""+repeater[6]+ " km");
 		
 		AdView mAdView = (AdView) findViewById(R.id.adView);
+		
 	    mAdView.loadAd(new AdRequest.Builder().build());
 	     
 
@@ -124,7 +128,10 @@ public class RepeaterDetailsActivity extends Activity {
 
 			return true;
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+			if (android.os.Build.VERSION.SDK_INT >=android.os.Build.VERSION_CODES.HONEYCOMB){
+				NavUtils.navigateUpFromSameTask(this);
+			}
+			
 			return true;
 			
 			

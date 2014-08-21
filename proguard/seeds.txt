@@ -3288,6 +3288,7 @@ net.mypapit.mobile.myrepeater.R$id: int svAbout
 net.mypapit.mobile.myrepeater.R$id: int tabhost
 net.mypapit.mobile.myrepeater.R$id: int terrain
 net.mypapit.mobile.myrepeater.R$id: int tvAbout
+net.mypapit.mobile.myrepeater.R$id: int tvAddress
 net.mypapit.mobile.myrepeater.R$id: int tvCallsign
 net.mypapit.mobile.myrepeater.R$id: int tvClub
 net.mypapit.mobile.myrepeater.R$id: int tvDistance

@@ -31,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,115 +51,110 @@ public class StaticLocationActivity extends Activity {
 	private ListView lv;
 	private StaticLocationAdapter adapter;
 	private Activity localActivity;
-	
-	
-	protected void onCreate(Bundle savedInstanceState){
+
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.static_location);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+
 		localActivity = this;
-		
-		ArrayList<StaticLocation> list=this.loadData(R.raw.staticlocation);
-		
+
+		ArrayList<StaticLocation> list = this.loadData(R.raw.staticlocation);
+
 		lv = (ListView) findViewById(R.id.lvStatic);
 		Button btnEnable = (Button) findViewById(R.id.btnEnable);
-		
-		
-		adapter = new StaticLocationAdapter(list,this);
+
+		adapter = new StaticLocationAdapter(list, this);
 		lv.setAdapter(adapter);
-		
-		lv.setOnItemClickListener(new OnItemClickListener(){
+
+		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				StaticLocation sl = adapter.getStaticLocation(position);
-				
+
 				SharedPreferences.Editor editor = getSharedPreferences("Location", MODE_PRIVATE).edit();
 				editor.putFloat("DefaultLat", (float) sl.getLat());
 				editor.putFloat("DefaultLon", (float) sl.getLon());
-				
+
 				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
 				Date date = new Date();
-				
-				//need to put token to avoid app from popping up annoying select manual location dialog
+
+				// need to put token to avoid app from popping up annoying
+				// select manual location dialog
 				editor.putString("token", dateFormat.format(date));
 				editor.commit();
-				
+
 				NavUtils.navigateUpFromSameTask(localActivity);
-				
-				
-				
-				
+
 			}
-			
+
 		});
-		
-		btnEnable.setOnClickListener(new OnClickListener(){
+
+		btnEnable.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// Open up Location Services settings 
+				// Open up Location Services settings
 
-            	Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            	
-                getApplicationContext().startActivity(intent);
+				Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+				getApplicationContext().startActivity(intent);
 			}
-			
+
 		});
-		
+
 	}
-	
-	public ArrayList<StaticLocation> loadData(int resource){
+
+	public ArrayList<StaticLocation> loadData(int resource) {
 		ArrayList<StaticLocation> locationList = new ArrayList<StaticLocation>();
-		int line=0;
+		int line = 0;
 		try {
-			InputStream stream = this.getResources().openRawResource(
-					resource);
+			InputStream stream = this.getResources().openRawResource(resource);
 			InputStreamReader is = new InputStreamReader(stream);
 			BufferedReader in = new BufferedReader(is);
 			CSVReader csv = new CSVReader(in, ';', '\"', 0);
 			String data[];
 			while ((data = csv.readNext()) != null) {
 				line++;
-				locationList.add(new StaticLocation(data[0],data[1],Double.parseDouble(data[2]),Double.parseDouble(data[3])));
-				
-				
+				locationList.add(new StaticLocation(data[0], data[1], Double.parseDouble(data[2]), Double
+						.parseDouble(data[3])));
+
 			}
 			in.close();
-			
-			
-		} catch (IOException ioe){
+
+		} catch (IOException ioe) {
 			Toast.makeText(this, "IOException: Couldn't read static location file", Toast.LENGTH_SHORT).show();
-			
-		}catch (NumberFormatException nfe){
-			Toast.makeText(this, "NumberFormatException: Couldn't read long/lat at line: "+line, Toast.LENGTH_SHORT).show();
-		}catch (Exception ex){
-			Toast.makeText(this, ex.toString()+": at line -"+line, Toast.LENGTH_SHORT).show();
-			Log.e("mypapit-static-location",": at line -"+line);
+
+		} catch (NumberFormatException nfe) {
+			Toast.makeText(this, "NumberFormatException: Couldn't read long/lat at line: " + line, Toast.LENGTH_SHORT)
+					.show();
+		} catch (Exception ex) {
+			Toast.makeText(this, ex.toString() + ": at line -" + line, Toast.LENGTH_SHORT).show();
+			Log.e("mypapit-static-location", ": at line -" + line);
 			ex.printStackTrace(System.err);
-			
-			
-			
+
 		}
-		
+
 		return locationList;
-		
-		
+
 	}
-	
+
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+				NavUtils.navigateUpFromSameTask(this);
+			}
 			return true;
-	
-		
 
 		}
 		return false;
-		
+
 	}
 
 }

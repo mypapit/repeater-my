@@ -54,8 +54,9 @@ public class DisplayMap extends FragmentActivity implements OnMarkerClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_map);
-		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		if (android.os.Build.VERSION.SDK_INT >=android.os.Build.VERSION_CODES.HONEYCOMB){
+				getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
 		
 		map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 
@@ -117,6 +118,7 @@ public class DisplayMap extends FragmentActivity implements OnMarkerClickListene
 	@Override
 	public boolean onMarkerClick(Marker marker) {
 		if (marker.equals(marker)) {
+			
 
 
 		}
@@ -127,7 +129,12 @@ public class DisplayMap extends FragmentActivity implements OnMarkerClickListene
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+		
+			if (android.os.Build.VERSION.SDK_INT >=android.os.Build.VERSION_CODES.HONEYCOMB){
+					NavUtils.navigateUpFromSameTask(this);
+			}
+			
+			
 			return true;
 	
 		
