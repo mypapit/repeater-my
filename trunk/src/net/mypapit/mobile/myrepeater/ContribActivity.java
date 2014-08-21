@@ -28,7 +28,6 @@ import java.io.InputStream;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.res.Resources;
-import android.view.Menu;
 import android.widget.TextView;
 
 public class ContribActivity extends Activity {

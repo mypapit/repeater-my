@@ -17,7 +17,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/notice_enable_location" />
+            android:text="@string/notice_enable_location"
+            android:textColor="@color/bright_yellow" />
 
     </LinearLayout>
 

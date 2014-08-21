@@ -4036,26 +4036,26 @@ net.mypapit.mobile.myrepeater.R$style
 net.mypapit.mobile.myrepeater.R$styleable
 net.mypapit.mobile.myrepeater.Repeater:
     private static final long serialVersionUID
-    113:115:public Repeater(android.location.Location)
-    134:135:public void setCallsign(java.lang.String)
-    168:169:public void setClub(java.lang.String)
-    202:203:public void setLocation(java.lang.String)
-    236:237:public void setLink(java.lang.String)
-    253:253:public java.lang.String getNotes()
-    270:271:public void setNotes(java.lang.String)
-    287:287:public double getLat()
-    304:305:public void setLat(double)
-    321:321:public double getLon()
-    338:339:public void setLon(double)
-    372:373:public void setDownlink(double)
-    406:407:public void setShift(double)
-    440:441:public void setTone(double)
+    112:114:public Repeater(android.location.Location)
+    133:134:public void setCallsign(java.lang.String)
+    167:168:public void setClub(java.lang.String)
+    201:202:public void setLocation(java.lang.String)
+    235:236:public void setLink(java.lang.String)
+    252:252:public java.lang.String getNotes()
+    269:270:public void setNotes(java.lang.String)
+    286:286:public double getLat()
+    303:304:public void setLat(double)
+    320:320:public double getLon()
+    337:338:public void setLon(double)
+    371:372:public void setDownlink(double)
+    405:406:public void setShift(double)
+    439:440:public void setTone(double)
 net.mypapit.mobile.myrepeater.RepeaterList:
     private static final long serialVersionUID
 net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread:
     java.lang.StringBuffer sb
 net.mypapit.mobile.myrepeater.StaticLocation:
-    9:10:public void setStatename(java.lang.String)
-    33:34:public void setName(java.lang.String)
-    39:40:public void setLat(double)
-    45:46:public void setLon(double)
+    32:33:public void setStatename(java.lang.String)
+    56:57:public void setName(java.lang.String)
+    62:63:public void setLat(double)
+    68:69:public void setLon(double)

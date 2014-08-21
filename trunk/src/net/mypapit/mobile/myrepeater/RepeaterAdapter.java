@@ -31,6 +31,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -40,6 +42,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	private static LayoutInflater inflater=null;
 	private RepeaterList data,realdata;
+	private int mLastPosition=-1;
 	//private Activity activity;
 
 
@@ -48,6 +51,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		//this.activity = activity;
 		data = rl;
 		realdata=rl;
+		
 		inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
@@ -84,6 +88,21 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		
 		if (convertView ==null) {
 			vi = inflater.inflate(R.layout.repeater_row, null);
+		} else {
+
+			 TranslateAnimation animation = null;
+		        if (position > mLastPosition) {
+		            animation = new TranslateAnimation(
+		                Animation.RELATIVE_TO_SELF,
+		                0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+		                Animation.RELATIVE_TO_SELF, 1.0f,
+		                Animation.RELATIVE_TO_SELF, 0.0f);
+
+		            animation.setDuration(600);
+		            convertView.startAnimation(animation);
+		            mLastPosition = position;
+		        }
+			
 		}
 
 		TextView tvCallsign = (TextView) vi.findViewById(R.id.tvCallsign);
@@ -96,11 +115,8 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 
 		Repeater repeater = data.get(position);
-
-
-
-
 		DecimalFormat nf = new DecimalFormat("#.00");
+		
 
 
 		tvCallsign.setText( (repeater.getCallsign()));

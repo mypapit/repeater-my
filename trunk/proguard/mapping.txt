@@ -11226,6 +11226,7 @@ net.mypapit.mobile.myrepeater.RepeaterAdapter -> net.mypapit.mobile.myrepeater.a
     android.view.LayoutInflater inflater -> a
     net.mypapit.mobile.myrepeater.RepeaterList data -> b
     net.mypapit.mobile.myrepeater.RepeaterList realdata -> c
+    int mLastPosition -> d
     int getCount() -> getCount
     java.lang.Object getItem(int) -> getItem
     net.mypapit.mobile.myrepeater.Repeater getRepeater(int) -> a
@@ -11258,8 +11259,8 @@ net.mypapit.mobile.myrepeater.RepeaterListActivity -> net.mypapit.mobile.myrepea
     net.mypapit.mobile.myrepeater.RepeaterAdapter adapter -> b
     net.mypapit.mobile.myrepeater.RepeaterList rl -> c
     android.widget.ListView lv -> d
+    android.widget.TextView tvAddress -> e
     void onCreate(android.os.Bundle) -> onCreate
-    void onListItemClick(android.widget.ListView,android.view.View,int,long) -> onListItemClick
     net.mypapit.mobile.myrepeater.RepeaterList loadData(int,android.app.Activity) -> a
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
@@ -11267,6 +11268,9 @@ net.mypapit.mobile.myrepeater.RepeaterListActivity -> net.mypapit.mobile.myrepea
     void showAlertDialog() -> b
     android.content.Intent createEmailOnlyChooserIntent(android.content.Intent,java.lang.CharSequence) -> a
     boolean isLocationEnabled(android.content.Context) -> a
+    void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
+    void setListAdapter(net.mypapit.mobile.myrepeater.RepeaterAdapter) -> a
+    void setAddress(java.lang.String) -> a
 net.mypapit.mobile.myrepeater.RepeaterListActivity$1 -> net.mypapit.mobile.myrepeater.d:
     net.mypapit.mobile.myrepeater.RepeaterListActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
@@ -11278,27 +11282,39 @@ net.mypapit.mobile.myrepeater.RepeaterListActivity$3 -> net.mypapit.mobile.myrep
     boolean onQueryTextSubmit(java.lang.String) -> onQueryTextSubmit
     boolean onQueryTextChange(java.lang.String) -> onQueryTextChange
 net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread -> net.mypapit.mobile.myrepeater.g:
-    android.app.ListActivity activity -> a
+    net.mypapit.mobile.myrepeater.RepeaterListActivity activity -> a
     java.lang.String bestProvider -> b
-    net.mypapit.mobile.myrepeater.RepeaterListActivity this$0 -> c
+    java.lang.String m_address -> c
+    java.lang.StringBuffer stringBuffer -> d
+    java.util.List addressList -> e
+    java.lang.String[] addressLocality -> f
+    net.mypapit.mobile.myrepeater.RepeaterListActivity this$0 -> g
+    java.lang.String geoCode(double,double) -> a
     void run() -> run
     net.mypapit.mobile.myrepeater.RepeaterListActivity access$0(net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread) -> a
 net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$1 -> net.mypapit.mobile.myrepeater.h:
     net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread this$1 -> a
     void run() -> run
 net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2 -> net.mypapit.mobile.myrepeater.i:
-    net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread this$1 -> a
+    java.lang.String m_location2 -> a
+    net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread this$1 -> b
     void onLocationChanged(android.location.Location) -> onLocationChanged
     void onProviderDisabled(java.lang.String) -> onProviderDisabled
     void onProviderEnabled(java.lang.String) -> onProviderEnabled
     void onStatusChanged(java.lang.String,int,android.os.Bundle) -> onStatusChanged
     net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread access$0(net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2) -> a
 net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2$1 -> net.mypapit.mobile.myrepeater.j:
-    double lat -> a
-    double lon -> b
-    net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2 this$2 -> c
+    net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2 this$2 -> a
+    double val$lat -> b
+    double val$lon -> c
     void run() -> run
-net.mypapit.mobile.myrepeater.StaticLocation -> net.mypapit.mobile.myrepeater.k:
+    net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2 access$0(net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2$1) -> a
+net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2$1$1 -> net.mypapit.mobile.myrepeater.k:
+    net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$2$1 this$3 -> a
+    double val$lat -> b
+    double val$lon -> c
+    void run() -> run
+net.mypapit.mobile.myrepeater.StaticLocation -> net.mypapit.mobile.myrepeater.l:
     java.lang.String name -> a
     java.lang.String statename -> b
     double lat -> c
@@ -11317,13 +11333,13 @@ net.mypapit.mobile.myrepeater.StaticLocationActivity -> net.mypapit.mobile.myrep
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     net.mypapit.mobile.myrepeater.StaticLocationAdapter access$0(net.mypapit.mobile.myrepeater.StaticLocationActivity) -> a
     android.app.Activity access$1(net.mypapit.mobile.myrepeater.StaticLocationActivity) -> b
-net.mypapit.mobile.myrepeater.StaticLocationActivity$1 -> net.mypapit.mobile.myrepeater.l:
+net.mypapit.mobile.myrepeater.StaticLocationActivity$1 -> net.mypapit.mobile.myrepeater.m:
     net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-net.mypapit.mobile.myrepeater.StaticLocationActivity$2 -> net.mypapit.mobile.myrepeater.m:
+net.mypapit.mobile.myrepeater.StaticLocationActivity$2 -> net.mypapit.mobile.myrepeater.n:
     net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-net.mypapit.mobile.myrepeater.StaticLocationAdapter -> net.mypapit.mobile.myrepeater.n:
+net.mypapit.mobile.myrepeater.StaticLocationAdapter -> net.mypapit.mobile.myrepeater.o:
     java.util.ArrayList list -> a
     android.content.Context activity -> b
     int getCount() -> getCount
