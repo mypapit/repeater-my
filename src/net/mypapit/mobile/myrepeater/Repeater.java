@@ -22,24 +22,22 @@
  */
 package net.mypapit.mobile.myrepeater;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.ListIterator;
-
 
 import android.location.Location;
 import android.os.Parcelable;
 
-public class Repeater extends Location implements Comparable<Repeater>, Parcelable{
+public class Repeater extends Location implements Comparable<Repeater>, Parcelable, Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 8465110382781503697L;
-	private String callsign,club,location,link,notes;
-	private double lat,lon,distance;
-	private double downlink,shift,tone;
+	private String callsign, club, location, link, notes;
+	private double lat, lon, distance;
+	private double downlink, shift, tone;
 
 	/**
 	 * @param callsign
@@ -54,19 +52,16 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 	 * @param tone
 	 */
 
-	public Repeater(String provider, double lat, double lon)
-	{
+	public Repeater(String provider, double lat, double lon) {
 		super(provider);
 		this.setProvider(provider);
 		this.setLatitude(lat);
 		this.setLongitude(lon);
 
-
 	}
-	public Repeater(String provider, String callsign, String club, String location, String link,
-			double lat, double lon, double downlink,
-			double shift, double tone) {
 
+	public Repeater(String provider, String callsign, String club, String location, String link, double lat,
+			double lon, double downlink, double shift, double tone) {
 
 		super(provider);
 
@@ -86,19 +81,6 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public Repeater(String provider, Double[] coordinates) {
 		// TODO Auto-generated constructor stub
 		super(provider);
@@ -107,388 +89,126 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 		this.setLongitude(coordinates[1]);
 
 	}
+
 	public Repeater(Location location) {
 		// TODO Auto-generated constructor stub
 		super(location);
 
 	}
+
 	public String getCallsign() {
 		return callsign;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setCallsign(String callsign) {
 		this.callsign = callsign;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public String getClub() {
 		return club;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setClub(String club) {
 		this.club = club;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public String getLocation() {
 		return location;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setLocation(String location) {
 		this.location = location;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public String getLink() {
 		return link;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setLink(String link) {
 		this.link = link;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public String getNotes() {
 		return notes;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public double getLat() {
 		return lat;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setLat(double lat) {
 		this.lat = lat;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public double getLon() {
 		return lon;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setLon(double lon) {
 		this.lon = lon;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public double getDownlink() {
 		return downlink;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setDownlink(double downlink) {
 		this.downlink = downlink;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public double getShift() {
 		return shift;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setShift(double shift) {
 		this.shift = shift;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public double getTone() {
 		return tone;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public void setTone(double tone) {
 		this.tone = tone;
 	}
 
 	/*
-public void setDistance(double lat, double lon){
-	distance = Distance.distance(this.lat, this.lon, lat, lon);
-
-}
+	 * public void setDistance(double lat, double lon){ distance =
+	 * Distance.distance(this.lat, this.lon, lat, lon);
+	 * 
+	 * }
 	 */
 
-	public ListIterator<Repeater> calcDistanceAll(RepeaterList rl)
-	{
-		ListIterator <Repeater> venum = rl.listIterator();
+	public ListIterator<Repeater> calcDistanceAll(RepeaterList rl) {
+		ListIterator<Repeater> venum = rl.listIterator();
 		Repeater temp;
-		while(venum.hasNext()) {
-			temp=venum.next();
+		while (venum.hasNext()) {
+			temp = venum.next();
 			temp.distanceTo(this);
 			venum.set(temp);
-
-
-
 
 		}
 		return venum;
 
-
 	}
 
-	public float distanceTo(Location l)
-	{
-		distance=super.distanceTo(l);
-
-
+	public float distanceTo(Location l) {
+		distance = super.distanceTo(l);
 
 		return (float) distance;
 
-
 	}
-
-
-
-
-
-
-
-
 
 	@Override
 	public int compareTo(Repeater repeater) {
 		// TODO Auto-generated method stub
 		if (this.distance < repeater.distance) {
 			return -1;
-		} else if (this.distance >repeater.distance) {
+		} else if (this.distance > repeater.distance) {
 			return 1;
 		}
 
@@ -501,55 +221,16 @@ public void setDistance(double lat, double lon){
 
 	}
 
-	public String[] toArrayString(){
+	public String[] toArrayString() {
 
 		DecimalFormat nf = new DecimalFormat("#.00");
-		String distance= nf.format(this.getDistance()/1000);
+		String distance = nf.format(this.getDistance() / 1000);
 
-		String array[] = {this.getCallsign(),this.getClub(),""+this.getDownlink(),""+this.getShift(),""+this.getLocation(),""+this.getTone(),distance};
-
-
+		String array[] = { this.getCallsign(), this.getClub(), "" + this.getDownlink(), "" + this.getShift(),
+				"" + this.getLocation(), "" + this.getTone(), distance };
 
 		return array;
 
 	}
 
 }
-
-
-
-
-
-class RepeaterList extends ArrayList<Repeater>{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8386681782482908119L;
-
-	public RepeaterList() {
-		super();
-	}
-
-	public RepeaterList(int capacity){
-		super(capacity);
-
-	}
-
-
-	public void sort(){
-
-		//RepeaterList sorted = (RepeaterList) this.clone();
-		Collections.sort(this);
-
-
-		//return this;
-
-
-	}
-
-
-
-
-}
-
