@@ -55,6 +55,7 @@ public class StaticLocationActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.static_location);
+		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -155,6 +156,11 @@ public class StaticLocationActivity extends Activity {
 		}
 		return false;
 
+	}
+
+	protected void onPause() {
+		super.onPause();
+		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
 	}
 
 }

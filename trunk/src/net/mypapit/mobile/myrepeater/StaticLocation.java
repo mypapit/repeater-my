@@ -24,52 +24,60 @@
 package net.mypapit.mobile.myrepeater;
 
 public class StaticLocation {
-	private String name,statename;
+	private String name, statename;
+
 	public String getStatename() {
 		return statename;
 	}
+
 	public void setStatename(String statename) {
 		this.statename = statename;
 	}
-	private double lat,lon;
-	
-	
+
+	private double lat, lon;
+
 	/**
-	 * @param name - name of the place
-	 * @param lat - latitude
-	 * @param lon - longitude
+	 * @param name
+	 *            - name of the place
+	 * @param lat
+	 *            - latitude
+	 * @param lon
+	 *            - longitude
 	 */
 	public StaticLocation(String name, String statename, double lat, double lon) {
 		this.name = name;
-		this.statename=statename;
+		this.statename = statename;
 		this.lat = lat;
 		this.lon = lon;
 	}
+
 	@Override
 	public String toString() {
-		return name+","+lat+","+"lon";
+		return name + "," + lat + "," + "lon";
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public double getLat() {
 		return lat;
 	}
+
 	public void setLat(double lat) {
 		this.lat = lat;
 	}
+
 	public double getLon() {
 		return lon;
 	}
+
 	public void setLon(double lon) {
 		this.lon = lon;
 	}
-	
-	
-	
-	
 
 }

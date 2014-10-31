@@ -22,5 +22,10 @@
     <string name="title_activity_static_location">Select Location (Manual)</string>
     <string name="notice_enable_location">Location Service for enhanced experience</string>
     <string name="label_enable">Enable</string>
+    <string name="action_history">History</string>
+    <string name="title_activity_history">Search History</string>
+    <string name="title_activity_suggest">Suggest Repeater</string>
+    <string name="action_suggest_done">Submit</string>
+    <string name="title_suggest_instruction">Please fill in repeater details that you want to suggest and press &quot;Submit&quot;</string>
 
 </resources>

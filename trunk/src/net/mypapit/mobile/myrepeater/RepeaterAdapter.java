@@ -22,8 +22,8 @@
  */
 
 package net.mypapit.mobile.myrepeater;
-import java.text.DecimalFormat;
 
+import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
@@ -40,20 +40,18 @@ import android.widget.TextView;
 
 public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
-	private static LayoutInflater inflater=null;
-	private RepeaterList data,realdata;
-	private int mLastPosition=-1;
-	//private Activity activity;
+	private static LayoutInflater inflater = null;
+	private RepeaterList data, realdata;
+	private int mLastPosition = -1;
 
+	// private Activity activity;
 
-
-	public RepeaterAdapter(Activity activity, RepeaterList rl){
-		//this.activity = activity;
+	public RepeaterAdapter(Activity activity, RepeaterList rl) {
+		// this.activity = activity;
 		data = rl;
-		realdata=rl;
-		
-		inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		realdata = rl;
 
+		inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 	}
 
@@ -69,8 +67,8 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		// TODO Auto-generated method stub
 		return position;
 	}
-	
-	public Repeater getRepeater(int position){
+
+	public Repeater getRepeater(int position) {
 		return data.get(position);
 	}
 
@@ -84,25 +82,23 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		View vi = convertView;
-		//LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
-		if (convertView ==null) {
+		// LayoutInflater inflater = (LayoutInflater)
+		// activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		if (convertView == null) {
 			vi = inflater.inflate(R.layout.repeater_row, null);
 		} else {
 
-			 TranslateAnimation animation = null;
-		        if (position > mLastPosition) {
-		            animation = new TranslateAnimation(
-		                Animation.RELATIVE_TO_SELF,
-		                0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-		                Animation.RELATIVE_TO_SELF, 1.0f,
-		                Animation.RELATIVE_TO_SELF, 0.0f);
+			TranslateAnimation animation = null;
+			if (position > mLastPosition) {
+				animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+						Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
 
-		            animation.setDuration(600);
-		            convertView.startAnimation(animation);
-		            mLastPosition = position;
-		        }
-			
+				animation.setDuration(600);
+				convertView.startAnimation(animation);
+				mLastPosition = position;
+			}
+
 		}
 
 		TextView tvCallsign = (TextView) vi.findViewById(R.id.tvCallsign);
@@ -113,28 +109,25 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		TextView tvLocation = (TextView) vi.findViewById(R.id.tvLocation);
 		TextView tvLink = (TextView) vi.findViewById(R.id.tvdLink);
 
-
 		Repeater repeater = data.get(position);
 		DecimalFormat nf = new DecimalFormat("#.00");
-		
 
-
-		tvCallsign.setText( (repeater.getCallsign()));
-		tvFreq.setText(Double.toString(repeater.getDownlink())+" MHz (" + repeater.getShift() +")");
+		tvCallsign.setText((repeater.getCallsign()));
+		tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
 		tvTone.setText(Double.toString(repeater.getTone()));
 		tvLocation.setText(repeater.getLocation());
 		tvClub.setText(repeater.getClub());
-		if (repeater.getLink().length()>0) {
-				
-				tvLink.setText("*link");
+		if (repeater.getLink().length() > 0) {
+
+			tvLink.setText("*link");
 		} else {
 			tvLink.setText("");
 		}
 
-		double distance = repeater.getDistance()/1000.0; 
-		tvDistance.setText(nf.format(distance)+" km");
+		double distance = repeater.getDistance() / 1000.0;
+		tvDistance.setText(nf.format(distance) + " km");
 
-		if (distance>99.5){
+		if (distance > 99.5) {
 			tvDistance.setTextColor(Color.rgb(200, 0, 0));
 
 		} else {
@@ -142,17 +135,13 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 		}
 
-
-
-
-
 		return vi;
 	}
 
 	@Override
 	public Filter getFilter() {
 		// TODO Auto-generated method stub
-		
+
 		return new Filter() {
 
 			@Override
@@ -160,48 +149,40 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 				// TODO Auto-generated method stub
 				FilterResults results = new FilterResults();
 				RepeaterList i = new RepeaterList();
-				
-				if (constraint!=null && constraint.toString().length()>2){
-					for(int index=0;index < realdata.size();index++){
+
+				if (constraint != null && constraint.toString().length() > 2) {
+					for (int index = 0; index < realdata.size(); index++) {
 						Repeater repeater = realdata.get(index);
-						if(repeater.getCallsign().contains(constraint.toString().toUpperCase())){
-							
-							
+						if (repeater.getCallsign().contains(constraint.toString().toUpperCase())) {
+
 							i.add(repeater);
 						}
-						
-						
-						
+
 					}
-					
-					results.values=i;
-					results.count=i.size();
-					
+
+					results.values = i;
+					results.count = i.size();
+
 				} else {
-						results.values=realdata;
-						results.count=realdata.size();
-						
-					}
-					
-					
-				
+					results.values = realdata;
+					results.count = realdata.size();
+
+				}
+
 				return results;
 			}
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
 				// TODO Auto-generated method stub
-				data=(RepeaterList) results.values;
-				
+				data = (RepeaterList) results.values;
+
 				RepeaterAdapter.this.notifyDataSetChanged();
-				
-				
-				
-				
+
 			}
-			
+
 		};
-		
+
 	}
 
 }

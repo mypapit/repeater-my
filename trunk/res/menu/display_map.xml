@@ -9,14 +9,14 @@
     
      <item
         android:id="@+id/action_suggest"
-        android:orderInCategory="104"
+        android:orderInCategory="500"
         android:showAsAction="never"
         android:icon="@android:drawable/ic_menu_edit"        
         android:title="@string/action_suggest"/>
      
          <item
         android:id="@+id/action_contrib"
-        android:orderInCategory="103"
+        android:orderInCategory="102"
         android:showAsAction="never"
         android:icon="@android:drawable/ic_menu_help"      
         android:title="@string/action_contrib"/>
@@ -35,7 +35,17 @@
          
          <item android:id="@+id/manual_settings"
           android:title="@string/manual_settings_title"
+          android:orderInCategory="110"
           android:showAsAction="never" />
+         <!-- history disabled due to memory leaks -->
+<!-- 
+
+         <item android:id="@+id/action_history"
+          android:title="@string/action_history"
+          android:orderInCategory="111"
+          android:icon="@android:drawable/ic_menu_recent_history"
+          android:showAsAction="never" />
+-->          
           
 
 </menu>

@@ -31,36 +31,37 @@ import android.content.res.Resources;
 import android.widget.TextView;
 
 public class ContribActivity extends Activity {
-TextView tvContrib; 
+	TextView tvContrib;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contrib);
+
+		overridePendingTransition(R.anim.activity_fadein, R.anim.activity_fadeout);
+
 		tvContrib = (TextView) findViewById(R.id.txtcontriblist);
-		
+
 		try {
 			Resources res = this.getResources();
-			
+
 			InputStream inputStream = res.openRawResource(R.raw.contributor);
-			
 			byte[] buffer = new byte[inputStream.available()];
-			
 			inputStream.read(buffer);
-			
+
 			tvContrib.setText(new String(buffer));
-			
-			
-		} catch (Exception e){
-			
+
+		} catch (Exception e) {
+
 			tvContrib.setText("Sorry, can't show contrib list");
-			
+
 		}
-		
-		
-		
+
 	}
 
-	
+	protected void onPause() {
+		super.onPause();
+		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+	}
 
 }
