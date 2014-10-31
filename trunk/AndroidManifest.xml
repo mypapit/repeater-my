@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.mypapit.mobile.myrepeater"
-    android:versionCode="10"
-    android:versionName="1.0.2" >
+    android:versionCode="16"
+    android:versionName="1.1.2" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -77,6 +77,14 @@
             android:value="net.mypapit.mobile.myrepeater.RepeaterListActivity" />
         </activity>
         
+         <activity
+            android:name="net.mypapit.mobile.myrepeater.RepeaterHistoryActivity"
+            android:label="@string/title_activity_history" >
+            
+              <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="net.mypapit.mobile.myrepeater.RepeaterListActivity" />
+        </activity>
          
          
             <activity
@@ -87,6 +95,12 @@
         <meta-data android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version" />
         
+         <activity
+            android:name="net.mypapit.mobile.myrepeater.SuggestRepeaterStartActivity"
+            android:label="@string/title_activity_suggest" />
+         <activity
+            android:name="net.mypapit.mobile.myrepeater.SuggestRepeaterSecondActivity"
+            android:label="@string/title_activity_suggest" />
         
     </application>
 
