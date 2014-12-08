@@ -36,10 +36,10 @@ import android.widget.Toast;
 
 public class SuggestRepeaterStartActivity extends Activity {
 	String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC", "PEMANCAR", "PERAMAH",
-			"ARECS", "UNKNOWN", "OTHERS" };
+			"ARECS","SARES", "UNKNOWN", "OTHERS" };
 	String state[] = { "JOHOR", "KEDAH", "KELANTAN", "LABUAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN", "PAHANG",
 			"PULAU PINANG", "PENANG", "PERLIS", "SELANGOR", "SABAH", "SARAWAK", "TERENGGANU", "PERAK" };
-	String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6" };
+	String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6","9M4C" };
 	String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK " };
 
 	private ArrayAdapter<String> adapterClub, adapterState, adapterCallsign, adapterLocation;

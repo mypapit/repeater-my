@@ -136,7 +136,8 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 		case android.R.id.home:
 
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-				NavUtils.navigateUpFromSameTask(this);
+				//NavUtils.navigateUpFromSameTask(this);
+				finish();
 			}
 
 			return true;
