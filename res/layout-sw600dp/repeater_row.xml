@@ -7,7 +7,7 @@
      >
 
     <TextView
-        android:id="@+id/tvSCallsign"
+        android:id="@+id/tvCallsign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -43,8 +43,8 @@
         android:id="@+id/tvLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvSCallsign"
-        android:layout_below="@+id/tvSCallsign"
+        android:layout_alignLeft="@+id/tvCallsign"
+        android:layout_below="@+id/tvCallsign"
         android:textSize="22sp"
         android:text="Alor Setar" />
 
@@ -71,8 +71,8 @@
         android:id="@+id/tvClub"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/tvSCallsign"
-        android:layout_alignBottom="@+id/tvSCallsign"
+        android:layout_alignBaseline="@+id/tvCallsign"
+        android:layout_alignBottom="@+id/tvCallsign"
         android:textSize="22sp"
         android:layout_alignParentRight="true"
         android:text="KSARC" 
