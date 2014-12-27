@@ -27,7 +27,10 @@ import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,19 +41,40 @@ import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	private static LayoutInflater inflater = null;
 	private RepeaterList data, realdata;
 	private int mLastPosition = -1;
+	float local_distance;
+	boolean excludeLink;
 
 	private Activity activity;
 
-	public RepeaterAdapter(Activity activity, RepeaterList rl) {
+	public RepeaterAdapter(Activity activity, RepeaterList rl, float local_distance, boolean excludeLink) {
 		this.activity = activity;
-		data = rl;
-		realdata = rl;
+		data = rl.filterLink(rl, excludeLink);
+		realdata = rl.filterLink(rl, excludeLink);
+
+		this.excludeLink = excludeLink;
+		this.local_distance = local_distance;
+		
+		SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+		if (repeater_prefs == null) {
+			Toast shit = Toast.makeText(activity, "repeater_prefs null", Toast.LENGTH_SHORT);
+			shit.show();
+			
+			
+		}
+		
+		
+		
+		
+		this.excludeLink=repeater_prefs.getBoolean("excludeLinkRepeater", false);
+		//local_distance=repeater_prefs.getString("repeater_local_distance", "100");
+		this.local_distance= repeater_prefs.getInt("range", 150);
 
 		inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -90,9 +114,10 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 			vi = inflater.inflate(R.layout.repeater_row, null);
 		} else {
 
-			 Animation animation = AnimationUtils.loadAnimation(activity, (position > mLastPosition) ? R.anim.up_from_bottom : R.anim.down_from_bottom);
-			    convertView.startAnimation(animation);
-			    mLastPosition = position;
+			Animation animation = AnimationUtils.loadAnimation(activity,
+					(position > mLastPosition) ? R.anim.up_from_bottom : R.anim.down_from_bottom);
+			convertView.startAnimation(animation);
+			mLastPosition = position;
 
 		}
 
@@ -106,6 +131,15 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 		Repeater repeater = data.get(position);
 		DecimalFormat nf = new DecimalFormat("#.00");
+		
+		/*
+		 * if ( (repeater.getLink().length()>0) && excludeLink ){ return
+		 * inflater.inflate(R.layout.repeater_row, null);
+		 * 
+		 * 
+		 * }
+		 */
+		Log.d("mypapit.excludeLink", "mypapit.local_distance: " + local_distance);
 
 		tvCallsign.setText((repeater.getCallsign()));
 		tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
@@ -122,7 +156,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		double distance = repeater.getDistance() / 1000.0;
 		tvDistance.setText(nf.format(distance) + " km");
 
-		if (distance > 99.5) {
+		if (distance > local_distance) {
 			tvDistance.setTextColor(Color.rgb(200, 0, 0));
 
 		} else {
@@ -149,8 +183,13 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 					for (int index = 0; index < realdata.size(); index++) {
 						Repeater repeater = realdata.get(index);
 						if (repeater.getCallsign().contains(constraint.toString().toUpperCase())) {
+							//Log.d("mypapit.excludeLink", "mypapit.excludeLink: " + excludeLink);
+							
+							
+							
 
-							i.add(repeater);
+								i.add(repeater);
+							
 						}
 
 					}

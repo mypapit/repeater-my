@@ -37,6 +37,15 @@
           android:title="@string/manual_settings_title"
           android:orderInCategory="110"
           android:showAsAction="never" />
+         
+         <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        
+        />
+         
          <!-- history disabled due to memory leaks -->
 <!-- 
 

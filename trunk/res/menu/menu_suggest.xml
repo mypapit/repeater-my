@@ -3,9 +3,11 @@
     <item
         android:id="@+id/action_suggest_done"
         android:orderInCategory="100"
-        
-        android:showAsAction="always"
-        android:title="@string/action_suggest_done"/>
+        android:icon="@drawable/checked"
+        android:showAsAction="always|withText"
+        android:title="@string/action_suggest_done"
+        android:label="@string/action_suggest_done"
+        />
     	
 
 </menu>

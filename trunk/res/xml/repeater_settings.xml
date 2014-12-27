@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:robobunny="http://robobunny.com"
+    android:key="preference_screen"
+    >
+<PreferenceCategory
+ 
+  android:title="Repeater"
+   >
+  
+     <com.robobunny.SeekBarPreference
+   android:key="range"
+   android:defaultValue="100"
+   android:max="200"
+   android:summary="Max distance to be considered as 'local repeater'"
+   android:title="'Local' distance (km)"
+   
+   robobunny:min="10"
+   robobunny:unitsRight=" km" />
+     
+     <CheckBoxPreference 
+          android:key="excludeLinkRepeater" 
+          android:title="Hide  Link Repeater?"
+          android:summary="This will omit 'linked' Repeater from list"
+          />
+   
+    </PreferenceCategory>
+ 
+ 
+</PreferenceScreen>

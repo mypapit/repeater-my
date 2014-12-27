@@ -114,7 +114,7 @@ public class RepeaterHistoryActivity extends Activity {
 		tvAddress = (TextView) findViewById(R.id.tvAddress);
 		tvAddress.setText("Recently searched repeater");
 
-		adapter = new RepeaterAdapter(this, rl);
+		adapter = new RepeaterAdapter(this, rl,100,false);
 
 		lv.setAdapter(adapter);
 

@@ -34,6 +34,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -42,14 +43,17 @@ import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RepeaterDetailsActivity extends Activity {
 	private String[] repeater;
 	private TextView tvCallsign, tvFreq, tvShift, tvTone, tvLocation, tvClub, tvDistance;
+	Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mContext=this.getApplicationContext();
 
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -179,8 +183,25 @@ public class RepeaterDetailsActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 					SparseBooleanArray checked = ( (AlertDialog) dialog ).getListView().getCheckedItemPositions();
 					
+					/*
+					 * replaced by additional CorrectActivity screen.
 					submitToEmail(checked.get(0),checked.get(1),checked.get(2),
 							checked.get(3),checked.get(4),checked.get(5));
+																		
+							
+				    */
+					
+					boolean selected= checked.get(0)|checked.get(1)|checked.get(2)|checked.get(3)|checked.get(4)|checked.get(5);
+					
+					if (selected) {
+											
+							submitToCorrect(checked,repeater);
+					} else {
+						Toast x = Toast.makeText(mContext, "Please select at least one detail", Toast.LENGTH_SHORT);
+						x.show();
+						
+						
+					}
 					
 					
 					
@@ -209,6 +230,17 @@ public class RepeaterDetailsActivity extends Activity {
 		//startActivity(emailIntent);
 		
 		startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest Correction"));
+		
+	}
+	
+	public void submitToCorrect(SparseBooleanArray checked, String[] repeater){
+		 boolean check[] = {checked.get(0),checked.get(1),checked.get(2),checked.get(3),checked.get(4),checked.get(5)};
+		Intent intent = new Intent(this.getApplicationContext(),CorrectActivity.class);
+		intent.putExtra("repeater", repeater);
+		intent.putExtra("options", check);
+		
+		startActivity(intent);
+		 
 		
 	}
 
