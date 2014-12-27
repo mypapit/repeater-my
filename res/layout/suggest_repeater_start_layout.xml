@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:ems="10" 
         android:hint="Repeater Callsign"
-          android:layout_row="0"
+          
           android:imeOptions="actionNext"
           android:singleLine="true"
          android:nextFocusDown="@+id/tvSClub"
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:ems="10" 
         android:hint="Club"
-        android:layout_row="0"
+        
                   android:imeOptions="actionNext"
                   android:singleLine="true"
          android:nextFocusDown="@+id/tvSLocation"
@@ -86,7 +86,7 @@
         android:layout_height="wrap_content"
         android:ems="10" 
         android:hint="Location or GPS coordinates"
-                 android:layout_row="0"
+                 
           android:imeOptions="actionNext"
           android:singleLine="true"
          android:nextFocusDown="@+id/tvSState"

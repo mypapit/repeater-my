@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.TranslateAnimation;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
@@ -44,10 +45,10 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 	private RepeaterList data, realdata;
 	private int mLastPosition = -1;
 
-	// private Activity activity;
+	private Activity activity;
 
 	public RepeaterAdapter(Activity activity, RepeaterList rl) {
-		// this.activity = activity;
+		this.activity = activity;
 		data = rl;
 		realdata = rl;
 
@@ -74,13 +75,13 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
+
 		return position;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
+
 		View vi = convertView;
 		// LayoutInflater inflater = (LayoutInflater)
 		// activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -89,15 +90,9 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 			vi = inflater.inflate(R.layout.repeater_row, null);
 		} else {
 
-			TranslateAnimation animation = null;
-			if (position > mLastPosition) {
-				animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-						Animation.RELATIVE_TO_SELF, 1.0f, Animation.RELATIVE_TO_SELF, 0.0f);
-
-				animation.setDuration(600);
-				convertView.startAnimation(animation);
-				mLastPosition = position;
-			}
+			 Animation animation = AnimationUtils.loadAnimation(activity, (position > mLastPosition) ? R.anim.up_from_bottom : R.anim.down_from_bottom);
+			    convertView.startAnimation(animation);
+			    mLastPosition = position;
 
 		}
 

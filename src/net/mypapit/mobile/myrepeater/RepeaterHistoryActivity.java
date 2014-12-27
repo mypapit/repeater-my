@@ -121,7 +121,7 @@ public class RepeaterHistoryActivity extends Activity {
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent;
+		
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {

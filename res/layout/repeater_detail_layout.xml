@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:text="145.525 MHz" 
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
+        android:textSize="20sp"
         
         android:paddingBottom="6dip"
         
@@ -63,7 +63,7 @@
         android:layout_height="wrap_content"
         android:text="-0.600 MHz" 
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
+        android:textSize="20sp"
         
         android:paddingBottom="6dip"
         
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:text="103.5 Hz" 
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
+        android:textSize="20sp"
         
         android:paddingBottom="6dip"
         
@@ -117,7 +117,7 @@
         android:layout_height="wrap_content"
         android:text="KSARC" 
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
+        android:textSize="20sp"
         
         android:paddingBottom="6dip"
         
@@ -144,7 +144,7 @@
         android:layout_height="wrap_content"
         android:text="Gunung Kriang" 
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
+        android:textSize="20sp"
         
         android:paddingBottom="6dip"
         
@@ -171,7 +171,7 @@
         android:layout_height="wrap_content"
         android:text="45.05 km"
         android:layout_marginLeft="10dip"
-        android:textSize="20dp"
+        android:textSize="20sp"
         
         android:paddingBottom="6dip"
         
