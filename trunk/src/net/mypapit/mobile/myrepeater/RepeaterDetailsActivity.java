@@ -33,9 +33,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
-import android.support.v4.app.NavUtils;
+
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -106,18 +109,8 @@ public class RepeaterDetailsActivity extends Activity {
 			return true;
 
 		case R.id.action_wrongInfo:
-			Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
-			emailIntent.setType("text/plain");
-			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "mypapit+wrong_info_repeater_suggest@gmail.com" });
-
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - Info Repeater " + repeater[0]);
-			emailIntent.putExtra(Intent.EXTRA_TEXT,
-					"Please put the repeater details you want to suggest --\n\nRepeater Callsign : " + repeater[0]
-							+ "\nFreq: " + repeater[2] + "\nShift: " + repeater[3] + "\nTone: " + repeater[5]
-							+ "\nClosest Known Location or Coordinates: " + repeater[4] + "\nOwner or Club: "
-							+ repeater[1] + "\n");
-			startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest new Repeater"));
+			showRepeaterCorrectionDialog();
+			
 
 			return true;
 		case android.R.id.home:
@@ -133,9 +126,12 @@ public class RepeaterDetailsActivity extends Activity {
 		return false;
 	}
 
+	/*
+	 * I don't write this, but it is a handy function to focus on only sending Email - mypapit (Christmas day 2014)
+	 */
 	public Intent createEmailOnlyChooserIntent(Intent source, CharSequence chooserTitle) {
 		Stack<Intent> intents = new Stack<Intent>();
-		Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "mypapit+new_repeater_suggest@gmail.com",
+		Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "mypapit+repeater_correction@gmail.com",
 				null));
 		List<ResolveInfo> activities = getPackageManager().queryIntentActivities(i, 0);
 
@@ -160,6 +156,60 @@ public class RepeaterDetailsActivity extends Activity {
 
 		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
 
+	}
+	
+	public void showRepeaterCorrectionDialog(){
+		CharSequence[] items={"Callsign","Frequency","Shift","Tone","Club","Location"};
+		boolean [] states = {false,false,false,false,false,false};
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Select details that needs correction");
+		builder.setMultiChoiceItems(items,states,new DialogInterface.OnMultiChoiceClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+					SparseBooleanArray checked = ( (AlertDialog) dialog ).getListView().getCheckedItemPositions();
+					
+					submitToEmail(checked.get(0),checked.get(1),checked.get(2),
+							checked.get(3),checked.get(4),checked.get(5));
+					
+					
+					
+				
+				
+			}
+		});
+		
+		builder.create().show();
+		
+		
+	}
+	
+	public void submitToEmail(boolean callsign, boolean freq, boolean shift, boolean tone, boolean club, boolean location){
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+		emailIntent.setType("text/plain");
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "mypapit+wrong_info_repeater_suggest@gmail.com" });
+
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - Info Repeater " + repeater[0]);
+		emailIntent.putExtra(Intent.EXTRA_TEXT,
+				"Please put the repeater details you want to suggest --\n\nRepeater Callsign : " + repeater[0] +(callsign ? "*":"")
+						+ "\nFreq: " + repeater[2] + (freq ? "*":"")+ "\nShift: " + repeater[3] +(shift ? "*":"")+ "\nTone: " + repeater[5] + (tone ? "*":"")
+						+ "\nClosest Known Location or Coordinates: " + repeater[4] +(location ? "*":"")+ "\nOwner or Club: "
+						+ repeater[1] + (club ? "*":"")+ "\n");
+		//startActivity(emailIntent);
+		
+		startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest Correction"));
+		
 	}
 
 }
