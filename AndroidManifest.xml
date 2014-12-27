@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.mypapit.mobile.myrepeater"
-    android:versionCode="21"
-    android:versionName="1.1.7" >
+    android:versionCode="22"
+    android:versionName="1.2.0" >
 
     <uses-sdk
         android:minSdkVersion="10"
@@ -96,6 +96,10 @@
         <activity
             android:name=".CorrectActivity"
             android:label="@string/title_activity_correc" >
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

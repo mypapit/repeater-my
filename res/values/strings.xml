@@ -27,6 +27,7 @@
     <string name="title_activity_suggest">Suggest Repeater</string>
     <string name="action_suggest_done">Submit</string>
     <string name="title_suggest_instruction">Please fill in repeater details that you want to suggest and press &quot;Submit&quot;</string>
-    <string name="title_activity_correc">Correct Details</string>
+    <string name="title_activity_correc">Suggest Correction</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

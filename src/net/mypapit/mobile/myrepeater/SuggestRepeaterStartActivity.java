@@ -65,6 +65,11 @@ public class SuggestRepeaterStartActivity extends Activity {
 		tvState.setAdapter(adapterState);
 		tvSCallsign.setAdapter(adapterCallsign);
 		tvSLocation.setAdapter(adapterLocation);
+		
+		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+			getActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+
 
 	}
 
@@ -101,6 +106,12 @@ public class SuggestRepeaterStartActivity extends Activity {
 			intent.putExtra("state", tvState.getText().toString());
 			startActivity(intent);
 
+			return true;
+		case android.R.id.home:
+			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+				//NavUtils.navigateUpFromSameTask(this);
+				finish();
+			}
 			return true;
 		}
 		return false;

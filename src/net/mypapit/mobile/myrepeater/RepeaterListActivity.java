@@ -64,6 +64,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import android.util.Log;
@@ -86,6 +87,10 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 	ListView lv;
 	TextView tvAddress;
 	static int static_distance = 500;
+	boolean excludeLink = false;
+	float local_distance=200.0f;	
+	
+	boolean mrefresh=false;
 
 	// StackHistory stackhistory;
 
@@ -115,19 +120,25 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 		rl = RepeaterListActivity.loadData(R.raw.repeaterdata5, this);
 		xlocation.calcDistanceAll(rl);
 		rl.sort();
+		
+		
 
-		adapter = new RepeaterAdapter(this, rl);
+		adapter = new RepeaterAdapter(this, rl,local_distance,excludeLink);
+		
 
 		// lv=this.getListView();
 
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(this);
+		
+		
 
-		// Toast.makeText(this, "Please enable Location Services",
-		// Toast.LENGTH_LONG).show();
+		
 		SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
 
 		// need to put token to avoid app from popping up annoying select manual
+		// dialog will be triggered if location/gps is not enabled AND if the
+		// date in dd/MM is not equal to 'token' saved in StaticLocationActivity
 		// location dialog
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
 		Date date = new Date();
@@ -192,6 +203,30 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 		lv.setAdapter(adapter);
 
+	}
+	
+	public void onStart() {
+		super.onStart();
+		
+		if (mrefresh){
+			this.refreshList();
+		}
+		
+	}
+	
+	public void refreshList() {
+		SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		excludeLink=repeater_prefs.getBoolean("excludeLinkRepeater", false);
+		//local_distance=repeater_prefs.getString("repeater_local_distance", "100");
+		local_distance= repeater_prefs.getInt("range", 150);
+
+		adapter = new RepeaterAdapter(this, rl,local_distance,excludeLink);
+		mrefresh=false;
+
+		
+		lv.setAdapter(adapter);
+		
 	}
 
 	/*
@@ -424,7 +459,7 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 					// TODO Auto-generated method stub
 					xlocation.calcDistanceAll(rl);
 					rl.sort();
-					adapter = new RepeaterAdapter(activity, rl);
+					adapter = new RepeaterAdapter(activity, rl,local_distance,excludeLink);
 					activity.setAddress(m_address);
 
 					activity.setListAdapter(adapter);
@@ -463,7 +498,7 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 									xlocation = new Repeater("", lat, lon);
 									xlocation.calcDistanceAll(rl);
 									rl.sort();
-									adapter = new RepeaterAdapter(activity, rl);
+									adapter = new RepeaterAdapter(activity, rl,local_distance,excludeLink);
 
 									if (m_location2 != null) {
 										activity.setAddress(m_location2);
@@ -676,6 +711,14 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 			startActivity(intent);
 
 			return true;
+			
+		case R.id.action_settings:
+			intent = new Intent(getBaseContext(),SettingsActivity.class);
+			mrefresh=true;			
+			startActivity(intent);
+			
+		return true;
+		
 		case R.id.search:
 			if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
 				Toast.makeText(this, "Search is unavailable for Android Gingerbread (2.3.7) and below",
