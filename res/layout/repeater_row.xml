@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    >
+
+    <garin.artemiy.compassview.library.CompassView
+        android:id="@+id/compassView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
+    
+<RelativeLayout 
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:paddingTop="5dip"
     android:paddingBottom="5dip"
@@ -28,6 +40,8 @@
         android:layout_marginRight="12dip"
         android:text="103.5"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+    
+  
 
     <ImageView
         android:id="@+id/imageView1"
@@ -88,3 +102,4 @@
         android:textStyle="italic" />
 
 </RelativeLayout>
+</LinearLayout>

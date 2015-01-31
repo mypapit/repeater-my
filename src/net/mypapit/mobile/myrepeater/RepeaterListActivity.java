@@ -7,7 +7,7 @@
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	http://repeater-my.googlecode.com/
-	
+
 	This file is part of MyRepeater Finder.
 
     MyRepeater Finder is free software: you can redistribute it and/or modify
@@ -25,20 +25,16 @@
  */
 package net.mypapit.mobile.myrepeater;
 
+import garin.artemiy.compassview.library.CompassSensorsActivity;
+
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Stack;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -51,8 +47,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -80,17 +79,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 import au.com.bytecode.opencsv.CSVReader;
 
-public class RepeaterListActivity extends Activity implements OnItemClickListener {
+public class RepeaterListActivity extends CompassSensorsActivity implements OnItemClickListener {
 	Repeater xlocation;
 	RepeaterAdapter adapter;
 	RepeaterList rl;
 	ListView lv;
 	TextView tvAddress;
 	static int static_distance = 500;
-	boolean excludeLink = false;
-	float local_distance=200.0f;	
-	
-	boolean mrefresh=false;
+	private boolean excludeLink = false;
+	private boolean excludeDirection = false;
+	private float local_distance = 100.0f;
+
+	boolean mrefresh = true;
 
 	// StackHistory stackhistory;
 
@@ -101,17 +101,14 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
+		// test for Magnetic Sensor, useful for disabling Compass
+
 		lv = (ListView) findViewById(R.id.repeaterListView);
 		tvAddress = (TextView) findViewById(R.id.tvAddress);
 
-		// Repeater repeater = (Repeater)
-		// this.getIntent().getExtras().getSerializable("RepeaterList");
-
-		// String coordinates = (String)
-		// this.getIntent().getExtras().getSerializable("RepeaterList");
 		String coordinates = null;
 		if (coordinates == null) {
-			coordinates = new String("6.5,100.5");
+			coordinates = new String("37.5651,126.98955");
 		}
 		String coord[] = coordinates.split(",");
 
@@ -120,20 +117,14 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 		rl = RepeaterListActivity.loadData(R.raw.repeaterdata5, this);
 		xlocation.calcDistanceAll(rl);
 		rl.sort();
-		
-		
 
-		adapter = new RepeaterAdapter(this, rl,local_distance,excludeLink);
-		
+		adapter = new RepeaterAdapter(this, rl, xlocation, local_distance, excludeLink, excludeDirection);
 
 		// lv=this.getListView();
 
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(this);
-		
-		
 
-		
 		SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
 
 		// need to put token to avoid app from popping up annoying select manual
@@ -151,7 +142,7 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.gps_not_found_title); // GPS not found
 			builder.setMessage(R.string.gps_not_found_message); // Want to
-																// enable?
+			// enable?
 
 			// if yes - bring user to enable Location Service settings
 			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -180,87 +171,37 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 		}
 
-		// restore Stack history
-		// function disabled
-
-		/*
-		 * try { this.restoreStackHistory(); } catch (IOException ioe){
-		 * Log.d("net.mypapit.mobile", "File history.txt : "+ioe.getMessage() );
-		 * 
-		 * ioe.printStackTrace(System.err);
-		 * 
-		 * stackhistory = new StackHistory();
-		 * 
-		 * } catch (ClassNotFoundException cnfe){ Log.d("net.mypapit.mobile",
-		 * "File history.txt : "+cnfe.getMessage() ); stackhistory = new
-		 * StackHistory(); cnfe.printStackTrace(System.err); }
-		 * 
-		 * if (stackhistory.size() > 10) { stackhistory.clear(); }
-		 */
-
 		GPSThread thread = new GPSThread(this);
 		thread.start();
 
 		lv.setAdapter(adapter);
 
 	}
-	
+
 	public void onStart() {
 		super.onStart();
-		
-		if (mrefresh){
+
+		if (mrefresh) {
 			this.refreshList();
 		}
-		
+
+		excludeDirection = checkCompassSensor(xlocation);
+
 	}
-	
+
 	public void refreshList() {
 		SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		excludeLink=repeater_prefs.getBoolean("excludeLinkRepeater", false);
-		//local_distance=repeater_prefs.getString("repeater_local_distance", "100");
-		local_distance= repeater_prefs.getInt("range", 150);
 
-		adapter = new RepeaterAdapter(this, rl,local_distance,excludeLink);
-		mrefresh=false;
+		excludeLink = repeater_prefs.getBoolean("excludeLinkRepeater", false);
 
-		
+		local_distance = repeater_prefs.getInt("range", 100);
+
+		adapter = new RepeaterAdapter(this, rl, xlocation, local_distance, excludeLink, excludeDirection);
+		mrefresh = false;
+
 		lv.setAdapter(adapter);
-		
+
 	}
-
-	/*
-	 * @Override protected void onListItemClick(ListView lv, View view, int
-	 * position, long id) {
-	 * 
-	 * // Toast.makeText(getBaseContext(), rl.get(position).getCallsign() + //
-	 * " clicked!", Toast.LENGTH_SHORT).show();
-	 * 
-	 * Intent intent = new Intent(); intent.setClassName(getBaseContext(),
-	 * "net.mypapit.mobile.myrepeater.RepeaterDetailsActivity");
-	 * 
-	 * Repeater rpt = (Repeater) adapter.getRepeater(position);
-	 * 
-	 * intent.putExtra("Repeater", rpt.toArrayString()); startActivity(intent);
-	 * 
-	 * super.onListItemClick(lv, view, position, id);
-	 * 
-	 * }
-	 */
-
-	/*
-	 * Disable stackhistory - memory leaks
-	 * 
-	 * private void restoreStackHistory() throws IOException,
-	 * ClassNotFoundException { // implements restoring stackhistory File infile
-	 * = new File(Environment.getExternalStorageDirectory(),"history.txt");
-	 * FileInputStream fis = new FileInputStream(infile); ObjectInputStream ois
-	 * = new ObjectInputStream(fis);
-	 * 
-	 * stackhistory = (StackHistory) ois.readObject(); ois.close();
-	 * 
-	 * }
-	 */
 
 	class GPSThread extends Thread {
 		RepeaterListActivity activity;
@@ -304,8 +245,8 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 					return addressLocality[0];
 
 				} else if (addressList.size() > 0) { // else if there are
-														// addresses
-														// retrieved
+					// addresses
+					// retrieved
 					int addressCounter = addressList.size();
 					addressLocality = new String[addressCounter];
 					addressLocality[0] = new String();
@@ -357,97 +298,71 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 			Location location = locationManager.getLastKnownLocation(bestProvider);
 
+			// if couldn't get Location Provider (aka couldn't get coordinates,
+			// try GPS
+
 			if (location == null) {
 				location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 			}
-
+			// if couldn't get Location Provider (aka couldn't get coordinates,
+			// try Network
 			if (location == null) {
 				location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 			}
 
 			if (location == null) {
+				excludeDirection = true;
+			}
+
+			// if couldn't get Location Provider (aka couldn't get coordinates,
+			// try set 37.56, 126.989 as coordinate and be done with it (Seoul,
+			// Korea)
+			if (location == null) {
 
 				location = new Location("");
 				SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
-				float lat = prefs.getFloat("DefaultLat", 3.0f);
-				float lon = prefs.getFloat("DefaultLon", 101.0f);
+				float lat = prefs.getFloat("DefaultLat", 37.56f);
+				float lon = prefs.getFloat("DefaultLon", 126.989f);
+				excludeDirection = true;
 
 				location.setLatitude(lat);
 				location.setLongitude(lon);
+				xlocation = new Repeater("Simulated", location.getLatitude(), location.getLongitude());
 
-				m_address = this.geoCode(lat, lon);
+				m_address = "Simulated: " + this.geoCode(lat, lon);
 
 				activity.runOnUiThread(new Runnable() {
 
 					@Override
 					public void run() {
 						activity.showToast("Unable to detect location, falling back on preset location");
+						// activity.excludeDirection=true;
+
 					}
 
 				});
 
-				// Geocoder geocoder = new Geocoder(activity,
-				// Locale.getDefault());
+			} else {
+				xlocation = new Repeater(location.getProvider(), location.getLatitude(), location.getLongitude());
+				m_address = this.geoCode(location.getLatitude(), location.getLongitude());
 
-				/*
-				 * try {
-				 * 
-				 * addressList = geocoder.getFromLocation(lat, lon, 3);
-				 * Log.d("new.mypapit.mobile", "inside geocoder Lat: " + lat +
-				 * "Lon: " + lon);
-				 * 
-				 * // if there are no address retrieved, put in Unknown Address
-				 * if (addressList == null) { Log.d("net.mypapit.mobile",
-				 * "Unknown Location...");
-				 * 
-				 * addressLocality[0] = new String("Unknown Location");
-				 * m_address = addressLocality[0];
-				 * 
-				 * } else if (addressList.size() > 0) { // else if there are //
-				 * addresses // retrieved int addressCounter =
-				 * addressList.size(); addressLocality = new
-				 * String[addressCounter]; addressLocality[0] = new String();
-				 * 
-				 * // store each of the address list in a string; for (int i =
-				 * 0; i < addressCounter; i++) { Address singleAddress =
-				 * addressList.get(i); stringBuffer = new StringBuffer();
-				 * Log.d("net.mypapit.mobile", "address: " +
-				 * stringBuffer.toString()); addressLocality[i] =
-				 * singleAddress.getLocality();
-				 * 
-				 * } }
-				 * 
-				 * } catch (IllegalArgumentException iae) { //
-				 * Toast.makeText(getActivity(), //
-				 * "Invalid GPS coordinates, this is not supposed to happen", //
-				 * Toast.LENGTH_LONG).show(); Log.d("net.mypapit.mobile",
-				 * "Invalid GPS coordinates : " + iae.getMessage() +
-				 * " caused by: " + iae.getCause()); addressLocality[0] = new
-				 * String("Unknown Location");
-				 * 
-				 * } catch (IOException ioe) { Log.d("net.mypapit.mobile",
-				 * "Geocoder IO exception " + ioe.toString());
-				 * addressLocality[0] = new String("Unknown Location");
-				 * 
-				 * }
-				 */
-				// Log.e("net.mypapit.mobile", "geocode address: " +
-				// addressLocality[0]);
-				// m_address = addressLocality[0];
-
+				excludeDirection = checkCompassSensor(xlocation);
+				activity.showToast("Location auto-detected, listing nearest repeater");
 			}
 
-			xlocation = new Repeater("", location.getLatitude(), location.getLongitude());
-			m_address = this.geoCode(location.getLatitude(), location.getLongitude());
 			if (xlocation != null) {
 
+				// check again for compassSensor
+
 			} else {
-
+				// else if xlocation == null, get coordinate stored in Manual
+				// Location setting
 				SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
-				float lat = prefs.getFloat("DefaultLat", 3.0f);
-				float lon = prefs.getFloat("DefaultLon", 101.0f);
+				float lat = prefs.getFloat("DefaultLat", 37.56f);
+				float lon = prefs.getFloat("DefaultLon", 126.989f);
+				excludeDirection = true;
 
-				xlocation = new Repeater("", lat, lon);
+				xlocation = new Repeater("Simulated", lat, lon);
 				m_address = "Auto Location Services Disabled";
 
 			}
@@ -456,24 +371,27 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
+
 					xlocation.calcDistanceAll(rl);
 					rl.sort();
-					adapter = new RepeaterAdapter(activity, rl,local_distance,excludeLink);
+					if (xlocation.getProvider().equalsIgnoreCase("Simulated")) {
+						excludeDirection = true;
+					}
+					adapter = new RepeaterAdapter(activity, rl, xlocation, local_distance, excludeLink,
+							excludeDirection);
 					activity.setAddress(m_address);
 
 					activity.setListAdapter(adapter);
 					Log.d("latitud papit", "Geo: " + xlocation.getLatitude());
 					Log.d("latitud papit", "Address: " + m_address);
 
-					activity.showToast("Location auto-detected, listing nearest repeater");
 					adapter.notifyDataSetChanged();
 
 				}
 
 			}
 
-			);
+					);
 			LocationListener myLocationListener = new LocationListener() {
 				String m_location2 = null;
 
@@ -482,6 +400,11 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 					final double lat = location.getLatitude();
 					final double lon = location.getLongitude();
+					if (location.getProvider().equalsIgnoreCase("Simulated")) {
+						excludeDirection = true;
+					} else {
+						excludeDirection = checkCompassSensor(xlocation);
+					}
 
 					Thread kthread = new Thread(new Runnable() {
 
@@ -494,11 +417,13 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 								@Override
 								public void run() {
-									// TODO Auto-generated method stub
+
 									xlocation = new Repeater("", lat, lon);
 									xlocation.calcDistanceAll(rl);
 									rl.sort();
-									adapter = new RepeaterAdapter(activity, rl,local_distance,excludeLink);
+
+									adapter = new RepeaterAdapter(activity, rl, xlocation, local_distance, excludeLink,
+											excludeDirection);
 
 									if (m_location2 != null) {
 										activity.setAddress(m_location2);
@@ -515,7 +440,7 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 							}
 
-							);
+									);
 						}
 
 					}, "on changed location thread");
@@ -534,6 +459,7 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 						@Override
 						public void run() {
 							activity.showToast("Location detection sensor: " + mProvider + " disabled");
+							activity.excludeDirection = true;
 						}
 
 					});
@@ -547,7 +473,9 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 						@Override
 						public void run() {
-							activity.showToast("Location detection sensor: " + mProvider + " reenabled");
+							activity.showToast("Location detection sensor: " + mProvider + " re-enabled");
+							activity.excludeDirection = false;
+
 						}
 
 					});
@@ -651,7 +579,6 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 			intent = new Intent();
 			intent.setClassName(getBaseContext(), "net.mypapit.mobile.myrepeater.DisplayMap");
 			intent.putExtra("LatLong", new LatLng(xlocation.getLatitude(), xlocation.getLongitude()));
-			// intent.putExtra("Repeaters",rl);
 
 			startActivity(intent);
 
@@ -677,32 +604,12 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 			return true;
 		case R.id.action_suggest:
-			
+
 			intent = new Intent();
-			
+
 			intent.setClassName(getBaseContext(), "net.mypapit.mobile.myrepeater.SuggestRepeaterStartActivity");
 			this.startActivity(intent);
 
-		/*	
-			  Old pre-1.0.x implementation Repeater Suggest
-			  
-			  Intent emailIntent = new Intent(Intent.ACTION_SEND);
-			  
-			  
-			  emailIntent.setType("text/plain");
-			  emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] {
-			  "mypapit+new_repeater_suggest@gmail.com" });
-			  
-			  emailIntent.putExtra(Intent.EXTRA_SUBJECT,
-			  "Repeater.MY - new Repeater"); emailIntent .putExtra(
-			  Intent.EXTRA_TEXT,
-			  "Please put the repeater details you want to suggest --\n\nRepeater Callsign : \nFreq: \nShift: \nTone: \nClosest Known Location or Coordinates: \nOwner or Club:\n"
-			  );
-			  
-			  
-			  startActivity(createEmailOnlyChooserIntent(emailIntent,
-			  "Suggest new Repeater"));
-			 */
 			return true;
 
 		case R.id.action_contrib:
@@ -711,30 +618,19 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 			startActivity(intent);
 
 			return true;
-			
+
 		case R.id.action_settings:
-			intent = new Intent(getBaseContext(),SettingsActivity.class);
-			mrefresh=true;			
+			intent = new Intent(getBaseContext(), SettingsActivity.class);
+			mrefresh = true;
 			startActivity(intent);
-			
-		return true;
-		
+
+			return true;
+
 		case R.id.search:
 			if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
 				Toast.makeText(this, "Search is unavailable for Android Gingerbread (2.3.7) and below",
 						Toast.LENGTH_LONG).show();
 			}
-			/*
-			 * Disable stackhistory due to memory leak case R.id.action_history:
-			 * //RepeaterList historylist = new RepeaterList(stackhistory);
-			 * intent = new Intent(); intent.setClassName(getBaseContext(),
-			 * "net.mypapit.mobile.myrepeater.RepeaterHistoryActivity");
-			 * //intent.putExtra("historylist", stackhistory);
-			 * intent.putExtra("lat", xlocation.getLatitude());
-			 * intent.putExtra("lon", xlocation.getLongitude());
-			 * 
-			 * startActivity(intent);
-			 */
 
 			return true;
 		}
@@ -773,28 +669,6 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 
 	}
 
-	public Intent createEmailOnlyChooserIntent(Intent source, CharSequence chooserTitle) {
-		Stack<Intent> intents = new Stack<Intent>();
-		Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "mypapit+new_repeater_suggest@gmail.com",
-				null));
-		List<ResolveInfo> activities = getPackageManager().queryIntentActivities(i, 0);
-
-		for (ResolveInfo ri : activities) {
-			Intent target = new Intent(source);
-			target.setPackage(ri.activityInfo.packageName);
-			intents.add(target);
-		}
-
-		if (!intents.isEmpty()) {
-			Intent chooserIntent = Intent.createChooser(intents.remove(0), chooserTitle);
-			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intents.toArray(new Parcelable[intents.size()]));
-
-			return chooserIntent;
-		} else {
-			return Intent.createChooser(source, chooserTitle);
-		}
-	}
-
 	public boolean isLocationEnabled(Context context) {
 		LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		String provider = lm.getBestProvider(new Criteria(), true);
@@ -810,8 +684,12 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 		Repeater rpt = (Repeater) adapter.getRepeater(position);
 
 		// stackhistory.add(new FauxRepeater(rpt));
+		String pass[] = rpt.toArrayString();
+		pass[9] = xlocation.getLatitude() + "";
+		pass[10] = xlocation.getLongitude() + "";
 
-		intent.putExtra("Repeater", rpt.toArrayString());
+		intent.putExtra("Repeater", pass);
+		intent.putExtra("noCompass", excludeDirection);
 		startActivity(intent);
 
 	}
@@ -837,25 +715,31 @@ public class RepeaterListActivity extends Activity implements OnItemClickListene
 		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
 
 	}
-	/*
-	 * Disable stackhistory due to memory leak
-	 * 
-	 * private void saveHistory() {
-	 * 
-	 * try{ File outfile = new
-	 * File(Environment.getExternalStorageDirectory(),"history.txt"); if
-	 * (!outfile.exists()){ outfile.createNewFile(); }
-	 * 
-	 * FileOutputStream fos = new FileOutputStream(outfile); ObjectOutputStream
-	 * oos = new ObjectOutputStream(fos); oos.writeObject(stackhistory);
-	 * Log.d("net.mypapit.mobile","number stackhistory :" +
-	 * stackhistory.size()); oos.close();
-	 * 
-	 * } catch (IOException ioe){
-	 * Log.e("net.mypapit.mobile","Masalah Exception file "+ ioe.getMessage());
-	 * ioe.printStackTrace(System.err); }
-	 * 
-	 * }
-	 */
+
+	// check for compass sensor
+	public boolean checkCompassSensor(Location xlocation) {
+
+		if (xlocation.getProvider().equalsIgnoreCase("Simulated")) {
+			return true;
+		}
+
+		boolean sensor = getBaseContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+
+		/*
+		Toast toast;
+		
+		if (sensor) {
+			toast = Toast.makeText(this, "Compass detected!", Toast.LENGTH_LONG);
+
+		} else {
+			toast = Toast.makeText(this, "Compass not detected!", Toast.LENGTH_LONG);
+		}
+
+		toast.show();
+		*/
+
+		return !sensor;
+
+	}
 
 }

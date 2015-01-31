@@ -79,10 +79,10 @@ class RepeaterList extends ArrayList<Repeater> {
 
 	public void sort() {
 
-		// RepeaterList sorted = (RepeaterList) this.clone();
+
 		Collections.sort(this);
 
-		// return this;
+
 
 	}
 

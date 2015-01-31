@@ -3146,6 +3146,10 @@ com.google.android.gms.wearable.internal.z: android.os.Parcelable$Creator CREATO
 com.robobunny.SeekBarPreference
 com.robobunny.SeekBarPreference: SeekBarPreference(android.content.Context,android.util.AttributeSet)
 com.robobunny.SeekBarPreference: SeekBarPreference(android.content.Context,android.util.AttributeSet,int)
+garin.artemiy.compassview.library.CompassSensorsActivity: CompassSensorsActivity()
+garin.artemiy.compassview.library.CompassView
+garin.artemiy.compassview.library.CompassView: CompassView(android.content.Context)
+garin.artemiy.compassview.library.CompassView: CompassView(android.content.Context,android.util.AttributeSet)
 net.mypapit.mobile.myrepeater.ContribActivity
 net.mypapit.mobile.myrepeater.ContribActivity: ContribActivity()
 net.mypapit.mobile.myrepeater.CorrectActivity
@@ -3224,6 +3228,8 @@ net.mypapit.mobile.myrepeater.R$color: int wallet_primary_text_holo_light
 net.mypapit.mobile.myrepeater.R$color: int wallet_secondary_text_holo_dark
 net.mypapit.mobile.myrepeater.R$dimen: int activity_horizontal_margin
 net.mypapit.mobile.myrepeater.R$dimen: int activity_vertical_margin
+net.mypapit.mobile.myrepeater.R$drawable: int arrow
+net.mypapit.mobile.myrepeater.R$drawable: int arrow_ori
 net.mypapit.mobile.myrepeater.R$drawable: int checked
 net.mypapit.mobile.myrepeater.R$drawable: int common_signin_btn_icon_dark
 net.mypapit.mobile.myrepeater.R$drawable: int common_signin_btn_icon_disabled_dark
@@ -3255,8 +3261,10 @@ net.mypapit.mobile.myrepeater.R$drawable: int ic_plusone_medium_off_client
 net.mypapit.mobile.myrepeater.R$drawable: int ic_plusone_small_off_client
 net.mypapit.mobile.myrepeater.R$drawable: int ic_plusone_standard_off_client
 net.mypapit.mobile.myrepeater.R$drawable: int ic_plusone_tall_off_client
+net.mypapit.mobile.myrepeater.R$drawable: int mediumarrow
 net.mypapit.mobile.myrepeater.R$drawable: int powered_by_google_dark
 net.mypapit.mobile.myrepeater.R$drawable: int powered_by_google_light
+net.mypapit.mobile.myrepeater.R$drawable: int smallarrow
 net.mypapit.mobile.myrepeater.R$drawable: int tone
 net.mypapit.mobile.myrepeater.R$id: int action_about
 net.mypapit.mobile.myrepeater.R$id: int action_contrib
@@ -3272,6 +3280,8 @@ net.mypapit.mobile.myrepeater.R$id: int buyButton
 net.mypapit.mobile.myrepeater.R$id: int buy_now
 net.mypapit.mobile.myrepeater.R$id: int buy_with_google
 net.mypapit.mobile.myrepeater.R$id: int classic
+net.mypapit.mobile.myrepeater.R$id: int compassView
+net.mypapit.mobile.myrepeater.R$id: int compassViewDetail
 net.mypapit.mobile.myrepeater.R$id: int etcCallsign
 net.mypapit.mobile.myrepeater.R$id: int etcClub
 net.mypapit.mobile.myrepeater.R$id: int etcFreq
@@ -3335,6 +3345,7 @@ net.mypapit.mobile.myrepeater.R$id: int tvsname
 net.mypapit.mobile.myrepeater.R$id: int tvsstate
 net.mypapit.mobile.myrepeater.R$id: int txtcontriblist
 net.mypapit.mobile.myrepeater.R$id: int wrap_content
+net.mypapit.mobile.myrepeater.R$integer: int compassScale
 net.mypapit.mobile.myrepeater.R$integer: int google_play_services_version
 net.mypapit.mobile.myrepeater.R$layout: int about_dialog
 net.mypapit.mobile.myrepeater.R$layout: int activity_contrib
@@ -3458,8 +3469,6 @@ net.mypapit.mobile.myrepeater.R$xml: int repeater_settings
 net.mypapit.mobile.myrepeater.Repeater
 net.mypapit.mobile.myrepeater.RepeaterDetailsActivity
 net.mypapit.mobile.myrepeater.RepeaterDetailsActivity: RepeaterDetailsActivity()
-net.mypapit.mobile.myrepeater.RepeaterHistoryActivity
-net.mypapit.mobile.myrepeater.RepeaterHistoryActivity: RepeaterHistoryActivity()
 net.mypapit.mobile.myrepeater.RepeaterListActivity
 net.mypapit.mobile.myrepeater.RepeaterListActivity: RepeaterListActivity()
 net.mypapit.mobile.myrepeater.SettingsActivity

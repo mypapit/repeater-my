@@ -11220,6 +11220,43 @@ com.robobunny.SeekBarPreference -> com.robobunny.SeekBarPreference:
     void onSetInitialValue(boolean,java.lang.Object) -> onSetInitialValue
     void setEnabled(boolean) -> setEnabled
     void onDependencyChanged(android.preference.Preference,boolean) -> onDependencyChanged
+garin.artemiy.compassview.library.CompassSensorsActivity -> garin.artemiy.compassview.library.a:
+    android.hardware.SensorManager sensorManager -> n
+    android.hardware.Sensor accelerometerSensor -> o
+    android.hardware.Sensor magneticFieldSensor -> p
+    float[] temporaryRotationMatrix -> q
+    float[] rotationMatrix -> r
+    float[] accelerometerData -> s
+    float[] magneticData -> t
+    float[] orientationData -> u
+    float azimuth -> v
+    void onCreate(android.os.Bundle) -> onCreate
+    float getAzimuth() -> f
+    void onResume() -> onResume
+    void onPause() -> onPause
+    void loadSensorData(android.hardware.SensorEvent) -> a
+    void onSensorChanged(android.hardware.SensorEvent) -> onSensorChanged
+    void configureDeviceAngle() -> g
+    void onAccuracyChanged(android.hardware.Sensor,int) -> onAccuracyChanged
+garin.artemiy.compassview.library.CompassUtility -> garin.artemiy.compassview.library.b:
+    boolean isDeviceCompatible(android.content.Context) -> a
+garin.artemiy.compassview.library.CompassView -> garin.artemiy.compassview.library.CompassView:
+    android.content.Context context -> a
+    android.location.Location userLocation -> b
+    android.location.Location objectLocation -> c
+    android.graphics.Bitmap directionBitmap -> d
+    int drawableResource -> e
+    float lastRotation -> f
+    void init(android.content.Context) -> a
+    void initializeCompass(android.location.Location,android.location.Location,int) -> a
+    void startRotation() -> a
+    void rotateImageView(android.widget.ImageView,int,float) -> a
+    void access$0(garin.artemiy.compassview.library.CompassView) -> a
+garin.artemiy.compassview.library.CompassView$CustomAnimationListener -> garin.artemiy.compassview.library.c:
+    garin.artemiy.compassview.library.CompassView this$0 -> a
+    void onAnimationStart(android.view.animation.Animation) -> onAnimationStart
+    void onAnimationEnd(android.view.animation.Animation) -> onAnimationEnd
+    void onAnimationRepeat(android.view.animation.Animation) -> onAnimationRepeat
 net.mypapit.mobile.myrepeater.ContribActivity -> net.mypapit.mobile.myrepeater.ContribActivity:
     android.widget.TextView tvContrib -> a
     void onCreate(android.os.Bundle) -> onCreate
@@ -11250,17 +11287,6 @@ net.mypapit.mobile.myrepeater.DisplayMap -> net.mypapit.mobile.myrepeater.Displa
     void onInfoWindowClick(com.google.android.gms.maps.model.Marker) -> onInfoWindowClick
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     void onPause() -> onPause
-net.mypapit.mobile.myrepeater.FauxRepeater -> net.mypapit.mobile.myrepeater.a:
-    java.lang.String callsign -> a
-    java.lang.String club -> b
-    java.lang.String location -> c
-    java.lang.String link -> d
-    double lat -> e
-    double lon -> f
-    double downlink -> g
-    double shift -> h
-    double tone -> i
-    net.mypapit.mobile.myrepeater.Repeater getRepeater() -> a
 net.mypapit.mobile.myrepeater.Repeater -> net.mypapit.mobile.myrepeater.Repeater:
     java.lang.String callsign -> a
     java.lang.String club -> b
@@ -11286,14 +11312,16 @@ net.mypapit.mobile.myrepeater.Repeater -> net.mypapit.mobile.myrepeater.Repeater
     double getDistance() -> h
     java.lang.String[] toArrayString() -> i
     int compareTo(java.lang.Object) -> compareTo
-net.mypapit.mobile.myrepeater.RepeaterAdapter -> net.mypapit.mobile.myrepeater.b:
-    android.view.LayoutInflater inflater -> c
-    net.mypapit.mobile.myrepeater.RepeaterList data -> d
-    net.mypapit.mobile.myrepeater.RepeaterList realdata -> e
-    int mLastPosition -> f
+net.mypapit.mobile.myrepeater.RepeaterAdapter -> net.mypapit.mobile.myrepeater.a:
+    android.view.LayoutInflater inflater -> d
+    net.mypapit.mobile.myrepeater.RepeaterList data -> e
+    net.mypapit.mobile.myrepeater.RepeaterList realdata -> f
+    int mLastPosition -> g
     float local_distance -> a
     boolean excludeLink -> b
-    android.app.Activity activity -> g
+    boolean excludeDirection -> c
+    net.mypapit.mobile.myrepeater.Repeater userLocation -> h
+    android.app.Activity activity -> i
     int getCount() -> getCount
     java.lang.Object getItem(int) -> getItem
     net.mypapit.mobile.myrepeater.Repeater getRepeater(int) -> a
@@ -11302,25 +11330,35 @@ net.mypapit.mobile.myrepeater.RepeaterAdapter -> net.mypapit.mobile.myrepeater.b
     android.widget.Filter getFilter() -> getFilter
     net.mypapit.mobile.myrepeater.RepeaterList access$0(net.mypapit.mobile.myrepeater.RepeaterAdapter) -> a
     void access$1(net.mypapit.mobile.myrepeater.RepeaterAdapter,net.mypapit.mobile.myrepeater.RepeaterList) -> a
-net.mypapit.mobile.myrepeater.RepeaterAdapter$1 -> net.mypapit.mobile.myrepeater.c:
+net.mypapit.mobile.myrepeater.RepeaterAdapter$1 -> net.mypapit.mobile.myrepeater.b:
     net.mypapit.mobile.myrepeater.RepeaterAdapter this$0 -> a
     android.widget.Filter$FilterResults performFiltering(java.lang.CharSequence) -> performFiltering
     void publishResults(java.lang.CharSequence,android.widget.Filter$FilterResults) -> publishResults
+net.mypapit.mobile.myrepeater.RepeaterAdapter$ViewHolder -> net.mypapit.mobile.myrepeater.c:
+    android.widget.TextView tvCallsign -> a
+    android.widget.TextView tvDistance -> b
+    android.widget.TextView tvFreq -> c
+    android.widget.TextView tvTone -> d
+    android.widget.TextView tvClub -> e
+    android.widget.TextView tvLocation -> f
+    android.widget.TextView tvLink -> g
+    garin.artemiy.compassview.library.CompassView compassView -> h
 net.mypapit.mobile.myrepeater.RepeaterDetailsActivity -> net.mypapit.mobile.myrepeater.RepeaterDetailsActivity:
-    java.lang.String[] repeater -> b
-    android.widget.TextView tvCallsign -> c
-    android.widget.TextView tvFreq -> d
-    android.widget.TextView tvShift -> e
-    android.widget.TextView tvTone -> f
-    android.widget.TextView tvLocation -> g
-    android.widget.TextView tvClub -> h
-    android.widget.TextView tvDistance -> i
-    android.content.Context mContext -> a
+    java.lang.String[] repeater -> o
+    boolean noCompass -> p
+    android.widget.TextView tvCallsign -> q
+    android.widget.TextView tvFreq -> r
+    android.widget.TextView tvShift -> s
+    android.widget.TextView tvTone -> t
+    android.widget.TextView tvLocation -> u
+    android.widget.TextView tvClub -> v
+    android.widget.TextView tvDistance -> w
+    android.content.Context mContext -> n
     void onCreate(android.os.Bundle) -> onCreate
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
     void onPause() -> onPause
-    void showRepeaterCorrectionDialog() -> a
+    void showRepeaterCorrectionDialog() -> g
     void submitToCorrect(android.util.SparseBooleanArray,java.lang.String[]) -> a
     java.lang.String[] access$0(net.mypapit.mobile.myrepeater.RepeaterDetailsActivity) -> a
 net.mypapit.mobile.myrepeater.RepeaterDetailsActivity$1 -> net.mypapit.mobile.myrepeater.d:
@@ -11329,40 +11367,39 @@ net.mypapit.mobile.myrepeater.RepeaterDetailsActivity$1 -> net.mypapit.mobile.my
 net.mypapit.mobile.myrepeater.RepeaterDetailsActivity$2 -> net.mypapit.mobile.myrepeater.e:
     net.mypapit.mobile.myrepeater.RepeaterDetailsActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
-net.mypapit.mobile.myrepeater.RepeaterHistoryActivity -> net.mypapit.mobile.myrepeater.RepeaterHistoryActivity:
-    android.widget.ListView lv -> a
-    android.widget.TextView tvAddress -> b
-    net.mypapit.mobile.myrepeater.RepeaterAdapter adapter -> c
-    net.mypapit.mobile.myrepeater.StackHistory stackhistory -> d
-    void onCreate(android.os.Bundle) -> onCreate
-    boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
 net.mypapit.mobile.myrepeater.RepeaterList -> net.mypapit.mobile.myrepeater.f:
     net.mypapit.mobile.myrepeater.RepeaterList filterLink(net.mypapit.mobile.myrepeater.RepeaterList,boolean) -> a
     void sort() -> a
 net.mypapit.mobile.myrepeater.RepeaterListActivity -> net.mypapit.mobile.myrepeater.RepeaterListActivity:
-    net.mypapit.mobile.myrepeater.Repeater xlocation -> a
-    net.mypapit.mobile.myrepeater.RepeaterAdapter adapter -> b
-    net.mypapit.mobile.myrepeater.RepeaterList rl -> c
-    android.widget.ListView lv -> d
-    android.widget.TextView tvAddress -> e
-    int static_distance -> f
-    boolean excludeLink -> g
-    float local_distance -> h
-    boolean mrefresh -> i
+    net.mypapit.mobile.myrepeater.Repeater xlocation -> n
+    net.mypapit.mobile.myrepeater.RepeaterAdapter adapter -> o
+    net.mypapit.mobile.myrepeater.RepeaterList rl -> p
+    android.widget.ListView lv -> q
+    android.widget.TextView tvAddress -> r
+    int static_distance -> s
+    boolean excludeLink -> u
+    boolean excludeDirection -> v
+    float local_distance -> w
+    boolean mrefresh -> t
     void onCreate(android.os.Bundle) -> onCreate
     void onStart() -> onStart
-    void refreshList() -> a
+    void refreshList() -> g
     net.mypapit.mobile.myrepeater.RepeaterList loadData(int,android.app.Activity) -> a
     boolean onCreateOptionsMenu(android.view.Menu) -> onCreateOptionsMenu
     boolean onOptionsItemSelected(android.view.MenuItem) -> onOptionsItemSelected
-    void showDialog() -> b
-    void showAlertDialog() -> c
+    void showDialog() -> h
+    void showAlertDialog() -> i
     boolean isLocationEnabled(android.content.Context) -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
     void setListAdapter(net.mypapit.mobile.myrepeater.RepeaterAdapter) -> a
-    void setAddress(java.lang.String) -> a
-    void showToast(java.lang.String) -> b
+    void setAddress(java.lang.String) -> b
+    void showToast(java.lang.String) -> c
     void onPause() -> onPause
+    boolean checkCompassSensor() -> j
+    void access$0(net.mypapit.mobile.myrepeater.RepeaterListActivity,boolean) -> a
+    float access$1(net.mypapit.mobile.myrepeater.RepeaterListActivity) -> a
+    boolean access$2(net.mypapit.mobile.myrepeater.RepeaterListActivity) -> b
+    boolean access$3(net.mypapit.mobile.myrepeater.RepeaterListActivity) -> c
 net.mypapit.mobile.myrepeater.RepeaterListActivity$1 -> net.mypapit.mobile.myrepeater.g:
     net.mypapit.mobile.myrepeater.RepeaterListActivity this$0 -> a
     void onClick(android.content.DialogInterface,int) -> onClick
@@ -11420,8 +11457,7 @@ net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread$3$3 -> net.mypapit.
 net.mypapit.mobile.myrepeater.SettingsActivity -> net.mypapit.mobile.myrepeater.SettingsActivity:
     void onCreate(android.os.Bundle) -> onCreate
     void onPause() -> onPause
-net.mypapit.mobile.myrepeater.StackHistory -> net.mypapit.mobile.myrepeater.r:
-net.mypapit.mobile.myrepeater.StaticLocation -> net.mypapit.mobile.myrepeater.s:
+net.mypapit.mobile.myrepeater.StaticLocation -> net.mypapit.mobile.myrepeater.r:
     java.lang.String name -> a
     java.lang.String statename -> b
     double lat -> c
@@ -11441,13 +11477,13 @@ net.mypapit.mobile.myrepeater.StaticLocationActivity -> net.mypapit.mobile.myrep
     void onPause() -> onPause
     net.mypapit.mobile.myrepeater.StaticLocationAdapter access$0(net.mypapit.mobile.myrepeater.StaticLocationActivity) -> a
     android.app.Activity access$1(net.mypapit.mobile.myrepeater.StaticLocationActivity) -> b
-net.mypapit.mobile.myrepeater.StaticLocationActivity$1 -> net.mypapit.mobile.myrepeater.t:
+net.mypapit.mobile.myrepeater.StaticLocationActivity$1 -> net.mypapit.mobile.myrepeater.s:
     net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-net.mypapit.mobile.myrepeater.StaticLocationActivity$2 -> net.mypapit.mobile.myrepeater.u:
+net.mypapit.mobile.myrepeater.StaticLocationActivity$2 -> net.mypapit.mobile.myrepeater.t:
     net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-net.mypapit.mobile.myrepeater.StaticLocationAdapter -> net.mypapit.mobile.myrepeater.v:
+net.mypapit.mobile.myrepeater.StaticLocationAdapter -> net.mypapit.mobile.myrepeater.u:
     java.util.ArrayList list -> a
     android.content.Context activity -> b
     int getCount() -> getCount
