@@ -4022,38 +4022,15 @@ com.robobunny.SeekBarPreference:
     private static final java.lang.String ANDROIDNS
     private static final java.lang.String APPLICATIONNS
     private static final int DEFAULT_VALUE
+garin.artemiy.compassview.library.CompassConstants
+garin.artemiy.compassview.library.CompassUtility:
+    10:10:public CompassUtility()
+garin.artemiy.compassview.library.CompassView:
+    private static final int FAST_ANIMATION_DURATION
+    private static final int DEGREES_360
+    private static final float CENTER
 net.mypapit.mobile.myrepeater.BuildConfig
-net.mypapit.mobile.myrepeater.FauxRepeater:
-    private static final long serialVersionUID
-    private java.lang.String notes
-    private java.lang.String provider
-    private double distance
-    46:60:public FauxRepeater(net.mypapit.mobile.myrepeater.Repeater)
-    62:81:public FauxRepeater(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,double,double,double,double,double)
-    84:85:public void setLatitude(double)
-    88:89:public void setLongitude(double)
-    92:92:public java.lang.String getCallsign()
-    96:97:public void setCallsign(java.lang.String)
-    100:100:public java.lang.String getClub()
-    104:105:public void setClub(java.lang.String)
-    108:108:public java.lang.String getLocation()
-    112:113:public void setLocation(java.lang.String)
-    116:116:public java.lang.String getLink()
-    120:121:public void setLink(java.lang.String)
-    124:124:public java.lang.String getNotes()
-    128:129:public void setNotes(java.lang.String)
-    132:132:public double getLat()
-    136:137:public void setLat(double)
-    140:140:public double getLon()
-    144:145:public void setLon(double)
-    148:148:public double getDownlink()
-    152:153:public void setDownlink(double)
-    156:156:public double getShift()
-    160:161:public void setShift(double)
-    164:164:public double getTone()
-    168:169:public void setTone(double)
-    173:173:public double getDistance()
-    179:185:public java.lang.String[] toArrayString()
+net.mypapit.mobile.myrepeater.FauxRepeater
 net.mypapit.mobile.myrepeater.Manifest
 net.mypapit.mobile.myrepeater.Manifest$permission
 net.mypapit.mobile.myrepeater.R
@@ -4088,17 +4065,14 @@ net.mypapit.mobile.myrepeater.Repeater:
     168:169:public void setShift(double)
     176:177:public void setTone(double)
 net.mypapit.mobile.myrepeater.RepeaterDetailsActivity:
-    137:154:public android.content.Intent createEmailOnlyChooserIntent(android.content.Intent,java.lang.CharSequence)
-    219:234:public void submitToEmail(boolean,boolean,boolean,boolean,boolean,boolean)
+    155:172:public android.content.Intent createEmailOnlyChooserIntent(android.content.Intent,java.lang.CharSequence)
 net.mypapit.mobile.myrepeater.RepeaterList:
     private static final long serialVersionUID
+    47:52:public RepeaterList(java.util.Stack)
     54:60:public RepeaterList(java.util.ArrayList)
-net.mypapit.mobile.myrepeater.RepeaterListActivity:
-    777:794:public android.content.Intent createEmailOnlyChooserIntent(android.content.Intent,java.lang.CharSequence)
 net.mypapit.mobile.myrepeater.RepeaterListActivity$GPSThread:
     java.lang.StringBuffer sb
-net.mypapit.mobile.myrepeater.StackHistory:
-    private static final long serialVersionUID
+net.mypapit.mobile.myrepeater.StackHistory
 net.mypapit.mobile.myrepeater.StaticLocation:
     34:35:public void setStatename(java.lang.String)
     64:65:public void setName(java.lang.String)

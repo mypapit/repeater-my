@@ -227,7 +227,7 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 		String distance = nf.format(this.getDistance() / 1000);
 
 		String array[] = { this.getCallsign(), this.getClub(), "" + this.getDownlink(), "" + this.getShift(),
-				"" + this.getLocation(), "" + this.getTone(), distance };
+				"" + this.getLocation(), "" + this.getTone(), distance,this.getLatitude()+"",this.getLongitude()+"","0.0","0.0" };
 
 		return array;
 

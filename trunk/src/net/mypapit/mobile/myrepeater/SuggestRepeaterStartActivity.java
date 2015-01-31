@@ -35,11 +35,11 @@ import android.widget.Toast;
 
 public class SuggestRepeaterStartActivity extends Activity {
 	String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC", "PEMANCAR", "PERAMAH",
-			"ARECS","SARES", "UNKNOWN", "OTHERS" };
+			"ARECS","SARES", "UNKNOWN", "OTHERS","SARC" };
 	String state[] = { "JOHOR", "KEDAH", "KELANTAN", "LABUAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN", "PAHANG",
 			"PULAU PINANG", "PENANG", "PERLIS", "SELANGOR", "SABAH", "SARAWAK", "TERENGGANU", "PERAK" };
-	String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6","9M4C" };
-	String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK " };
+	String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6","9M4C","9M8","9M6" };
+	String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL " };
 
 	private ArrayAdapter<String> adapterClub, adapterState, adapterCallsign, adapterLocation;
 
@@ -109,7 +109,7 @@ public class SuggestRepeaterStartActivity extends Activity {
 			return true;
 		case android.R.id.home:
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-				//NavUtils.navigateUpFromSameTask(this);
+				
 				finish();
 			}
 			return true;

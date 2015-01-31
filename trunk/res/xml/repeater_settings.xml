@@ -19,9 +19,17 @@
      
      <CheckBoxPreference 
           android:key="excludeLinkRepeater" 
-          android:title="Hide  Link Repeater?"
+          android:title="Hide Link Repeater?"
           android:summary="This will omit 'linked' Repeater from list"
           />
+<!--      
+     <CheckBoxPreference 
+          android:key="excludeDirection" 
+          android:title="Hide repeater direction?"
+          android:summary="(Supported device only) Hides repeater direction. Pointer will always be hidden for repeater within 10 km or less"
+          />
+          
+    -->
    
     </PreferenceCategory>
  

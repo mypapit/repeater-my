@@ -23,12 +23,15 @@
 
 package net.mypapit.mobile.myrepeater;
 
+import garin.artemiy.compassview.library.CompassView;
+
 import java.text.DecimalFormat;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,32 +52,35 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 	private RepeaterList data, realdata;
 	private int mLastPosition = -1;
 	float local_distance;
-	boolean excludeLink;
+	boolean excludeLink, excludeDirection;
+	private Repeater userLocation;
 
 	private Activity activity;
 
-	public RepeaterAdapter(Activity activity, RepeaterList rl, float local_distance, boolean excludeLink) {
+	public RepeaterAdapter(Activity activity, RepeaterList rl, Repeater userLocation, float local_distance,
+			boolean excludeLink, boolean excludeDirection) {
 		this.activity = activity;
+		this.userLocation = userLocation;
 		data = rl.filterLink(rl, excludeLink);
 		realdata = rl.filterLink(rl, excludeLink);
 
+		
+		this.excludeDirection = excludeDirection;
+
 		this.excludeLink = excludeLink;
 		this.local_distance = local_distance;
-		
+
 		SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 		if (repeater_prefs == null) {
 			Toast shit = Toast.makeText(activity, "repeater_prefs null", Toast.LENGTH_SHORT);
 			shit.show();
-			
-			
+
 		}
-		
-		
-		
-		
-		this.excludeLink=repeater_prefs.getBoolean("excludeLinkRepeater", false);
-		//local_distance=repeater_prefs.getString("repeater_local_distance", "100");
-		this.local_distance= repeater_prefs.getInt("range", 150);
+
+		this.excludeLink = repeater_prefs.getBoolean("excludeLinkRepeater", false);
+		// local_distance=repeater_prefs.getString("repeater_local_distance",
+		// "100");
+		this.local_distance = repeater_prefs.getInt("range", 150);
 
 		inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -82,14 +88,14 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
+
 		return data.size();
 
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
+		//
 		return position;
 	}
 
@@ -105,33 +111,40 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-
-		View vi = convertView;
-		// LayoutInflater inflater = (LayoutInflater)
-		// activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		ViewHolder holder;
 
 		if (convertView == null) {
-			vi = inflater.inflate(R.layout.repeater_row, null);
+			convertView = inflater.inflate(R.layout.repeater_row, parent, false);
+			holder = new ViewHolder();
+			holder.tvCallsign = (TextView) convertView.findViewById(R.id.tvCallsign);
+			holder.tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
+			holder.tvFreq = (TextView) convertView.findViewById(R.id.tvFreq);
+			holder.tvTone = (TextView) convertView.findViewById(R.id.tvTone);
+			holder.tvClub = (TextView) convertView.findViewById(R.id.tvClub);
+			holder.tvLocation = (TextView) convertView.findViewById(R.id.tvLocation);
+			holder.tvLink = (TextView) convertView.findViewById(R.id.tvdLink);
+			
+			if (!excludeDirection) {
+				holder.compassView= (CompassView) convertView.findViewById(R.id.compassView);
+			}
+
+			
+			convertView.setTag(holder);
+			
 		} else {
 
 			Animation animation = AnimationUtils.loadAnimation(activity,
 					(position > mLastPosition) ? R.anim.up_from_bottom : R.anim.down_from_bottom);
 			convertView.startAnimation(animation);
 			mLastPosition = position;
+			holder = (ViewHolder) convertView.getTag();
 
 		}
 
-		TextView tvCallsign = (TextView) vi.findViewById(R.id.tvCallsign);
-		TextView tvDistance = (TextView) vi.findViewById(R.id.tvDistance);
-		TextView tvFreq = (TextView) vi.findViewById(R.id.tvFreq);
-		TextView tvTone = (TextView) vi.findViewById(R.id.tvTone);
-		TextView tvClub = (TextView) vi.findViewById(R.id.tvClub);
-		TextView tvLocation = (TextView) vi.findViewById(R.id.tvLocation);
-		TextView tvLink = (TextView) vi.findViewById(R.id.tvdLink);
-
+		
 		Repeater repeater = data.get(position);
 		DecimalFormat nf = new DecimalFormat("#.00");
-		
+
 		/*
 		 * if ( (repeater.getLink().length()>0) && excludeLink ){ return
 		 * inflater.inflate(R.layout.repeater_row, null);
@@ -141,41 +154,47 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		 */
 		Log.d("mypapit.excludeLink", "mypapit.local_distance: " + local_distance);
 
-		tvCallsign.setText((repeater.getCallsign()));
-		tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
-		tvTone.setText(Double.toString(repeater.getTone()));
-		tvLocation.setText(repeater.getLocation());
-		tvClub.setText(repeater.getClub());
+		holder.tvCallsign.setText((repeater.getCallsign()));
+		holder.tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
+		holder.tvTone.setText(Double.toString(repeater.getTone()));
+		holder.tvLocation.setText(repeater.getLocation());
+		holder.tvClub.setText(repeater.getClub());
 		if (repeater.getLink().length() > 0) {
 
-			tvLink.setText("*link");
+			holder.tvLink.setText("*link");
 		} else {
-			tvLink.setText("");
+			holder.tvLink.setText("");
 		}
 
 		double distance = repeater.getDistance() / 1000.0;
-		tvDistance.setText(nf.format(distance) + " km");
+		holder.tvDistance.setText(nf.format(distance) + " km");
 
 		if (distance > local_distance) {
-			tvDistance.setTextColor(Color.rgb(200, 0, 0));
+			holder.tvDistance.setTextColor(Color.rgb(200, 0, 0));
 
 		} else {
-			tvDistance.setTextColor(Color.rgb(0, 250, 0));
+			holder.tvDistance.setTextColor(Color.rgb(0, 250, 0));
 
 		}
+		
+		
 
-		return vi;
+		if (!excludeDirection) {
+			holder.compassView.initializeCompass(userLocation, repeater, R.drawable.mediumarrow);
+		}
+
+		return convertView;
 	}
 
 	@Override
 	public Filter getFilter() {
-		// TODO Auto-generated method stub
+
 
 		return new Filter() {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				// TODO Auto-generated method stub
+				
 				FilterResults results = new FilterResults();
 				RepeaterList i = new RepeaterList();
 
@@ -183,13 +202,11 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 					for (int index = 0; index < realdata.size(); index++) {
 						Repeater repeater = realdata.get(index);
 						if (repeater.getCallsign().contains(constraint.toString().toUpperCase())) {
-							//Log.d("mypapit.excludeLink", "mypapit.excludeLink: " + excludeLink);
-							
-							
-							
+							// Log.d("mypapit.excludeLink",
+							// "mypapit.excludeLink: " + excludeLink);
 
-								i.add(repeater);
-							
+							i.add(repeater);
+
 						}
 
 					}
@@ -208,9 +225,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 			@Override
 			protected void publishResults(CharSequence constraint, FilterResults results) {
-				// TODO Auto-generated method stub
 				data = (RepeaterList) results.values;
-
 				RepeaterAdapter.this.notifyDataSetChanged();
 
 			}
@@ -219,4 +234,16 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 
 	}
 
+	static class ViewHolder {
+
+		TextView tvCallsign;
+		TextView tvDistance;
+		TextView tvFreq;
+		TextView tvTone;
+		TextView tvClub;
+		TextView tvLocation;
+		TextView tvLink;
+		CompassView compassView;
+
+	}
 }

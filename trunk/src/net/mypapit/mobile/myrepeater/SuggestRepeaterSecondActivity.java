@@ -29,6 +29,7 @@ import java.util.Stack;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,17 +66,20 @@ public class SuggestRepeaterSecondActivity extends Activity {
 		if (club.equalsIgnoreCase("ASTRA")) {
 			tvSTone.setText("103.5");
 
+		} else if (club.equalsIgnoreCase("MARTS")) {
+			tvSTone.setText("203.5");
+
 		}
 
 		labelCallsign = (TextView) findViewById(R.id.tvLabelCallsign);
-		labelCallsign.setText("wtf");
+
 		labelCallsign.setText(callsign);
 
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		//Intent intent = new Intent();
+		// Intent intent = new Intent();
 		switch (item.getItemId()) {
 		case R.id.action_suggest_done:
 
@@ -96,6 +100,15 @@ public class SuggestRepeaterSecondActivity extends Activity {
 			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "mypapit+new_repeater_suggest@gmail.com" });
 
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - new Repeater");
+
+			String versionName = "Unknown";
+			try {
+				// workaround to identify Repeater.MY version in email reports
+				versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+
+			} catch (NameNotFoundException nnfe) {
+
+			}
 			emailIntent.putExtra(Intent.EXTRA_TEXT, "Please put the repeater details you want to suggest --"
 					+ "\n\nRepeater Callsign : "
 					+ callsign
@@ -105,7 +118,7 @@ public class SuggestRepeaterSecondActivity extends Activity {
 					+ tvSShift.getText().toString()
 					+ "\nTone: "
 					+ tvSTone.getText().toString()
-					+ "\nClosest Location or Coordinates: "
+					+ "\nLocation: "
 					+ location
 					+ "\nOwner or Club: "
 					+ club
@@ -119,7 +132,10 @@ public class SuggestRepeaterSecondActivity extends Activity {
 					+ Build.BRAND
 					+ " "
 					+ " "
-					+ Build.PRODUCT + " " + Build.MODEL);
+					+ Build.PRODUCT
+					+ " "
+					+ Build.MODEL
+					+ "\nRepeater.MY version: " + versionName);
 
 			startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest new Repeater"));
 
