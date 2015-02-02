@@ -34,13 +34,13 @@ public class CompassView extends ImageView {
     private int drawableResource;
     private float lastRotation;
 
-    @SuppressWarnings("unused")
+    
     public CompassView(Context context) {
         super(context);
         init(context);
     }
 
-    @SuppressWarnings("unused")
+    
     public CompassView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
@@ -83,7 +83,7 @@ public class CompassView extends ImageView {
        // if (BuildConfig.DEBUG) Log.d(CompassConstants.LOG_TAG, String.valueOf(rotation));
     }
 
-    @SuppressWarnings("ConstantConditions")
+    
     private void rotateImageView(ImageView compassView, int drawable, float currentRotate) {
         if (directionBitmap == null) {
 

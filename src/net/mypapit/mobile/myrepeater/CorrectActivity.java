@@ -6,6 +6,7 @@ import java.util.Stack;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -109,10 +110,19 @@ public class CorrectActivity extends Activity {
 
 	public void submitToEmail(boolean[] checked) {
 		Intent emailIntent = new Intent(Intent.ACTION_SEND);
-
 		emailIntent.setType("text/plain");
 		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[] { "mypapit+wrong_info_repeater_suggest@gmail.com" });
 
+		String versionName = "Unknown";
+		try {
+			// workaround to identify Repeater.MY version in email reports
+			versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+
+		} catch (NameNotFoundException nnfe) {
+
+		}
+		
+		
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - Info Repeater " + repeater[0]);
 		emailIntent.putExtra(
 				Intent.EXTRA_TEXT,
@@ -122,7 +132,7 @@ public class CorrectActivity extends Activity {
 						+ (checked[2] ? "*" : "") + "\nTone: " + etcTone.getText().toString() + (checked[3] ? "*" : "")
 						+ "\nLocation or Coordinates: " + etcLocation.getText().toString() + (checked[5] ? "*" : "")
 						+ "\nOwner or Club: " + etcClub.getText().toString() + (checked[4] ? "*" : "") + "\n\n"
-						+ Build.BRAND + "(" + Build.PRODUCT + "-" + Build.MODEL + ")\n\nNote:\n"
+						+ Build.BRAND + "(" + Build.PRODUCT + "-" + Build.MODEL + ")\nRepeater.MY ver: "+versionName+"\n\nNote:\n"
 						+ etcNote.getText().toString());
 		// startActivity(emailIntent);
 
