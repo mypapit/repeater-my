@@ -49,20 +49,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.ResolveInfo;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -126,6 +120,18 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		lv.setOnItemClickListener(this);
 
 		SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
+		
+		
+		if (prefs.getInt("walkthrough", 0)==0){
+			Intent intent = new Intent();
+			intent.setClassName(getBaseContext(), "net.mypapit.mobile.myrepeater.WalkthroughActivity");
+			SharedPreferences.Editor prefEditor = prefs.edit();
+			prefEditor.putInt("walkthrough", 1);
+			prefEditor.commit();
+			
+			startActivity(intent);
+		}
+
 
 		// need to put token to avoid app from popping up annoying select manual
 		// dialog will be triggered if location/gps is not enabled AND if the
@@ -451,7 +457,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 				@Override
 				public void onProviderDisabled(String provider) {
-					// TODO Auto-generated method stub
+					
 					// tvAddress.setText("Auto Location Service Disabled");
 					final String mProvider = provider;
 					activity.runOnUiThread(new Runnable() {
@@ -484,7 +490,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 				@Override
 				public void onStatusChanged(String provider, int status, Bundle extras) {
-					// TODO Auto-generated method stub
+					
 
 				}
 
@@ -628,7 +634,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 		case R.id.search:
 			if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.HONEYCOMB) {
-				Toast.makeText(this, "Search is unavailable for Android Gingerbread (2.3.7) and below",
+				Toast.makeText(this, "Search is unavailable for Gingerbread (2.3.7) and below",
 						Toast.LENGTH_LONG).show();
 			}
 
@@ -657,16 +663,39 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	}
 
 	public void showAlertDialog() {
-		AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+		
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Manual Location"); 
+		builder.setMessage("Note that this will not allow Repeater.MY to auto-detect location.\n\nDisable Location Service now?"); // Want to
+		// enable?
 
-		// Setting Dialog Title
-		alertDialog.setTitle("Manual Location");
+		// if yes - bring user to enable Location Service settings
+		builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialogInterface, int i) {
 
-		// Setting Dialog Message
-		alertDialog.setMessage("Please disable GPS or Location Service to use this feature.");
+				Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		alertDialog.show();
+				getApplicationContext().startActivity(intent);
+			}
+		});
 
+		// if no - bring user to selecting Static Location Activity
+		builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				
+			}
+
+		});
+		builder.create().show();
+		
+		
+
+		
 	}
 
 	public boolean isLocationEnabled(Context context) {

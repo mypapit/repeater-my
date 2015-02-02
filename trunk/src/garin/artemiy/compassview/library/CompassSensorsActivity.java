@@ -13,7 +13,7 @@ import android.view.Surface;
  * Author: Artemiy Garin
  * Date: 26.11.13
  */
-@SuppressWarnings("SuspiciousNameCombination")
+
 public class CompassSensorsActivity extends FragmentActivity implements SensorEventListener {
 
     private SensorManager sensorManager;

@@ -36,16 +36,21 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.app.Activity;
+
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,7 +75,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		// get repeater information from ListView
 		repeater = (String[]) getIntent().getExtras().get("Repeater");
 		noCompass = (boolean) getIntent().getExtras().getBoolean("noCompass");
-		
+
 		// prevent application from crashing if Repeater == null
 		if (repeater == null) {
 			repeater = new String[] { "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0.0", "0.0", "0.0",
@@ -104,6 +109,16 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
 			CompassView compassView = (CompassView) findViewById(R.id.compassViewDetail);
 			compassView.initializeCompass((Location) userloc, (Location) repeaterloc, R.drawable.arrow);
+			
+			SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
+			int count = prefs.getInt("walkthrough", 0);
+			if (count<4){
+				showOverlay();
+				count++;
+				SharedPreferences.Editor prefEditor = prefs.edit();
+				prefEditor.putInt("walkthrough", count);
+				prefEditor.commit();
+			}
 		}
 
 	}
@@ -146,6 +161,28 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
 		return false;
 	}
+	
+	private void showOverlay() {
+
+		final Dialog dialog = new Dialog(this, R.style.cust_dialog);
+		
+		
+		dialog.setContentView(R.layout.overlay_view);
+		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.overlayLayout);
+		layout.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View arg0) {
+
+				dialog.dismiss();
+
+			}
+
+		});
+
+		dialog.show();
+
+	}
+
 
 	/*
 	 * I don't write this, but it is a handy function to focus on sending Email
@@ -231,4 +268,5 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
 	}
 
+	
 }

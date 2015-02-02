@@ -29,5 +29,7 @@
     <string name="title_suggest_instruction">Please fill in repeater details that you want to suggest and press &quot;Submit&quot;</string>
     <string name="title_activity_correc">Suggest Correction</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_walkthrough">New in Repeater.MY</string>
+    <string name="title_activity_help_overlay">Tips</string>
 
 </resources>
