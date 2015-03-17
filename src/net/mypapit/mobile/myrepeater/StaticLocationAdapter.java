@@ -77,7 +77,7 @@ public class StaticLocationAdapter extends BaseAdapter {
 	 */
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
+
 		return list.get(position);
 	}
 
@@ -92,7 +92,7 @@ public class StaticLocationAdapter extends BaseAdapter {
 	 */
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
+	
 		return position;
 	}
 
@@ -104,26 +104,25 @@ public class StaticLocationAdapter extends BaseAdapter {
 	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
-		View vi = convertView;
-		// LayoutInflater inflater = (LayoutInflater)
-		// activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	
+			
 		LayoutInflater inflater = LayoutInflater.from(activity);
 
 		if (convertView == null) {
-			vi = inflater.inflate(R.layout.static_location_row, null);
+			convertView = inflater.inflate(R.layout.static_location_row, parent,false);
+			
 		}
 
 		// Log.d("mypapit-static-location","Static Location List size: "+list.size());
 
-		TextView tvsname = (TextView) vi.findViewById(R.id.tvsname);
-		TextView tvsstate = (TextView) vi.findViewById(R.id.tvsstate);
+		TextView tvsname = (TextView) convertView.findViewById(R.id.tvsname);
+		TextView tvsstate = (TextView) convertView.findViewById(R.id.tvsstate);
 		StaticLocation location = list.get(position);
 
 		tvsname.setText(location.getName());
 		tvsstate.setText(location.getStatename());
 
-		return vi;
+		return convertView;
 	}
 
 }

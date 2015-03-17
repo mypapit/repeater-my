@@ -205,7 +205,7 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 
 	@Override
 	public int compareTo(Repeater repeater) {
-		// TODO Auto-generated method stub
+	
 		if (this.distance < repeater.distance) {
 			return -1;
 		} else if (this.distance > repeater.distance) {

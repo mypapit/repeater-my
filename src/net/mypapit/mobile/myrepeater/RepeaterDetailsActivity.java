@@ -244,6 +244,8 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 				if (selected) {
 
 					submitToCorrect(checked, repeater);
+					
+					
 				} else {
 					Toast x = Toast.makeText(mContext, "Please select at least one detail", Toast.LENGTH_SHORT);
 					x.show();

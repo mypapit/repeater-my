@@ -1,5 +1,7 @@
+//uses vierpagerindicator libary from Patrik Akerfeldt and Jake Wharton
 /*
  * 
+
 	MyRepeater Finder 
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/

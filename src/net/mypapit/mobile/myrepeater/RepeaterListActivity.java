@@ -95,7 +95,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
-		// test for Magnetic Sensor, useful for disabling Compass
+		
 
 		lv = (ListView) findViewById(R.id.repeaterListView);
 		tvAddress = (TextView) findViewById(R.id.tvAddress);
@@ -114,8 +114,11 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 		adapter = new RepeaterAdapter(this, rl, xlocation, local_distance, excludeLink, excludeDirection);
 
-		// lv=this.getListView();
 
+		
+        lv.setFastScrollEnabled(true);
+        lv.setVerticalFadingEdgeEnabled(false);
+        lv.setVerticalScrollBarEnabled(true);
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(this);
 
@@ -250,9 +253,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 					addressLocality[0] = new String("Unknown Location");
 					return addressLocality[0];
 
-				} else if (addressList.size() > 0) { // else if there are
-					// addresses
-					// retrieved
+				} else if (addressList.size() > 0) { 
+					// else if there are addresses retrieved
 					int addressCounter = addressList.size();
 					addressLocality = new String[addressCounter];
 					addressLocality[0] = new String();
@@ -262,6 +264,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 						Address singleAddress = addressList.get(i);
 						stringBuffer = new StringBuffer();
 						Log.d("net.mypapit.mobile", "address: " + stringBuffer.toString());
+						//However, only display locality info (like county, territory, area)
 						addressLocality[i] = singleAddress.getLocality();
 
 					}
@@ -342,7 +345,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 					@Override
 					public void run() {
 						activity.showToast("Unable to detect location, falling back on preset location");
-						// activity.excludeDirection=true;
+
 
 					}
 
@@ -504,7 +507,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	}
 
 	public static RepeaterList loadData(int resource, Activity activity) {
-		RepeaterList mlist = new RepeaterList(200);
+		RepeaterList mlist = new RepeaterList(150);
 		int line = 0;
 		try {
 
@@ -748,6 +751,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	// check for compass sensor
 	public boolean checkCompassSensor(Location xlocation) {
 
+		//if using Simulated provider, then automatically return true
 		if (xlocation.getProvider().equalsIgnoreCase("Simulated")) {
 			return true;
 		}

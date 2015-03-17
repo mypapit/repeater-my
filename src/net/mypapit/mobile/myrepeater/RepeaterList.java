@@ -31,7 +31,7 @@ import java.util.Stack;
 class RepeaterList extends ArrayList<Repeater> {
 
 	/**
-	 * 
+	 * Custom ArrayList version for Repeater, can filter and sort repeaters.
 	 */
 	private static final long serialVersionUID = -8386681782482908119L;
 
@@ -60,7 +60,7 @@ class RepeaterList extends ArrayList<Repeater> {
 	}
 	
 	public RepeaterList filterLink(RepeaterList input, boolean excludeLink){
-		RepeaterList output = new RepeaterList();
+		RepeaterList output = new RepeaterList(100);
 		
 		Iterator<Repeater> iter = input.iterator();
 		while (iter.hasNext()) {

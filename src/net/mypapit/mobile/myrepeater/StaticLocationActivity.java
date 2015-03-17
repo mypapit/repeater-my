@@ -40,6 +40,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -67,6 +69,9 @@ public class StaticLocationActivity extends Activity {
 
 		lv = (ListView) findViewById(R.id.lvStatic);
 		Button btnEnable = (Button) findViewById(R.id.btnEnable);
+		Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.enable_bounce);
+		btnEnable.setAnimation(animation);
+		
 
 		adapter = new StaticLocationAdapter(list, this);
 		lv.setAdapter(adapter);
@@ -82,11 +87,12 @@ public class StaticLocationActivity extends Activity {
 				editor.putFloat("DefaultLon", (float) sl.getLon());
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
-				Date date = new Date();
+				
 
 				// need to put token to avoid app from popping up annoying
 				// select manual location dialog
-				editor.putString("token", dateFormat.format(date));
+				// token = today's date in dd/MM format
+				editor.putString("token", dateFormat.format(new Date()));
 				editor.commit();
 
 				NavUtils.navigateUpFromSameTask(localActivity);

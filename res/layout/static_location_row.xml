@@ -11,6 +11,7 @@
         android:paddingLeft="10dip"
         android:paddingTop="6dip"
         android:text="Large Text"
+        android:textColor="@color/text_color"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView

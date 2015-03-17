@@ -11941,13 +11941,17 @@ net.mypapit.mobile.myrepeater.RepeaterAdapter -> net.mypapit.mobile.myrepeater.a
     boolean excludeLink -> b
     boolean excludeDirection -> c
     net.mypapit.mobile.myrepeater.Repeater userLocation -> h
-    android.app.Activity activity -> i
+    int[] interval -> i
+    android.app.Activity activity -> j
     int getCount() -> getCount
     java.lang.Object getItem(int) -> getItem
     net.mypapit.mobile.myrepeater.Repeater getRepeater(int) -> a
     long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
     android.widget.Filter getFilter() -> getFilter
+    java.lang.Object[] getSections() -> getSections
+    int getPositionForSection(int) -> getPositionForSection
+    int getSectionForPosition(int) -> getSectionForPosition
     net.mypapit.mobile.myrepeater.RepeaterList access$0(net.mypapit.mobile.myrepeater.RepeaterAdapter) -> a
     void access$1(net.mypapit.mobile.myrepeater.RepeaterAdapter,net.mypapit.mobile.myrepeater.RepeaterList) -> a
 net.mypapit.mobile.myrepeater.RepeaterAdapter$1 -> net.mypapit.mobile.myrepeater.b:

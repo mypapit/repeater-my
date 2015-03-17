@@ -3400,6 +3400,7 @@ net.mypapit.mobile.myrepeater.R$anim: int activity_open_scale
 net.mypapit.mobile.myrepeater.R$anim: int activity_open_translate
 net.mypapit.mobile.myrepeater.R$anim: int bounceanim
 net.mypapit.mobile.myrepeater.R$anim: int down_from_bottom
+net.mypapit.mobile.myrepeater.R$anim: int enable_bounce
 net.mypapit.mobile.myrepeater.R$anim: int rotate
 net.mypapit.mobile.myrepeater.R$anim: int up_from_bottom
 net.mypapit.mobile.myrepeater.R$attr: int adSize

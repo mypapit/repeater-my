@@ -2,7 +2,7 @@
  * 
 	MyRepeater Finder 
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
-	http://blog.mypapit.net/
+	httptit://blog.mypapit.net/
 	http://repeater-my.googlecode.com/
 
 	This file is part of MyRepeater Finder.
@@ -43,10 +43,11 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class RepeaterAdapter extends BaseAdapter implements Filterable {
+public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIndexer {
 
 	private static LayoutInflater inflater = null;
 	private RepeaterList data, realdata;
@@ -54,6 +55,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 	float local_distance;
 	boolean excludeLink, excludeDirection;
 	private Repeater userLocation;
+	private static final int[] interval= new int[]{0,50,100,150,200,300,400,500,600,700,800,900,1000,1500};
 
 	private Activity activity;
 
@@ -96,7 +98,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 	@Override
 	public Object getItem(int position) {
 		//
-		return position;
+		return data.get(position);
 	}
 
 	public Repeater getRepeater(int position) {
@@ -118,6 +120,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 			holder = new ViewHolder();
 			holder.tvCallsign = (TextView) convertView.findViewById(R.id.tvCallsign);
 			holder.tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
+			
 			holder.tvFreq = (TextView) convertView.findViewById(R.id.tvFreq);
 			holder.tvTone = (TextView) convertView.findViewById(R.id.tvTone);
 			holder.tvClub = (TextView) convertView.findViewById(R.id.tvClub);
@@ -196,23 +199,21 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 			protected FilterResults performFiltering(CharSequence constraint) {
 				
 				FilterResults results = new FilterResults();
-				RepeaterList i = new RepeaterList();
+				RepeaterList list = new RepeaterList();
 
 				if (constraint != null && constraint.toString().length() > 2) {
 					for (int index = 0; index < realdata.size(); index++) {
 						Repeater repeater = realdata.get(index);
 						if (repeater.getCallsign().contains(constraint.toString().toUpperCase())) {
-							// Log.d("mypapit.excludeLink",
-							// "mypapit.excludeLink: " + excludeLink);
 
-							i.add(repeater);
+							list.add(repeater);
 
 						}
 
 					}
 
-					results.values = i;
-					results.count = i.size();
+					results.values = list;
+					results.count = list.size();
 
 				} else {
 					results.values = realdata;
@@ -245,5 +246,44 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable {
 		TextView tvLink;
 		CompassView compassView;
 
+	}
+
+	@Override
+	public Object[] getSections() {
+		
+		
+		 
+		int i=interval.length;
+		String strSection[] = new String[i];
+		
+		for (int j=0; j<i;j++){
+			strSection[j] = ""+interval[j]+" km";
+			
+		}
+	
+		return strSection;
+
+		
+	}
+
+	@Override
+	public int getPositionForSection(int section) {
+		int numOfItems= this.getCount();
+		
+		for (int i=0;i<numOfItems;i++){
+			double distance = this.getRepeater(i).getDistance()/1000.0; 
+			
+			if ( (distance+9.0) >= interval[section]){
+				return i;
+			}
+		}
+	
+		return 0;
+	}
+
+	@Override
+	public int getSectionForPosition(int position) {
+	
+		return 0;
 	}
 }

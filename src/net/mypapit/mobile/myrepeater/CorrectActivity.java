@@ -134,7 +134,7 @@ public class CorrectActivity extends Activity {
 						+ "\nOwner or Club: " + etcClub.getText().toString() + (checked[4] ? "*" : "") + "\n\n"
 						+ Build.BRAND + "(" + Build.PRODUCT + "-" + Build.MODEL + ")\nRepeater.MY ver: "+versionName+"\n\nNote:\n"
 						+ etcNote.getText().toString());
-		// startActivity(emailIntent);
+		
 
 		startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest Correction"));
 
