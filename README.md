@@ -15,7 +15,7 @@ Repeater.my for Android - Malaysian Hamradio Repeater Finder
   * Available in Google Play Store - [https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater Repeater.my]
   * Compiled with Google Play Service v13 (for Map functionality)
 
-[https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater http://developer.android.com//images/brand/en_generic_rgb_wo_60.png]
+[Get it from Google Play](https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater) ![alt GooglePlay](http://developer.android.com//images/brand/en_generic_rgb_wo_60.png)
 
 
 
