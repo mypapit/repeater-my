@@ -2,8 +2,8 @@
  * 
 	MyRepeater Finder 
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
-	httptit://blog.mypapit.net/
-	http://repeater-my.googlecode.com/
+	http://blog.mypapit.net/
+	https://github.com/mypapit/repeater-my
 
 	This file is part of MyRepeater Finder.
 
@@ -55,7 +55,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 	float local_distance;
 	boolean excludeLink, excludeDirection;
 	private Repeater userLocation;
-	private static final int[] interval= new int[]{0,50,100,150,200,300,400,500,600,700,800,900,1000,1500};
+	private static final int[] interval= new int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750};
 
 	private Activity activity;
 
@@ -273,7 +273,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 		for (int i=0;i<numOfItems;i++){
 			double distance = this.getRepeater(i).getDistance()/1000.0; 
 			
-			if ( (distance+9.0) >= interval[section]){
+			if ( (distance+9.5) >= interval[section]){
 				return i;
 			}
 		}

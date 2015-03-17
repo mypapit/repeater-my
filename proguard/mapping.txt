@@ -12115,17 +12115,25 @@ net.mypapit.mobile.myrepeater.StaticLocationActivity -> net.mypapit.mobile.myrep
 net.mypapit.mobile.myrepeater.StaticLocationActivity$1 -> net.mypapit.mobile.myrepeater.v:
     net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
     void onItemClick(android.widget.AdapterView,android.view.View,int,long) -> onItemClick
-net.mypapit.mobile.myrepeater.StaticLocationActivity$2 -> net.mypapit.mobile.myrepeater.w:
+net.mypapit.mobile.myrepeater.StaticLocationActivity$1LocationNameComparator -> net.mypapit.mobile.myrepeater.w:
+    net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
+    int compare(net.mypapit.mobile.myrepeater.StaticLocation,net.mypapit.mobile.myrepeater.StaticLocation) -> a
+    int compare(java.lang.Object,java.lang.Object) -> compare
+net.mypapit.mobile.myrepeater.StaticLocationActivity$2 -> net.mypapit.mobile.myrepeater.x:
     net.mypapit.mobile.myrepeater.StaticLocationActivity this$0 -> a
     void onClick(android.view.View) -> onClick
-net.mypapit.mobile.myrepeater.StaticLocationAdapter -> net.mypapit.mobile.myrepeater.x:
+net.mypapit.mobile.myrepeater.StaticLocationAdapter -> net.mypapit.mobile.myrepeater.y:
     java.util.ArrayList list -> a
     android.content.Context activity -> b
+    java.lang.String[] states -> c
     int getCount() -> getCount
     java.lang.Object getItem(int) -> getItem
     net.mypapit.mobile.myrepeater.StaticLocation getStaticLocation(int) -> a
     long getItemId(int) -> getItemId
     android.view.View getView(int,android.view.View,android.view.ViewGroup) -> getView
+    java.lang.Object[] getSections() -> getSections
+    int getPositionForSection(int) -> getPositionForSection
+    int getSectionForPosition(int) -> getSectionForPosition
 net.mypapit.mobile.myrepeater.SuggestRepeaterSecondActivity -> net.mypapit.mobile.myrepeater.SuggestRepeaterSecondActivity:
     android.os.Bundle extras -> a
     android.widget.TextView labelCallsign -> b

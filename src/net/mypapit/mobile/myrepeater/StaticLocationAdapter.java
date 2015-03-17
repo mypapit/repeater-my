@@ -3,7 +3,7 @@
 	MyRepeater Finder 
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
-	http://repeater-my.googlecode.com/
+	https://github.com/mypapit/repeater-my
 
 	This file is part of MyRepeater Finder.
 
@@ -31,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.SectionIndexer;
 
 import android.widget.TextView;
 
@@ -42,7 +43,7 @@ import android.widget.TextView;
  * @author mypapit
  * 
  */
-public class StaticLocationAdapter extends BaseAdapter {
+public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer {
 
 	/**
 	 * 
@@ -50,6 +51,7 @@ public class StaticLocationAdapter extends BaseAdapter {
 
 	private ArrayList<StaticLocation> list;
 	private Context activity;
+	private String[] states = new String[]{"#","Johor","Kedah","Kelantan","Kuala Lumpur", "Melaka","N. Sembilan","Pahang","Penang","Perlis","Putrajaya","Sabah","Sarawak","Selangor","Terengganu" };
 
 	public StaticLocationAdapter(ArrayList<StaticLocation> list, Context context) {
 		super();
@@ -123,6 +125,47 @@ public class StaticLocationAdapter extends BaseAdapter {
 		tvsstate.setText(location.getStatename());
 
 		return convertView;
+	}
+
+	@Override
+	public Object[] getSections() {
+
+		return states;
+	}
+
+	@Override
+	public int getPositionForSection(int section) {
+		
+		int numItems=this.getCount();
+		
+		
+		for (int i=0;i<numItems;i++){
+			
+			if (this.list.get(i).getStatename().equalsIgnoreCase(states[section])) {
+				return i;
+			}
+			
+			
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public int getSectionForPosition(int position) {
+		/*
+		String name=this.list.get(position).getStatename();
+		
+		int len = states.length;
+		
+		for (int i=0;i<len;i++){
+			if (states[i].equalsIgnoreCase(name)) {
+				return i;
+			}
+		}
+		*/
+		
+		return 0;
 	}
 
 }

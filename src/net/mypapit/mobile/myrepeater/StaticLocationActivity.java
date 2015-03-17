@@ -3,7 +3,7 @@
 	MyRepeater Finder 
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
-	http://repeater-my.googlecode.com/
+	https://github.com/mypapit/repeater-my
 
 	This file is part of MyRepeater Finder.
 
@@ -29,6 +29,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 import android.app.Activity;
@@ -114,6 +116,9 @@ public class StaticLocationActivity extends Activity {
 			}
 
 		});
+		
+		lv.setFastScrollEnabled(true);
+		lv.setVerticalScrollBarEnabled(true);
 
 	}
 
@@ -146,6 +151,18 @@ public class StaticLocationActivity extends Activity {
 			ex.printStackTrace(System.err);
 
 		}
+		
+		class LocationNameComparator implements Comparator<StaticLocation>{
+
+			@Override
+			public int compare(StaticLocation lhs, StaticLocation rhs) {
+				return lhs.getStatename().compareTo(rhs.getStatename());
+				
+			}
+			
+		}
+		
+		Collections.sort(locationList, new LocationNameComparator() );
 
 		return locationList;
 

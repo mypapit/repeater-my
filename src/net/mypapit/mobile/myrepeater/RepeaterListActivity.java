@@ -6,7 +6,7 @@
 	MyRepeater Finder 
 	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
-	http://repeater-my.googlecode.com/
+	https://github.com/mypapit/repeater-my
 
 	This file is part of MyRepeater Finder.
 
@@ -528,7 +528,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			in.close();
 
 		} catch (IOException ioe) {
-			Log.e("Read CSV Error", "Some CSV Error: ", ioe.getCause());
+			Log.e("Read CSV Error mypapit", "Some CSV Error: ", ioe.getCause());
 
 		} catch (NumberFormatException nfe) {
 			Log.e("Number error", "parse number error - line: " + line + "  " + nfe.getMessage(), nfe.getCause());
