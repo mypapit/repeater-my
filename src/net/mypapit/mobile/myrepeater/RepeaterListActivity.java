@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -510,7 +512,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		RepeaterList mlist = new RepeaterList(150);
 		int line = 0;
 		try {
-
+			
+			
 			InputStream stream = activity.getResources().openRawResource(resource);
 			InputStreamReader is = new InputStreamReader(stream);
 			BufferedReader in = new BufferedReader(is);
@@ -539,6 +542,42 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 		return mlist;
 
+	}
+	
+	public static ArrayList<String> loadStringData(InputStream stream) {
+		ArrayList<String> mlist = new ArrayList<String>(150);
+		int line=0;
+		try {
+
+			//InputStream stream = activity.getResources().openRawResource(resource);
+			InputStreamReader is = new InputStreamReader(stream);
+			BufferedReader in = new BufferedReader(is);
+			CSVReader csv = new CSVReader(in, ';', '\"', 0);
+			String data[];
+
+			while ((data = csv.readNext()) != null) {
+				line++;
+				mlist.add(data[1]);
+				
+				//Log.d("net.mypapit repeater data","stored data : " + data[1]);
+
+			}
+
+			in.close();
+
+		} catch (IOException ioe) {
+			Log.e("Read CSV Error mypapit", "Some CSV Error: ", ioe.getCause());
+
+		} catch (NumberFormatException nfe) {
+			Log.e("Number error", "parse number error - line: " + line + "  " + nfe.getMessage(), nfe.getCause());
+		} catch (Exception ex) {
+			Log.e("Some Exception", "some exception at line :" + line + " \n " + ex.getCause());
+			ex.printStackTrace(System.err);
+		}
+		//Collections.sort(mlist);
+				
+		return mlist;
+		
 	}
 
 	@Override

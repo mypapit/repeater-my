@@ -55,7 +55,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 	float local_distance;
 	boolean excludeLink, excludeDirection;
 	private Repeater userLocation;
-	private static final int[] interval= new int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750};
+	private static final int[] interval= new int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750,2000};
 
 	private Activity activity;
 
@@ -148,13 +148,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 		Repeater repeater = data.get(position);
 		DecimalFormat nf = new DecimalFormat("#.00");
 
-		/*
-		 * if ( (repeater.getLink().length()>0) && excludeLink ){ return
-		 * inflater.inflate(R.layout.repeater_row, null);
-		 * 
-		 * 
-		 * }
-		 */
+	
 		Log.d("mypapit.excludeLink", "mypapit.local_distance: " + local_distance);
 
 		holder.tvCallsign.setText((repeater.getCallsign()));
@@ -268,12 +262,13 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 
 	@Override
 	public int getPositionForSection(int section) {
+		
 		int numOfItems= this.getCount();
 		
 		for (int i=0;i<numOfItems;i++){
 			double distance = this.getRepeater(i).getDistance()/1000.0; 
 			
-			if ( (distance+9.5) >= interval[section]){
+			if ( (distance+4.5) >= interval[section]){
 				return i;
 			}
 		}
@@ -283,6 +278,51 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 
 	@Override
 	public int getSectionForPosition(int position) {
+		
+		Repeater repeater=this.data.get(position);
+		double distance=repeater.getDistance()/1000.0;
+		//Log.d("net.mypapit distance","distance: " + distance);
+		//int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750,2000,2250};	
+		if (distance >25.0 ) {
+			return 1;
+			
+		} else if (distance >50.0){
+			return 2;
+		} else if (distance >75.0) {
+			return 3;
+		} else if (distance >100.0) {
+			return 4;
+		} else if (distance >150.0){
+			return 5;
+		} else if (distance <=200.0){
+			return 6;
+		} else if (distance<=300.0){
+			return 7;
+		} else if (distance<=350.0){
+			return 8;
+		} else if (distance<=400.0){
+			return 9;
+		} else if (distance<=500.0){
+			return 10;
+		} else if (distance<=600.0){
+			return 11;
+		} else if (distance<=700){
+			return 12;
+		} else if (distance<=800){
+			return 13;
+		} else if (distance<=900){
+			return 14;
+		} else if (distance<=1000){
+			return 15;
+		} else if (distance<=1250){
+			return 16;
+		} else if (distance<=1500){
+			return 17;
+		} else if (distance<=1750){
+			return 18;
+		} else if (distance<=2000){
+			return 19;
+		}
 	
 		return 0;
 	}
