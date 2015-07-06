@@ -26,6 +26,7 @@ package net.mypapit.mobile.myrepeater;
 import garin.artemiy.compassview.library.CompassView;
 
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -57,7 +58,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 	private Repeater userLocation;
 	private static final int[] interval= new int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750,2000};
 
-	private Activity activity;
+	private final Activity activity;
 
 	public RepeaterAdapter(Activity activity, RepeaterList rl, Repeater userLocation, float local_distance,
 			boolean excludeLink, boolean excludeDirection) {
@@ -149,7 +150,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 		DecimalFormat nf = new DecimalFormat("#.00");
 
 	
-		Log.d("mypapit.excludeLink", "mypapit.local_distance: " + local_distance);
+		//Log.d("mypapit.excludeLink", "mypapit.local_distance: " + local_distance);
 
 		holder.tvCallsign.setText((repeater.getCallsign()));
 		holder.tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
@@ -198,7 +199,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 				if (constraint != null && constraint.toString().length() > 2) {
 					for (int index = 0; index < realdata.size(); index++) {
 						Repeater repeater = realdata.get(index);
-						if (repeater.getCallsign().contains(constraint.toString().toUpperCase())) {
+						if (repeater.getCallsign().contains(constraint.toString().toUpperCase(Locale.getDefault()))) {
 
 							list.add(repeater);
 

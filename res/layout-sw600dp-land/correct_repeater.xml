@@ -17,6 +17,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:baselineAligned="false"
     >
     
     <LinearLayout 
@@ -78,6 +79,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:baselineAligned="false"
     >
     
     <LinearLayout 
@@ -157,7 +159,8 @@
         android:paddingBottom="6dip"
         android:text="Bukit Tinggi"
         android:textSize="16sp" 
-        android:ems="10" 
+        android:ems="10"
+        android:hint="Location / Area" 
         />
 
     <TextView

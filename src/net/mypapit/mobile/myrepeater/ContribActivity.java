@@ -3,7 +3,7 @@
  * 
 
 	MyRepeater Finder 
-	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2013,2015 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 

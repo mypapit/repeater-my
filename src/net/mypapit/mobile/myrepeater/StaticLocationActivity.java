@@ -73,7 +73,6 @@ public class StaticLocationActivity extends Activity {
 		Button btnEnable = (Button) findViewById(R.id.btnEnable);
 		Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.enable_bounce);
 		btnEnable.setAnimation(animation);
-		
 
 		adapter = new StaticLocationAdapter(list, this);
 		lv.setAdapter(adapter);
@@ -89,7 +88,6 @@ public class StaticLocationActivity extends Activity {
 				editor.putFloat("DefaultLon", (float) sl.getLon());
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
-				
 
 				// need to put token to avoid app from popping up annoying
 				// select manual location dialog
@@ -116,7 +114,7 @@ public class StaticLocationActivity extends Activity {
 			}
 
 		});
-		
+
 		lv.setFastScrollEnabled(true);
 		lv.setVerticalScrollBarEnabled(true);
 
@@ -151,18 +149,18 @@ public class StaticLocationActivity extends Activity {
 			ex.printStackTrace(System.err);
 
 		}
-		
-		class LocationNameComparator implements Comparator<StaticLocation>{
+
+		class LocationNameComparator implements Comparator<StaticLocation> {
 
 			@Override
 			public int compare(StaticLocation lhs, StaticLocation rhs) {
 				return lhs.getStatename().compareTo(rhs.getStatename());
-				
+
 			}
-			
+
 		}
-		
-		Collections.sort(locationList, new LocationNameComparator() );
+
+		Collections.sort(locationList, new LocationNameComparator());
 
 		return locationList;
 

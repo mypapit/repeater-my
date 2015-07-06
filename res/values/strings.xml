@@ -8,9 +8,10 @@
     <string name="action_wrongInfo">Wrong Info?</string>
     <string name="title_activity_display_map">Display Map</string>
     <string name="title_activity_repeater_details">Details</string>
-    <string name="txtLicense">Copyright © 2014 Mohammad Hafiz Ismail\nEmail: &lt;mypapit@gmail.com&gt;\nWeb: repeater-my.googlecode.com\nFacebook: fb.me/repeater-my\n\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\nLicense: http://www.gnu.org/licenses\n\nDISCLAIMER: The latitude/longitude listed is approximate and only used for distance calculation and does not reflect actual repeater location."\n\nThe repeater information have been gathered from public domain sources including (but not limited to) Amateur Radio Club websites, logbooks, publicly-accessible database and individual contributors. Although repeater information is accurate at release time, be advised that details such as trasmitting/receiving frequency, tones and location may change without notice, thus information update through users/contributors are much appreciated. </string>
+    <string name="txtLicense">Copyright © 2014 Mohammad Hafiz Ismail\nEmail: &lt;mypapit@gmail.com&gt;\nWeb: github.com/mypapit/repeater-my\nFacebook: fb.me/repeater-my\n\nThis program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\nLicense: http://www.gnu.org/licenses\n\nDISCLAIMER: The latitude/longitude listed is approximate and only used for distance calculation and does not reflect actual repeater location."\n\nThe repeater information have been gathered from public domain sources including (but not limited to) Amateur Radio Club websites, logbooks, publicly-accessible database and individual contributors. Although repeater information is accurate at release time, be advised that details such as trasmitting/receiving frequency, tones and location may change without notice, thus information update through users/contributors are much appreciated. </string>
     <string name="title_activity_contrib">Contributors</string>
     <string name="action_contrib">Contributors</string>
+    <string name="action_simplex_title">Simplex&#8230;</string>
     <string name="hello_world">Hello world!</string>
     <string name="search_title">Search</string>
     <string name="manual_settings_title">Set Location&#8230;</string>
@@ -26,10 +27,11 @@
     <string name="title_activity_history">Search History</string>
     <string name="title_activity_suggest">Suggest Repeater</string>
     <string name="action_suggest_done">Submit</string>
-    <string name="title_suggest_instruction">Please fill in repeater details that you want to suggest and press &quot;Submit&quot;</string>
+    <string name="title_suggest_instruction">Fill in new repeater details that you want to suggest. Use this only for suggesting new repeater.</string>
     <string name="title_activity_correc">Suggest Correction</string>
     <string name="title_activity_settings">Settings</string>
     <string name="title_activity_walkthrough">New in Repeater.MY</string>
     <string name="title_activity_help_overlay">Tips</string>
+    <string name="title_activity_simplex">Simplex Freq</string>
 
 </resources>

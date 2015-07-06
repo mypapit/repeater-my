@@ -3,7 +3,7 @@ package net.mypapit.mobile.myrepeater;
 /*
  * 
  MyRepeater Finder 
- Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+ Copyright 201, 2015 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
  http://blog.mypapit.net/
  https://github.com/mypapit/repeater-my
 
@@ -34,6 +34,7 @@ import com.google.android.gms.ads.AdView;
 
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 
@@ -44,6 +45,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -58,7 +60,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 	private String[] repeater;
 	private boolean noCompass = false;
 	private TextView tvCallsign, tvFreq, tvShift, tvTone, tvLocation, tvClub, tvDistance;
-	Context mContext;
+	private Context mContext;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +113,10 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 			compassView.initializeCompass((Location) userloc, (Location) repeaterloc, R.drawable.arrow);
 			
 			SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
-			int count = prefs.getInt("walkthrough", 0);
-			if (count<4){
+			int count = prefs.getInt("walkthrough", RepeaterListActivity.WALK_VERSION_CODE);
+			//count=count-4;
+			
+			if (count<(RepeaterListActivity.WALK_VERSION_CODE+3)){
 				showOverlay();
 				count++;
 				SharedPreferences.Editor prefEditor = prefs.edit();
@@ -135,12 +139,26 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		Intent intent;
 		switch (item.getItemId()) {
 		case R.id.action_sharedetails:
+			String versionName="local";
+			try {
+				versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+			} catch (NameNotFoundException nnfe) {	}
+
 			intent = new Intent(android.content.Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TITLE, repeater[0]);
 			intent.putExtra(Intent.EXTRA_TEXT, "Repeater Callsign :" + repeater[0] + " (" + repeater[1] + ")"
-					+ "\nLocation : " + repeater[4] + "\nFrequency : " + repeater[2] + " MHz ,Shift : " + repeater[3]
-					+ " MHz, Tone : " + repeater[5]);
+					+ "\nLocation : " + repeater[4] + "\nFrequency : " + repeater[2] + " MHz\nShift : " + repeater[3]
+					+ " MHz\nTone : " + repeater[5]+ "\n\nSent from: "
+					+ Build.MANUFACTURER
+					+ " "
+					+ Build.BRAND
+					+ " "
+					+ " "
+					+ Build.PRODUCT
+					+ " "
+					+ Build.MODEL
+					+ "\nRepeater.MY version: " + versionName);
 
 			startActivity(Intent.createChooser(intent, "Send via "));
 			return true;

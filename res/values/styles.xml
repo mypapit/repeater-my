@@ -24,4 +24,8 @@
     <item name="android:background">?android:attr/listDivider</item>
 </style>
 
+     <style name="LightTheme" parent="android:style/Theme.Light">
+        <!-- Customization here -->
+    </style>
+
 </resources>

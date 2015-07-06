@@ -24,6 +24,7 @@
 package net.mypapit.mobile.myrepeater;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
 import android.app.Activity;
@@ -42,10 +43,10 @@ import android.widget.Toast;
 
 public class SuggestRepeaterSecondActivity extends Activity {
 
-	Bundle extras;
-	TextView labelCallsign;
-	String callsign, club, location, state;
-	EditText tvSShift, tvSFreq, tvSTone;
+	private Bundle extras;
+	private TextView labelCallsign;
+	private String callsign, club, location, state;
+	private EditText tvSShift, tvSFreq, tvSTone;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,7 +54,7 @@ public class SuggestRepeaterSecondActivity extends Activity {
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
 		extras = getIntent().getExtras();
-		callsign = extras.getString("callsign").toUpperCase();
+		callsign = extras.getString("callsign").toUpperCase(Locale.getDefault());
 		club = extras.getString("club");
 		location = extras.getString("location");
 		state = extras.getString("state");

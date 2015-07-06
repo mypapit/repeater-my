@@ -51,7 +51,8 @@ public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer
 
 	private ArrayList<StaticLocation> list;
 	private Context activity;
-	private String[] states = new String[]{"#","Johor","Kedah","Kelantan","Kuala Lumpur", "Melaka","N. Sembilan","Pahang","Penang","Perlis","Putrajaya","Sabah","Sarawak","Selangor","Terengganu" };
+	private final String[] states = new String[] { "#", "Johor", "Kedah", "Kelantan", "Kuala Lumpur", "Melaka",
+			"N. Sembilan", "Pahang", "Penang", "Perlis", "Putrajaya", "Sabah", "Sarawak", "Selangor", "Terengganu" };
 
 	public StaticLocationAdapter(ArrayList<StaticLocation> list, Context context) {
 		super();
@@ -94,7 +95,7 @@ public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer
 	 */
 	@Override
 	public long getItemId(int position) {
-	
+
 		return position;
 	}
 
@@ -106,13 +107,12 @@ public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer
 	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-	
-			
+
 		LayoutInflater inflater = LayoutInflater.from(activity);
 
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.static_location_row, parent,false);
-			
+			convertView = inflater.inflate(R.layout.static_location_row, parent, false);
+
 		}
 
 		// Log.d("mypapit-static-location","Static Location List size: "+list.size());
@@ -135,36 +135,31 @@ public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer
 
 	@Override
 	public int getPositionForSection(int section) {
-		
-		int numItems=this.getCount();
-		
-		
-		for (int i=0;i<numItems;i++){
-			
+
+		int numItems = this.getCount();
+
+		for (int i = 0; i < numItems; i++) {
+
 			if (this.list.get(i).getStatename().equalsIgnoreCase(states[section])) {
 				return i;
 			}
-			
-			
+
 		}
-		
+
 		return 0;
 	}
 
 	@Override
 	public int getSectionForPosition(int position) {
 		/*
-		String name=this.list.get(position).getStatename();
-		
-		int len = states.length;
-		
-		for (int i=0;i<len;i++){
-			if (states[i].equalsIgnoreCase(name)) {
-				return i;
-			}
-		}
-		*/
-		
+		 * String name=this.list.get(position).getStatename();
+		 * 
+		 * int len = states.length;
+		 * 
+		 * for (int i=0;i<len;i++){ if (states[i].equalsIgnoreCase(name)) {
+		 * return i; } }
+		 */
+
 		return 0;
 	}
 

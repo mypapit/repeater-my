@@ -27,6 +27,8 @@
         android:showAsAction="ifRoom|withText"
         android:title="Map"></item>
     
+    
+    
          <item android:id="@+id/search"
           android:title="@string/search_title"
           android:icon="@android:drawable/ic_menu_search"
@@ -38,9 +40,14 @@
           android:orderInCategory="110"
           android:showAsAction="never" />
          
+          <item android:id="@+id/action_simplex"
+          android:title="@string/action_simplex_title"
+          android:orderInCategory="490"
+          android:showAsAction="never" />
+         
          <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:orderInCategory="109"
         android:title="@string/action_settings"
         android:icon="@android:drawable/ic_menu_preferences"
         

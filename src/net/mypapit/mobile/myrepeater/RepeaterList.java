@@ -74,16 +74,12 @@ class RepeaterList extends ArrayList<Repeater> {
 		}
 		
 		return output;
-		
 	}
 
+	
 	public void sort() {
-
-
+		//sort repeater list according to distance
 		Collections.sort(this);
-
-
-
 	}
 
 }

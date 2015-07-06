@@ -1,9 +1,8 @@
 /*
  * 
-	MyRepeater Finder 
-	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2013,2015 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
-	http://repeater-my.googlecode.com/
+	https://github.com/mypapit/repeater-my
 
 	This file is part of MyRepeater Finder.
 
@@ -24,37 +23,84 @@
 package net.mypapit.mobile.myrepeater;
 
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
+import net.mypapit.mobile.myrepeater.mapinfo.CallsignMapInfo;
+import net.mypapit.mobile.myrepeater.mapinfo.MapInfoObject;
+import net.mypapit.mobile.myrepeater.mapinfo.RepeaterMapInfo;
+import net.sf.jfuzzydate.FuzzyDateFormat;
+import net.sf.jfuzzydate.FuzzyDateFormatter;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import android.support.v4.app.FragmentActivity;
 
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
 
 public class DisplayMap extends FragmentActivity implements OnInfoWindowClickListener {
 
 	private GoogleMap map;
-	HashMap<Marker, Integer> hashMap = new HashMap<Marker, Integer>();
+	HashMap<Marker, MapInfoObject> hashMap = new HashMap<Marker, MapInfoObject>();
 	RepeaterList rl = new RepeaterList();
+	//private static String URL ="http://192.168.1.40/rmy/getposition.php";
+	private static String URL ="http://api.repeater.my/v1/getposition.php";
+	private JSONArray rakanradio = null;
+	ArrayList<HashMap<String, String>> listrakanradio;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_map);
+		
+	
+		
 
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
@@ -80,10 +126,15 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 			map.setMyLocationEnabled(true);
 			map.setOnInfoWindowClickListener(this);
+			map.getUiSettings().setZoomControlsEnabled(true);
+	
+			
+			AdView mAdView = (AdView) findViewById(R.id.adViewMap);
+			mAdView.loadAd(new AdRequest.Builder().build());
 
 			// counter i, for mapping marker with integer
-			int i;
-			i = 0;
+			int i=0;
+			
 
 			Iterator<Repeater> iter = rl.iterator();
 			while (iter.hasNext()) {
@@ -94,8 +145,11 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 						+ ")");
 
 				marking.snippet("Tone: " + repeater.getTone() + " Shift: " + repeater.getShift());
+				
+				RepeaterMapInfo rmi = new RepeaterMapInfo(repeater);
+				rmi.setIndex(i);
 
-				hashMap.put(map.addMarker(marking), Integer.valueOf(i));
+				hashMap.put(map.addMarker(marking), rmi);
 
 				i++;
 
@@ -106,6 +160,47 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10));
 			map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+			new GetUserInfo(latlng).execute();
+			
+			
+			/*
+			
+			map.setInfoWindowAdapter(new InfoWindowAdapter() {
+
+				@Override
+				public View getInfoContents(Marker marker) {
+					View view = getLayoutInflater().inflate(R.layout.callsigninfowindow, null);
+					
+					TextView iwCallsign = (TextView) view.findViewById(R.id.iwcallsign);
+					TextView iwTop = (TextView) view.findViewById(R.id.iwTop);
+					TextView iwmiddle = (TextView) view.findViewById(R.id.iwmiddle);
+					TextView iwbottom = (TextView) view.findViewById(R.id.iwbottom);
+					TextView iwName = (TextView) view.findViewById(R.id.iwName);
+					TextView iwStatus = (TextView) view.findViewById(R.id.iwStatus);
+					
+					MapInfoObject mio= hashMap.get(marker);
+					
+					iwCallsign.setText(mio.getCallsign());
+					iwTop.setText(mio.getVerifiedFreq());
+					iwmiddle.setText(mio.getDetailMiddle());
+					iwbottom.setText(mio.getDetailBottom());
+					
+					iwStatus.setText(mio.getStatus());
+					iwName.setText(mio.getLocationHandle());
+					
+					return view;
+				}
+
+				@Override
+				public View getInfoWindow(Marker arg0) {
+					
+					return null;
+				}
+				
+				
+			});
+			*/
+
 
 		}
 	}
@@ -113,16 +208,20 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		// getMenuInflater().inflate(R.menu.display_map, menu);
+		// getMenuInflater().inflate(R.menu.display_map, menu);i
 		return true;
 	}
 
 	@Override
 	public void onInfoWindowClick(Marker marker) {
 
-		Integer integer = hashMap.get(marker);
+		MapInfoObject mio= hashMap.get(marker);
+		
+		if (mio.getIndex() <0) {
+			return;
+		}
 
-		Repeater rpt = rl.get(integer.intValue());
+		Repeater rpt = rl.get(mio.getIndex());
 
 		Intent intent = new Intent();
 		intent.setClassName(getBaseContext(), "net.mypapit.mobile.myrepeater.RepeaterDetailsActivity");
@@ -152,5 +251,271 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
 
 	}
+	
+	
+	//private class AsyncTask for retrieving repeater-my user information
+	
+	private class GetUserInfo extends AsyncTask<Void,Void,Void>{
+		
+		String currentlat, currentlng;
+		
+		GetUserInfo(LatLng latlng){
+			currentlat = latlng.latitude+"";
+			currentlng = latlng.longitude+"";
+			
+		}
 
+		
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			
+			//put a dialog or whatsoever
+			
+		}
+		@Override
+		protected Void doInBackground(Void... params) {
+			 // Creating service handler class instance
+            ServiceHandler sh = new ServiceHandler();
+ 
+            // Making a request to url and getting responsei
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+            
+            
+			nameValuePairs.add(new BasicNameValuePair("lat",currentlat));
+			nameValuePairs.add(new BasicNameValuePair("lng",currentlng));
+			
+            String jsonStr = sh.makeServiceCall(URL, ServiceHandler.GET, nameValuePairs);
+ 
+            Log.d("mypapit Json Response: ", "> " + jsonStr);
+            listrakanradio = new ArrayList<HashMap<String, String>>(50);
+            
+            if (jsonStr !=null) {
+            	try{
+            	//JSONObject jsonObj = new JSONObject(jsonStr);
+            	
+            	rakanradio = new JSONArray(jsonStr);
+            	int num_of_rakanradio = rakanradio.length();
+            	for (int i=0; i<num_of_rakanradio;i++) {
+            		JSONObject jsinfo = rakanradio.getJSONObject(i);
+            		String callsign = jsinfo.getString("callsign");
+            		String name = jsinfo.getString("name");
+            		String qsx=jsinfo.getString("qsx");
+            		
+            		/*
+            		double lat = Double.parseDouble(jsinfo.getString("lat"));
+            		double lng = Double.parseDouble(jsinfo.getString("lng"));
+            		*/
+            		String status = jsinfo.getString("status");
+            		
+            		/*
+            		java.util.Date utilDate = new java.util.Date();
+            		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            		java.util.Date time = formatter.parse(jsinfo.getString("time"));
+            		*/
+ 
+            		
+            		String distance = jsinfo.getString("distance");
+            		String time = jsinfo.getString("time");
+            		String lat = jsinfo.getString("lat");
+            		String lng = jsinfo.getString("lng");
+            		String valid = jsinfo.getString("valid");
+            		String deviceid = jsinfo.getString("deviceid");
+            		
+            		HashMap<String, String> inforakanradio = new HashMap<String, String>();
+            		
+            		int validity = Integer.parseInt(jsinfo.getString("valid"));
+            		
+            		if (validity==0) {
+            			callsign = callsign + " (Unverified)";
+            		}
+            		
+            		inforakanradio.put("callsign", callsign);
+            		inforakanradio.put("name", name);
+            		inforakanradio.put("qsx", qsx);
+            		inforakanradio.put("status",status);
+            		inforakanradio.put("distance",distance);
+            		inforakanradio.put("time", time);
+            		inforakanradio.put("lat",lat);
+            		inforakanradio.put("lng", lng);
+            		inforakanradio.put("valid", valid);
+            		inforakanradio.put("deviceid", deviceid);
+            		
+            		listrakanradio.add(inforakanradio);
+            		
+            		
+            		
+            		
+            	}
+            	} catch (JSONException jse){
+            		jse.printStackTrace();
+            	}
+            	
+            	
+            	
+            } else {
+            	Log.e("mypapit ServiceHandler","Couldn't get any data from api endpoint");
+            }
+            return null;
+			
+		}
+		
+		protected void onPostExecute(Void result){
+			super.onPostExecute(result);
+			
+			Iterator  <HashMap<String, String>> iter = listrakanradio.iterator();
+			
+			while (iter.hasNext()){
+					HashMap<String, String> inforakanradio = new HashMap<String, String>();
+					inforakanradio = iter.next();
+			
+					MarkerOptions marking = new MarkerOptions();
+					
+					
+					//java.util.Date utilDate = new java.util.Date();
+            		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            		java.util.Date time = new java.util.Date();
+            		
+					try {
+						time = formatter.parse(inforakanradio.get("time"));
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+            		
+					FuzzyDateFormatter format = FuzzyDateFormat.getInstance();
+					
+					
+					
+					marking.position(new LatLng(Double.parseDouble(inforakanradio.get("lat")), Double.parseDouble(inforakanradio.get("lng"))));
+					marking.title(new StringBuilder(inforakanradio.get("callsign")).append(" - ").append("Seen ").append(format.formatDistance(time)).toString());
+					marking.snippet(new StringBuilder("@").append(inforakanradio.get("name")).append("\n#:").append(inforakanradio.get("status")).toString());
+					
+					
+					CallsignMapInfo cmi = new CallsignMapInfo(inforakanradio.get("callsign"), Double.parseDouble(inforakanradio.get("lat")), Double.parseDouble(inforakanradio.get("lng")));
+					cmi.setHandle(inforakanradio.get("name"));
+					
+					DecimalFormat df = new DecimalFormat("#.##");
+					
+					cmi.setDistance(df.format(Double.parseDouble(inforakanradio.get("distance"))));
+					cmi.setTime(format.formatDistance(time));
+					
+					cmi.setStatus(inforakanradio.get("status"));
+					cmi.setDeviceId(inforakanradio.get("deviceid"));
+					
+					String valid=inforakanradio.get("valid");
+					String deviceId = inforakanradio.get("deviceid");
+					
+							
+					cmi.setVerified(valid);
+					
+					
+					
+					if (Integer.parseInt(valid)== 1) {
+						marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+					} else {
+						marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+					}
+					SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+					
+					String m_deviceid = repeater_prefs.getString("deviceid", "defaultx");
+
+					if (deviceId.equalsIgnoreCase(m_deviceid)) {
+						marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+						
+					}
+
+					
+					
+					
+					hashMap.put(map.addMarker(marking),cmi);
+					
+
+			
+			}
+			
+			
+		}
+		
+		
+		
+		
+	}
+	
+	
+	
+
+}
+
+
+class ServiceHandler {
+	 
+    static String response = null;
+    public final static int GET = 1;
+    public final static int POST = 2;
+ 
+    public ServiceHandler() {
+ 
+    }
+ 
+    /**
+     * Making service call
+     * @url - url to make request
+     * @method - http request method
+     * */
+    public String makeServiceCall(String url, int method) {
+        return this.makeServiceCall(url, method, null);
+    }
+ 
+    /**
+     * Making service call
+     * @url - url to make request
+     * @method - http request method
+     * @params - http request params
+     * */
+    public String makeServiceCall(String url, int method,
+            List<NameValuePair> params) {
+        try {
+            // http client
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpEntity httpEntity = null;
+            HttpResponse httpResponse = null;
+             
+            // Checking http request method type
+            if (method == POST) {
+                HttpPost httpPost = new HttpPost(url);
+                // adding post params
+                if (params != null) {
+                    httpPost.setEntity(new UrlEncodedFormEntity(params));
+                }
+ 
+                httpResponse = httpClient.execute(httpPost);
+ 
+            } else if (method == GET) {
+                // appending params to url
+                if (params != null) {
+                    String paramString = URLEncodedUtils
+                            .format(params, "utf-8");
+                    url += "?" + paramString;
+                }
+                HttpGet httpGet = new HttpGet(url);
+ 
+                httpResponse = httpClient.execute(httpGet);
+ 
+            }
+            httpEntity = httpResponse.getEntity();
+            response = EntityUtils.toString(httpEntity);
+ 
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+         
+        return response;
+ 
+    }
 }

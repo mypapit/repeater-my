@@ -1,7 +1,7 @@
 /*
  * 
 	MyRepeater Finder 
-	Copyright 2014 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2014, 2015 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 
@@ -24,6 +24,7 @@
 package net.mypapit.mobile.myrepeater;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -38,21 +39,17 @@ import android.widget.AutoCompleteTextView;
 
 import android.widget.Toast;
 
-
 public class SuggestRepeaterStartActivity extends Activity {
-	String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC", "PEMANCAR", "PERAMAH",
-			"ARECS","SARES", "UNKNOWN", "OTHERS","SARC" };
-	String state[] = { "JOHOR", "KEDAH", "KELANTAN", "LABUAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN", "PAHANG",
-			"PULAU PINANG", "PENANG", "PERLIS", "SELANGOR", "SABAH", "SARAWAK", "TERENGGANU", "PERAK" };
-	String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6","9M4C","9M8","9M6" };
-	String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL " };
+	private final String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC", "PEMANCAR", "PERAMAH",
+			"ARECS", "SARES", "UNKNOWN", "OTHERS", "SARC" };
+	private final String state[] = { "JOHOR", "KEDAH", "KELANTAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN", "PAHANG",
+			"PULAU PINANG", "PENANG", "PERAK", "PERLIS", "SELANGOR", "SABAH", "SARAWAK", "TERENGGANU"};
+	private final String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6", "9M4C", "9M8", "9M6" };
+	private final String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL ","HUTAN " };
 
 	private ArrayAdapter<String> adapterClub, adapterState, adapterCallsign, adapterLocation;
-	
+
 	private ArrayList<String> rlist;
-	
-	
-	
 
 	AutoCompleteTextView tvClub, tvState, tvSCallsign, tvSLocation;
 
@@ -60,11 +57,11 @@ public class SuggestRepeaterStartActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.suggest_repeater_start_layout);
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-		
+
 		AdView mAdView = (AdView) findViewById(R.id.adViewSuggest);
 		mAdView.loadAd(new AdRequest.Builder().build());
-		
-		rlist = RepeaterListActivity.loadStringData(getResources().openRawResource(R.raw.repeaterdata5) );
+
+		rlist = RepeaterListActivity.loadStringData(getResources().openRawResource(R.raw.repeaterdata5));
 
 		tvSCallsign = (AutoCompleteTextView) findViewById(R.id.tvSCallsign);
 		tvSLocation = (AutoCompleteTextView) findViewById(R.id.tvSLocation);
@@ -81,11 +78,10 @@ public class SuggestRepeaterStartActivity extends Activity {
 		tvState.setAdapter(adapterState);
 		tvSCallsign.setAdapter(adapterCallsign);
 		tvSLocation.setAdapter(adapterLocation);
-		
+
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-
 
 	}
 
@@ -104,13 +100,15 @@ public class SuggestRepeaterStartActivity extends Activity {
 			if (tvSCallsign.getText().toString().length() < 5) {
 				Toast.makeText(this, "Please fill in Repeater callsign", Toast.LENGTH_SHORT).show();
 				return false;
-			} else if (rlist.contains(tvSCallsign.getText().toString().toUpperCase())) {
-				Toast.makeText(this, tvSCallsign.getText().toString().toUpperCase()+" already exists.\n\nPress \'thumbs down\' in repeater details to suggest corrections", Toast.LENGTH_SHORT).show();
+			} else if (rlist.contains(tvSCallsign.getText().toString().toUpperCase(Locale.getDefault()))) {
+				Toast.makeText(
+						this,
+						tvSCallsign.getText().toString().toUpperCase(Locale.getDefault())
+								+ " already exists.\n\nPress \'thumbs down\' in repeater details to suggest corrections",
+						Toast.LENGTH_SHORT).show();
 				return false;
-				
 
-				
-			}else if (tvClub.getText().toString().length() < 3) {
+			} else if (tvClub.getText().toString().length() < 3) {
 				Toast.makeText(this, "Please fill in Club", Toast.LENGTH_SHORT).show();
 				return false;
 			} else if (tvState.getText().toString().length() < 3) {
@@ -131,7 +129,7 @@ public class SuggestRepeaterStartActivity extends Activity {
 			return true;
 		case android.R.id.home:
 			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-				
+
 				finish();
 			}
 			return true;
