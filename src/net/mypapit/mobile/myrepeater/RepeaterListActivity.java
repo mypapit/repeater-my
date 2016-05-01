@@ -104,6 +104,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	private double m_qsx=145.000;
 	private String m_status="no status";
 	private int m_passcode=0;
+	private String m_phoneno="+60120000";
 	private static final String URL_API="http://api.repeater.my/v1/endp.php";
 		
 	
@@ -246,10 +247,14 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		m_handle = repeater_prefs.getString("handle", "Newbie (" + this.generateCallsign().substring(0,4)+")");
 		m_status = repeater_prefs.getString("status", "no status");
 		m_qsx = Double.parseDouble(repeater_prefs.getString("qsx", "145.00"));
+		m_phoneno = repeater_prefs.getString("phoneno", "+60120000");
 		try {
 			m_passcode = Integer.parseInt(repeater_prefs.getString("passcode", "0"));
 			
 		} catch (NumberFormatException nfe){
+			
+			m_passcode= 0;
+		} catch (Exception ex){
 			
 			m_passcode= 0;
 		}
@@ -314,7 +319,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 						// However, only display locality info (like county,
 						// territory, area)
 						addressLocality[i] = singleAddress.getLocality();
-
+						
 					}
 				}
 
@@ -380,6 +385,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 				float lat = prefs.getFloat("DefaultLat", 37.56f);
 				float lon = prefs.getFloat("DefaultLon", 126.989f);
 				excludeDirection = true;
+				
+			
 
 				location.setLatitude(lat);
 				location.setLongitude(lon);
@@ -402,7 +409,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 				m_address = this.geoCode(location.getLatitude(), location.getLongitude());
 
 				excludeDirection = checkCompassSensor(xlocation);
-				activity.showToast("Location auto-detected, listing nearest repeater");
+				activity.showToast("Location detected, listing nearby repeater");
 			}
 
 			if (xlocation != null) {
@@ -481,7 +488,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 						
 							
 							try {
-								List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(8);
+								Log.d("http mypapit","sending data");
+								List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(16);
 								nameValuePairs.add(new BasicNameValuePair("apiver","1"));
 								nameValuePairs.add(new BasicNameValuePair("passcode",Integer.toString(m_passcode)));
 								nameValuePairs.add(new BasicNameValuePair("name",m_handle));
@@ -495,6 +503,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 								nameValuePairs.add(new BasicNameValuePair("qsx",Double.toString(m_qsx)));
 								nameValuePairs.add(new BasicNameValuePair("locality",m_location2));
 								nameValuePairs.add(new BasicNameValuePair("deviceid",m_deviceid));
+								nameValuePairs.add(new BasicNameValuePair("phoneno",m_phoneno));
 								
 								post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 								 HttpResponse response = client.execute(post);
@@ -502,7 +511,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 								 //debugging
 								 HttpEntity entity = response.getEntity();
 								 InputStream inputstream = entity.getContent();
-								 BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream,"UTF-8"),8);
+								 BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream,"UTF-8"),16);
 								 StringBuilder sbuilder = new StringBuilder("");
 								 
 								 sbuilder.append(reader.readLine());
@@ -582,7 +591,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 						@Override
 						public void run() {
-							activity.showToast("Location detection sensor: " + mProvider + " disabled");
+							activity.showToast("Location sensor: " + mProvider + " disabled");
 							activity.excludeDirection = true;
 						}
 
@@ -597,7 +606,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 						@Override
 						public void run() {
-							activity.showToast("Location detection sensor: " + mProvider + " re-enabled");
+							activity.showToast("Location sensor: " + mProvider + " re-enabled");
 							activity.excludeDirection = false;
 
 						}

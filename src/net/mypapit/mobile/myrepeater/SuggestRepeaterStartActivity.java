@@ -58,9 +58,10 @@ public class SuggestRepeaterStartActivity extends Activity {
 		setContentView(R.layout.suggest_repeater_start_layout);
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
+		/*
 		AdView mAdView = (AdView) findViewById(R.id.adViewSuggest);
 		mAdView.loadAd(new AdRequest.Builder().build());
-
+*/
 		rlist = RepeaterListActivity.loadStringData(getResources().openRawResource(R.raw.repeaterdata5));
 
 		tvSCallsign = (AutoCompleteTextView) findViewById(R.id.tvSCallsign);

@@ -3,7 +3,7 @@ package net.mypapit.mobile.myrepeater.mapinfo;
 public abstract class MapInfoObject {
 	
 	
-	protected String m_callsign="", m_location_handle="", m_top="", m_bottom="", m_middle="", m_status="None";
+	protected String m_callsign="", m_location_handle="", m_top="", m_bottom="", m_middle="", m_status="None", m_phoneno="",m_client="";
 	protected int m_index=-100;
 	protected String m_deviceid="";
 	protected boolean isRepeater=true;

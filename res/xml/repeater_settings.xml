@@ -63,12 +63,17 @@
       />
       
       -->
+  <EditTextPreference
+      android:key="phoneno"
+      android:title="Phone Number"
+      android:summary="Enter your Phone Number"
+     />
       
   
   <EditTextPreference
       android:key="status"
       android:title="Status"
-      android:summary="Enter a human-readable status (eg: \'Driving home\', \'Mamak session\')\nYou can also put your phone number here: 012-3456789"
+      android:summary="Enter a human-readable status (eg: \'Driving home\', \'Mamak session\')"
      />
   
       
