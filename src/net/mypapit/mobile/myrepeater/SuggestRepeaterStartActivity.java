@@ -40,12 +40,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 public class SuggestRepeaterStartActivity extends Activity {
-	private final String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC", "PEMANCAR", "PERAMAH",
-			"ARECS", "SARES", "UNKNOWN", "OTHERS", "SARC" };
-	private final String state[] = { "JOHOR", "KEDAH", "KELANTAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN", "PAHANG",
-			"PULAU PINANG", "PENANG", "PERAK", "PERLIS", "SELANGOR", "SABAH", "SARAWAK", "TERENGGANU"};
-	private final String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6", "9M4C", "9M8", "9M6" };
-	private final String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL ","HUTAN " };
+	private final String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC",
+			"PEMANCAR", "PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS", "SARC" };
+	private final String state[] = { "JOHOR", "KEDAH", "KELANTAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN",
+			"PAHANG", "PULAU PINANG", "PENANG", "PERAK", "PERLIS", "SELANGOR", "SABAH", "SARAWAK", "TERENGGANU" };
+	private final String callsign[] = { "9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6", "9M4C", "9M8",
+			"9M6" };
+	private final String location[] = { "BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL ", "HUTAN " };
 
 	private ArrayAdapter<String> adapterClub, adapterState, adapterCallsign, adapterLocation;
 
@@ -59,9 +60,9 @@ public class SuggestRepeaterStartActivity extends Activity {
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
 		/*
-		AdView mAdView = (AdView) findViewById(R.id.adViewSuggest);
-		mAdView.loadAd(new AdRequest.Builder().build());
-*/
+		 * AdView mAdView = (AdView) findViewById(R.id.adViewSuggest);
+		 * mAdView.loadAd(new AdRequest.Builder().build());
+		 */
 		rlist = RepeaterListActivity.loadStringData(getResources().openRawResource(R.raw.repeaterdata5));
 
 		tvSCallsign = (AutoCompleteTextView) findViewById(R.id.tvSCallsign);

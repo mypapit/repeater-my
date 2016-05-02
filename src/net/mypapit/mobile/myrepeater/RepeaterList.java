@@ -58,27 +58,29 @@ class RepeaterList extends ArrayList<Repeater> {
 		}
 
 	}
-	
-	public RepeaterList filterLink(RepeaterList input, boolean excludeLink){
+
+	/*
+	 * Skips linked repeater
+	 */
+	public RepeaterList filterLink(RepeaterList input, boolean excludeLink) {
 		RepeaterList output = new RepeaterList(100);
-		
+
 		Iterator<Repeater> iter = input.iterator();
 		while (iter.hasNext()) {
 			Repeater temp = iter.next();
-			if ( (temp.getLink().length()>0) && excludeLink   ){
-				
-			} else {			
-					output.add(temp);
+			if ((temp.getLink().length() > 0) && excludeLink) {
+
+			} else {
+				output.add(temp);
 			}
-					
+
 		}
-		
+
 		return output;
 	}
 
-	
 	public void sort() {
-		//sort repeater list according to distance
+		// sort repeater list according to distance
 		Collections.sort(this);
 	}
 

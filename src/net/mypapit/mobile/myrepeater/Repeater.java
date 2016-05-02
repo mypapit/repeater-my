@@ -196,8 +196,15 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 
 	}
 
+	/*
+	 * calculate and set distance (non-Javadoc)
+	 * 
+	 * @see android.location.Location#distanceTo(android.location.Location)
+	 * Accepts: Location Returns: the distance between Repeater and Location l;
+	 */
+
 	public float distanceTo(Location l) {
-		distance = super.distanceTo(l);
+		this.distance = super.distanceTo(l);
 
 		return (float) distance;
 
@@ -205,7 +212,7 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 
 	@Override
 	public int compareTo(Repeater repeater) {
-	
+
 		if (this.distance < repeater.distance) {
 			return -1;
 		} else if (this.distance > repeater.distance) {
@@ -227,7 +234,8 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
 		String distance = nf.format(this.getDistance() / 1000);
 
 		String array[] = { this.getCallsign(), this.getClub(), "" + this.getDownlink(), "" + this.getShift(),
-				"" + this.getLocation(), "" + this.getTone(), distance,this.getLatitude()+"",this.getLongitude()+"","0.0","0.0" };
+				"" + this.getLocation(), "" + this.getTone(), distance, this.getLatitude() + "",
+				this.getLongitude() + "", "0.0", "0.0" };
 
 		return array;
 

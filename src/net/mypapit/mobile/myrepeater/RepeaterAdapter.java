@@ -48,7 +48,7 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIndexer {
+public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer {
 
 	private static LayoutInflater inflater = null;
 	private RepeaterList data, realdata;
@@ -56,7 +56,8 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 	float local_distance;
 	boolean excludeLink, excludeDirection;
 	private Repeater userLocation;
-	private static final int[] interval= new int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750,2000};
+	private static final int[] interval = new int[] { 0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
+			700, 800, 900, 1000, 1250, 1500, 1750, 2000 };
 
 	private final Activity activity;
 
@@ -67,7 +68,6 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 		data = rl.filterLink(rl, excludeLink);
 		realdata = rl.filterLink(rl, excludeLink);
 
-		
 		this.excludeDirection = excludeDirection;
 
 		this.excludeLink = excludeLink;
@@ -121,20 +121,19 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 			holder = new ViewHolder();
 			holder.tvCallsign = (TextView) convertView.findViewById(R.id.tvCallsign);
 			holder.tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
-			
+
 			holder.tvFreq = (TextView) convertView.findViewById(R.id.tvFreq);
 			holder.tvTone = (TextView) convertView.findViewById(R.id.tvTone);
 			holder.tvClub = (TextView) convertView.findViewById(R.id.tvClub);
 			holder.tvLocation = (TextView) convertView.findViewById(R.id.tvLocation);
 			holder.tvLink = (TextView) convertView.findViewById(R.id.tvdLink);
-			
+
 			if (!excludeDirection) {
-				holder.compassView= (CompassView) convertView.findViewById(R.id.compassView);
+				holder.compassView = (CompassView) convertView.findViewById(R.id.compassView);
 			}
 
-			
 			convertView.setTag(holder);
-			
+
 		} else {
 
 			Animation animation = AnimationUtils.loadAnimation(activity,
@@ -145,12 +144,11 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 
 		}
 
-		
 		Repeater repeater = data.get(position);
 		DecimalFormat nf = new DecimalFormat("#.00");
 
-	
-		//Log.d("mypapit.excludeLink", "mypapit.local_distance: " + local_distance);
+		// Log.d("mypapit.excludeLink", "mypapit.local_distance: " +
+		// local_distance);
 
 		holder.tvCallsign.setText((repeater.getCallsign()));
 		holder.tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
@@ -174,8 +172,6 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 			holder.tvDistance.setTextColor(Color.rgb(0, 250, 0));
 
 		}
-		
-		
 
 		if (!excludeDirection) {
 			holder.compassView.initializeCompass(userLocation, repeater, R.drawable.mediumarrow);
@@ -184,15 +180,20 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 		return convertView;
 	}
 
+	/*
+	 * Code for performing searching / filtering of repeater callsign =)
+	 * (non-Javadoc)
+	 * 
+	 * @see android.widget.Filterable#getFilter()
+	 */
 	@Override
 	public Filter getFilter() {
-
 
 		return new Filter() {
 
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint) {
-				
+
 				FilterResults results = new FilterResults();
 				RepeaterList list = new RepeaterList();
 
@@ -245,86 +246,85 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable,SectionIn
 
 	@Override
 	public Object[] getSections() {
-		
-		
-		 
-		int i=interval.length;
+
+		int i = interval.length;
 		String strSection[] = new String[i];
-		
-		for (int j=0; j<i;j++){
-			strSection[j] = ""+interval[j]+" km";
-			
+
+		for (int j = 0; j < i; j++) {
+			strSection[j] = "" + interval[j] + " km";
+
 		}
-	
+
 		return strSection;
 
-		
 	}
 
 	@Override
 	public int getPositionForSection(int section) {
-		
-		int numOfItems= this.getCount();
-		
-		for (int i=0;i<numOfItems;i++){
-			double distance = this.getRepeater(i).getDistance()/1000.0; 
-			
-			if ( (distance+4.5) >= interval[section]){
+
+		int numOfItems = this.getCount();
+
+		for (int i = 0; i < numOfItems; i++) {
+			double distance = this.getRepeater(i).getDistance() / 1000.0;
+
+			if ((distance + 4.5) >= interval[section]) {
 				return i;
 			}
 		}
-	
+
 		return 0;
 	}
 
 	@Override
 	public int getSectionForPosition(int position) {
-		
-		Repeater repeater=this.data.get(position);
-		double distance=repeater.getDistance()/1000.0;
-		//Log.d("net.mypapit distance","distance: " + distance);
-		//int[]{0,25,50,75,100,150,200,250,300,350,400,500,600,700,800,900,1000,1250,1500,1750,2000,2250};	
-		if (distance >25.0 ) {
+
+		Repeater repeater = this.data.get(position);
+		double distance = repeater.getDistance() / 1000.0;
+		// Log.d("net.mypapit distance","distance: " + distance);
+		// int[]{0,25,50,75,100,150,200,250,300,350,400,450,500,600,700,800,900,1000,1250,1500,1750,2000,2250};
+		if (distance > 25.0) {
 			return 1;
-			
-		} else if (distance >50.0){
+
+		} else if (distance > 50.0) {
 			return 2;
-		} else if (distance >75.0) {
+		} else if (distance > 75.0) {
 			return 3;
-		} else if (distance >100.0) {
+		} else if (distance > 100.0) {
 			return 4;
-		} else if (distance >150.0){
+		} else if (distance > 150.0) {
 			return 5;
-		} else if (distance <=200.0){
+		} else if (distance <= 200.0) {
 			return 6;
-		} else if (distance<=300.0){
+		} else if (distance <= 300.0) {
 			return 7;
-		} else if (distance<=350.0){
+		} else if (distance <= 350.0) {
 			return 8;
-		} else if (distance<=400.0){
+		} else if (distance <= 400.0) {
 			return 9;
-		} else if (distance<=500.0){
+		} else if (distance <= 450.0) {
 			return 10;
-		} else if (distance<=600.0){
+		} else if (distance <= 500.0) {
 			return 11;
-		} else if (distance<=700){
+		} else if (distance <= 600.0) {
 			return 12;
-		} else if (distance<=800){
+		} else if (distance <= 700.0) {
 			return 13;
-		} else if (distance<=900){
+		} else if (distance <= 800.0) {
 			return 14;
-		} else if (distance<=1000){
+		} else if (distance <= 900.0) {
 			return 15;
-		} else if (distance<=1250){
+		} else if (distance <= 1000.0) {
 			return 16;
-		} else if (distance<=1500){
+		} else if (distance <= 1250.0) {
 			return 17;
-		} else if (distance<=1750){
+		} else if (distance <= 1500.0) {
 			return 18;
-		} else if (distance<=2000){
+		} else if (distance <= 1750.0) {
 			return 19;
+		} else if (distance <= 2000.0) {
+			return 20;
 		}
-	
+
 		return 0;
 	}
 }

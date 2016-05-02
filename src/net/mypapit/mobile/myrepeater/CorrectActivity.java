@@ -2,7 +2,7 @@
  * 
 
 	MyRepeater Finder 
-	Copyright 2013, 2015 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2013, 2015, 2016 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 
@@ -51,8 +51,8 @@ public class CorrectActivity extends Activity {
 	private String[] repeater;
 	private boolean[] checked;
 
-	private final String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC", "PEMANCAR",
-			"PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS" };
+	private final String club[] = { "ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC",
+			"PEMANCAR", "PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -142,22 +142,22 @@ public class CorrectActivity extends Activity {
 			versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 
 		} catch (NameNotFoundException nnfe) {
+			Toast.makeText(this, "Problem retrieving version name", Toast.LENGTH_SHORT).show();
+			versionName = "Unknown";
 
 		}
-		
-		
+
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - Info Repeater " + repeater[0]);
 		emailIntent.putExtra(
 				Intent.EXTRA_TEXT,
-				"Please put the repeater details you want to suggest --\n\nRepeater Callsign : "
+				"Please put the repeater details you want to correct --\n\nRepeater Callsign : "
 						+ etcCallsign.getText() + (checked[0] ? "*" : "") + "\nFreq: " + etcFreq.getText().toString()
 						+ (checked[1] ? "*" : "") + "\nShift: " + etcShift.getText().toString()
 						+ (checked[2] ? "*" : "") + "\nTone: " + etcTone.getText().toString() + (checked[3] ? "*" : "")
 						+ "\nLocation or Coordinates: " + etcLocation.getText().toString() + (checked[5] ? "*" : "")
 						+ "\nOwner or Club: " + etcClub.getText().toString() + (checked[4] ? "*" : "") + "\n\n"
-						+ Build.BRAND + "(" + Build.PRODUCT + "-" + Build.MODEL + ")\nRepeater.MY ver: "+versionName+"\n\nNote:\n"
-						+ etcNote.getText().toString());
-		
+						+ Build.BRAND + "(" + Build.PRODUCT + "-" + Build.MODEL + ")\nRepeater.MY ver: " + versionName
+						+ "\n\nNote:\n" + etcNote.getText().toString());
 
 		startActivity(createEmailOnlyChooserIntent(emailIntent, "Suggest Correction"));
 
@@ -176,6 +176,7 @@ public class CorrectActivity extends Activity {
 		for (ResolveInfo ri : activities) {
 			Intent target = new Intent(source);
 			target.setPackage(ri.activityInfo.packageName);
+
 			intents.add(target);
 		}
 

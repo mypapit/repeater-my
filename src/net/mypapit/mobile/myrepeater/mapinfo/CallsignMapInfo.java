@@ -3,6 +3,7 @@ package net.mypapit.mobile.myrepeater.mapinfo;
 public class CallsignMapInfo extends MapInfoObject {
 	
 	
+	
 	public CallsignMapInfo() 
 	{
 		isRepeater = false;
@@ -62,6 +63,17 @@ public class CallsignMapInfo extends MapInfoObject {
 		}
 		
 	}
+	
+	public void setIndex(int index){
+		m_index=index;
+		
+	}
+	
+	public int getIndex(){
+		return m_index;
+		
+	}
+	
 	
 
 }

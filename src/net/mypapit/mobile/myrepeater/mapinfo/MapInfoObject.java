@@ -89,5 +89,11 @@ public abstract class MapInfoObject {
 		return m_status;
 	}
 	
+	public boolean getIsRepeater(){
+		return isRepeater;
+		
+	}
+	
+	
 
 }

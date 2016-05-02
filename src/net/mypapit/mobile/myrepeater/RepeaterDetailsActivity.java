@@ -111,12 +111,12 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
 			CompassView compassView = (CompassView) findViewById(R.id.compassViewDetail);
 			compassView.initializeCompass((Location) userloc, (Location) repeaterloc, R.drawable.arrow);
-			
+
 			SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
 			int count = prefs.getInt("walkthrough", RepeaterListActivity.WALK_VERSION_CODE);
-			//count=count-4;
-			
-			if (count<(RepeaterListActivity.WALK_VERSION_CODE+3)){
+			// count=count-4;
+
+			if (count < (RepeaterListActivity.WALK_VERSION_CODE + 3)) {
 				showOverlay();
 				count++;
 				SharedPreferences.Editor prefEditor = prefs.edit();
@@ -139,26 +139,19 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		Intent intent;
 		switch (item.getItemId()) {
 		case R.id.action_sharedetails:
-			String versionName="local";
+			String versionName = "local";
 			try {
 				versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-			} catch (NameNotFoundException nnfe) {	}
+			} catch (NameNotFoundException nnfe) {
+			}
 
 			intent = new Intent(android.content.Intent.ACTION_SEND);
 			intent.setType("text/plain");
 			intent.putExtra(Intent.EXTRA_TITLE, repeater[0]);
 			intent.putExtra(Intent.EXTRA_TEXT, "Repeater Callsign :" + repeater[0] + " (" + repeater[1] + ")"
 					+ "\nLocation : " + repeater[4] + "\nFrequency : " + repeater[2] + " MHz\nShift : " + repeater[3]
-					+ " MHz\nTone : " + repeater[5]+ "\n\nSent from: "
-					+ Build.MANUFACTURER
-					+ " "
-					+ Build.BRAND
-					+ " "
-					+ " "
-					+ Build.PRODUCT
-					+ " "
-					+ Build.MODEL
-					+ "\nRepeater.MY version: " + versionName);
+					+ " MHz\nTone : " + repeater[5] + "\n\nSent from: " + Build.MANUFACTURER + " " + Build.BRAND + " "
+					+ " " + Build.PRODUCT + " " + Build.MODEL + "\nRepeater.MY version: " + versionName);
 
 			startActivity(Intent.createChooser(intent, "Send via "));
 			return true;
@@ -179,12 +172,11 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
 		return false;
 	}
-	
+
 	private void showOverlay() {
 
 		final Dialog dialog = new Dialog(this, R.style.cust_dialog);
-		
-		
+
 		dialog.setContentView(R.layout.overlay_view);
 		LinearLayout layout = (LinearLayout) dialog.findViewById(R.id.overlayLayout);
 		layout.setOnClickListener(new OnClickListener() {
@@ -200,7 +192,6 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		dialog.show();
 
 	}
-
 
 	/*
 	 * I don't write this, but it is a handy function to focus on sending Email
@@ -262,8 +253,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 				if (selected) {
 
 					submitToCorrect(checked, repeater);
-					
-					
+
 				} else {
 					Toast x = Toast.makeText(mContext, "Please select at least one detail", Toast.LENGTH_SHORT);
 					x.show();
@@ -288,5 +278,4 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
 	}
 
-	
 }

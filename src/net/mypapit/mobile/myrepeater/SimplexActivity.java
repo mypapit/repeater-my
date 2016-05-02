@@ -21,9 +21,7 @@
     along with MyRepeater Finder.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package net.mypapit.mobile.myrepeater;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +40,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import au.com.bytecode.opencsv.CSVReader;
 
-public class SimplexActivity extends Activity{
+public class SimplexActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +52,15 @@ public class SimplexActivity extends Activity{
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 
-
 		ListView lv = (ListView) findViewById(R.id.lvSimplex);
 
-		List<Map<String, String>> simplexData = this.loadSimplexData(getResources().openRawResource(R.raw.simplex)); 
+		List<Map<String, String>> simplexData = this.loadSimplexData(getResources().openRawResource(R.raw.simplex));
 
-		SimpleAdapter adapter = new SimpleAdapter(this, simplexData,android.R.layout.simple_list_item_2,new String[]{"V","Freq"},new int[]{android.R.id.text1,android.R.id.text2});
+		SimpleAdapter adapter = new SimpleAdapter(this, simplexData, android.R.layout.simple_list_item_2, new String[] {
+				"V", "Freq" }, new int[] { android.R.id.text1, android.R.id.text2 });
 		lv.setAdapter(adapter);
 
-
 	}
-
-
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -81,32 +76,27 @@ public class SimplexActivity extends Activity{
 
 	}
 
-	public List<Map<String, String>> loadSimplexData(InputStream stream)
-	{
-		List<Map<String, String>> datalist = new ArrayList<Map<String,String>>();
-		int line=0;
+	public List<Map<String, String>> loadSimplexData(InputStream stream) {
+		List<Map<String, String>> datalist = new ArrayList<Map<String, String>>();
+		int line = 0;
 		try {
 			InputStreamReader is = new InputStreamReader(stream);
 			BufferedReader in = new BufferedReader(is);
 			CSVReader csv = new CSVReader(in, ',', '\"', 0);
 
-
-
 			String data[];
-			Map <String,String> simplexfreq;
+			Map<String, String> simplexfreq;
 
 			while ((data = csv.readNext()) != null) {
 				line++;
-				simplexfreq = new HashMap<String,String>();
+				simplexfreq = new HashMap<String, String>();
 
-				simplexfreq.put("Freq",data[0]+" MHz");
-				simplexfreq.put("V",data[1]);
+				simplexfreq.put("Freq", data[0] + " MHz");
+				simplexfreq.put("V", data[1]);
 
-				Log.d("Simplex net.mypapit","data[0]: " + data[0]);
+				Log.d("Simplex net.mypapit", "data[0]: " + data[0]);
 				datalist.add(simplexfreq);
 			}
-
-
 
 			in.close();
 
@@ -123,6 +113,5 @@ public class SimplexActivity extends Activity{
 		return datalist;
 
 	}
-
 
 }

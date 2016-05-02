@@ -33,5 +33,6 @@
     <string name="title_activity_walkthrough">New in Repeater.MY</string>
     <string name="title_activity_help_overlay">Tips</string>
     <string name="title_activity_simplex">Simplex Freq</string>
+    <string name="title_activity_callsign_details">CallsignDetailsActivity</string>
 
 </resources>

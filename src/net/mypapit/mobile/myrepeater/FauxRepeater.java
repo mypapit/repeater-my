@@ -5,10 +5,10 @@
  * This application requires (and has been compiled with) Google Play Service rev. 13
  *  
 	MyRepeater Finder 
-	Copyright 2014 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2014,2016 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	http://repeater-my.googlecode.com/
-	
+
 	This file is part of MyRepeater Finder.
 
     MyRepeater Finder is free software: you can redistribute it and/or modify

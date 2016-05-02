@@ -4,7 +4,7 @@
  * This application requires (and has been compiled with) Google Play Service rev. 13
  *  
 	MyRepeater Finder 
-	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2016 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 
@@ -99,21 +99,19 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	private float local_distance = 100.0f;
 
 	private boolean mrefresh = true;
-	private String m_callsign="9W-newbie";
-	private String m_handle="Mr Newbie";
-	private double m_qsx=145.000;
-	private String m_status="no status";
-	private int m_passcode=0;
-	private String m_phoneno="+60120000";
-	private static final String URL_API="http://api.repeater.my/v1/endp.php";
-		
-	
-	//device id, once assigned, never changes 
+	private String m_callsign = "9W-newbie";
+	private String m_handle = "Mr Newbie";
+	private double m_qsx = 145.000;
+	private String m_status = "no status";
+	private int m_passcode = 0;
+	private String m_phoneno = "+60120000";
+	private static final String URL_API = "http://api.repeater.my/v1/endp.php";
+
+	// device id, once assigned, never changes
 	private static String m_deviceid;
-	
-	//please change this to reflect walkthrough updates
-	protected static int WALK_VERSION_CODE=210;
-	
+
+	// please change this to reflect walkthrough updates
+	protected static int WALK_VERSION_CODE = 210;
 
 	// StackHistory stackhistory;
 
@@ -127,9 +125,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		lv = (ListView) findViewById(R.id.repeaterListView);
 		tvAddress = (TextView) findViewById(R.id.tvAddress);
 
-		
 		String coordinates = new String("37.5651,126.98955");
-	
+
 		String coord[] = coordinates.split(",");
 
 		xlocation = new Repeater("", Double.parseDouble(coord[0]), Double.parseDouble(coord[1]));
@@ -146,31 +143,31 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(this);
 
-		//SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
+		// SharedPreferences prefs = getSharedPreferences("Location",
+		// MODE_PRIVATE);
 		SharedPreferences prefshare = PreferenceManager.getDefaultSharedPreferences(this);
 		int walkcount = prefshare.getInt("walkthrough", WALK_VERSION_CODE);
-		if (walkcount < (WALK_VERSION_CODE+1)) {
+		if (walkcount < (WALK_VERSION_CODE + 1)) {
 			Intent intent = new Intent();
-			
-			intent.setClassName(getApplicationContext(),"net.mypapit.mobile.myrepeater.SettingsActivity");
+
+			intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.SettingsActivity");
 			startActivity(intent);
-			
-			
+
 			intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.WalkthroughActivity");
 			SharedPreferences.Editor prefEditor = prefshare.edit();
 			walkcount++;
-			
+
 			SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-						
 			m_deviceid = repeater_prefs.getString("deviceid", this.generateCallsign());
 			prefEditor.putInt("walkthrough", walkcount);
-			//prefEditor.putString("callsign", new StringBuilder("9W2-").append(this.generateCallsign()).toString());
+			// prefEditor.putString("callsign", new
+			// StringBuilder("9W2-").append(this.generateCallsign()).toString());
 			prefEditor.putString("deviceid", m_deviceid);
 			prefEditor.commit();
 
 			startActivity(intent);
-			
+
 		}
 
 		// need to put token to avoid app from popping up annoying select manual
@@ -179,13 +176,12 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		// location dialog
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM", Locale.US);
 		Date date = new Date();
-		
+
 		SharedPreferences preftoken = getSharedPreferences("Location", MODE_PRIVATE);
 
 		if (!this.isLocationEnabled(this)
 				&& !dateFormat.format(date).equalsIgnoreCase(preftoken.getString("token", "28/10"))) {
 
-			
 			// show dialog if Location Services is not enabled
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.gps_not_found_title); // GPS not found
@@ -241,24 +237,23 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		excludeLink = repeater_prefs.getBoolean("excludeLinkRepeater", false);
-		
+
 		m_deviceid = repeater_prefs.getString("deviceid", this.generateCallsign());
 		m_callsign = repeater_prefs.getString("callsign", "9W2-" + this.generateCallsign());
-		m_handle = repeater_prefs.getString("handle", "Newbie (" + this.generateCallsign().substring(0,4)+")");
+		m_handle = repeater_prefs.getString("handle", "Newbie (" + this.generateCallsign().substring(0, 4) + ")");
 		m_status = repeater_prefs.getString("status", "no status");
 		m_qsx = Double.parseDouble(repeater_prefs.getString("qsx", "145.00"));
 		m_phoneno = repeater_prefs.getString("phoneno", "+60120000");
 		try {
 			m_passcode = Integer.parseInt(repeater_prefs.getString("passcode", "0"));
-			
-		} catch (NumberFormatException nfe){
-			
-			m_passcode= 0;
-		} catch (Exception ex){
-			
-			m_passcode= 0;
+
+		} catch (NumberFormatException nfe) {
+
+			m_passcode = 0;
+		} catch (Exception ex) {
+
+			m_passcode = 0;
 		}
-		
 
 		local_distance = repeater_prefs.getInt("range", 100);
 
@@ -271,7 +266,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 	class GPSThread extends Thread {
 		private RepeaterListActivity activity;
-		
+
 		private String bestProvider;
 		private String m_address;
 
@@ -279,7 +274,6 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 		public GPSThread(RepeaterListActivity activity) {
 			this.activity = activity;
-			
 
 			m_address = new String("Unknown Address");
 
@@ -289,8 +283,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 			List<Address> addressList = null;
 			StringBuffer stringBuffer = new StringBuffer("");
-			String[] addressLocality= new String[2];
-			
+			String[] addressLocality = new String[2];
+
 			Log.d("net.mypapit.mobile", "Unknown Address");
 
 			try {
@@ -319,12 +313,12 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 						// However, only display locality info (like county,
 						// territory, area)
 						addressLocality[i] = singleAddress.getLocality();
-						
+
 					}
 				}
 
 			} catch (IllegalArgumentException iae) {
-			
+
 				Log.d("net.mypapit.mobile",
 						"Invalid GPS coordinates : " + iae.getMessage() + " caused by: " + iae.getCause());
 				addressLocality[0] = new String("Unknown Location");
@@ -347,11 +341,11 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 			criteria.setPowerRequirement(Criteria.POWER_LOW);
 			/*
-			criteria.setSpeedRequired(false);
-			criteria.setAltitudeRequired(false);
-			criteria.setHorizontalAccuracy(Criteria.NO_REQUIREMENT);
-			criteria.setCostAllowed(true);
-			criteria.setVerticalAccuracy(Criteria.NO_REQUIREMENT);
+			 * criteria.setSpeedRequired(false);
+			 * criteria.setAltitudeRequired(false);
+			 * criteria.setHorizontalAccuracy(Criteria.NO_REQUIREMENT);
+			 * criteria.setCostAllowed(true);
+			 * criteria.setVerticalAccuracy(Criteria.NO_REQUIREMENT);
 			 */
 			Looper.prepare();
 
@@ -385,8 +379,6 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 				float lat = prefs.getFloat("DefaultLat", 37.56f);
 				float lon = prefs.getFloat("DefaultLon", 126.989f);
 				excludeDirection = true;
-				
-			
 
 				location.setLatitude(lat);
 				location.setLongitude(lon);
@@ -469,77 +461,67 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 					}
 
 					Thread kthread = new Thread(new Runnable() {
-						String versionName="local/1.0";
+						String versionName = "local/1.0";
 
 						@Override
 						public void run() {
 
 							m_location2 = geoCode(lat, lon);
-							
+
 							HttpClient client = new DefaultHttpClient();
 							HttpPost post = new HttpPost(URL_API);
-							try{
-								versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-							} catch (NameNotFoundException nnfe){
-								
-								
-								
-							}
-						
-							
 							try {
-								Log.d("http mypapit","sending data");
-								List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(16);
-								nameValuePairs.add(new BasicNameValuePair("apiver","1"));
-								nameValuePairs.add(new BasicNameValuePair("passcode",Integer.toString(m_passcode)));
-								nameValuePairs.add(new BasicNameValuePair("name",m_handle));
-								nameValuePairs.add(new BasicNameValuePair("callsign",m_callsign));
-								nameValuePairs.add(new BasicNameValuePair("lat",Double.toString(lat)));
-								nameValuePairs.add(new BasicNameValuePair("lng",Double.toString(lon)));
-								nameValuePairs.add(new BasicNameValuePair("status",m_status));
-								nameValuePairs.add(new BasicNameValuePair("datetime",Long.toString(System.currentTimeMillis()/1000l)));
-								nameValuePairs.add(new BasicNameValuePair("device",Build.PRODUCT +" " + Build.MODEL));
-								nameValuePairs.add(new BasicNameValuePair("client","Repeater.MY/"+versionName));
-								nameValuePairs.add(new BasicNameValuePair("qsx",Double.toString(m_qsx)));
-								nameValuePairs.add(new BasicNameValuePair("locality",m_location2));
-								nameValuePairs.add(new BasicNameValuePair("deviceid",m_deviceid));
-								nameValuePairs.add(new BasicNameValuePair("phoneno",m_phoneno));
-								
-								post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-								 HttpResponse response = client.execute(post);
-								 
-								 //debugging
-								 HttpEntity entity = response.getEntity();
-								 InputStream inputstream = entity.getContent();
-								 BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream,"UTF-8"),16);
-								 StringBuilder sbuilder = new StringBuilder("");
-								 
-								 sbuilder.append(reader.readLine());
-								 String line="0";
-								 while (  (line= reader.readLine()) != null) {
-									 sbuilder.append(line +"\n");
-									 
-								 }
-								 
-								 inputstream.close();
-								 String result = sbuilder.toString();
-								 
-								 Log.d("http mypapit","Output: " + result);
-								 
-								 		
-								 
-								
-								
-								
-								
-								
-								
-							}catch (IOException err){
-								
-								Log.d("http mypapit","Error HTTP Client : " + err.getMessage());
-								//err.printStackTrace();
+								versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+							} catch (NameNotFoundException nnfe) {
+
 							}
-							
+
+							try {
+								Log.d("http mypapit", "sending data");
+								List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(16);
+								nameValuePairs.add(new BasicNameValuePair("apiver", "1"));
+								nameValuePairs.add(new BasicNameValuePair("passcode", Integer.toString(m_passcode)));
+								nameValuePairs.add(new BasicNameValuePair("name", m_handle));
+								nameValuePairs.add(new BasicNameValuePair("callsign", m_callsign));
+								nameValuePairs.add(new BasicNameValuePair("lat", Double.toString(lat)));
+								nameValuePairs.add(new BasicNameValuePair("lng", Double.toString(lon)));
+								nameValuePairs.add(new BasicNameValuePair("status", m_status));
+								nameValuePairs.add(new BasicNameValuePair("datetime", Long.toString(System
+										.currentTimeMillis() / 1000l)));
+								nameValuePairs.add(new BasicNameValuePair("device", Build.PRODUCT + " " + Build.MODEL));
+								nameValuePairs.add(new BasicNameValuePair("client", "Repeater.MY/" + versionName));
+								nameValuePairs.add(new BasicNameValuePair("qsx", Double.toString(m_qsx)));
+								nameValuePairs.add(new BasicNameValuePair("locality", m_location2));
+								nameValuePairs.add(new BasicNameValuePair("deviceid", m_deviceid));
+								nameValuePairs.add(new BasicNameValuePair("phoneno", m_phoneno));
+
+								post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+								HttpResponse response = client.execute(post);
+
+								// debugging
+								HttpEntity entity = response.getEntity();
+								InputStream inputstream = entity.getContent();
+								BufferedReader reader = new BufferedReader(new InputStreamReader(inputstream, "UTF-8"),
+										16);
+								StringBuilder sbuilder = new StringBuilder("");
+
+								sbuilder.append(reader.readLine());
+								String line = "0";
+								while ((line = reader.readLine()) != null) {
+									sbuilder.append(line + "\n");
+
+								}
+
+								inputstream.close();
+								String result = sbuilder.toString();
+
+								Log.d("http mypapit", "Output: " + result);
+
+							} catch (IOException err) {
+
+								Log.d("http mypapit", "Error HTTP Client : " + err.getMessage());
+								// err.printStackTrace();
+							}
 
 							activity.runOnUiThread(new Runnable() {
 
@@ -563,11 +545,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 									adapter.notifyDataSetChanged();
 
 									Log.d("latitud papit", "Geo: " + xlocation.getLatitude());
-									
-									
-									//http post
-									
-									
+
+									// http post
 
 								}
 
@@ -621,9 +600,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 				}
 
 			};
-			Log.d("Best Provider mypapit","Best Provider: " + bestProvider);
+			Log.d("Best Provider mypapit", "Best Provider: " + bestProvider);
 			locationManager.requestLocationUpdates(bestProvider, 5000, static_distance, myLocationListener);
-			
 
 			Looper.loop();
 
@@ -713,7 +691,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 				@Override
 				public boolean onQueryTextSubmit(String searchText) {
-					
+
 					adapter.getFilter().filter(searchText);
 					Log.d("MYRepeater", "search: " + searchText);
 					adapter.notifyDataSetChanged();
@@ -798,15 +776,14 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			}
 
 			return true;
-			
+
 		case R.id.action_simplex:
 			intent = new Intent(getApplicationContext(), SimplexActivity.class);
 			startActivity(intent);
 			return true;
 
 		}
-		
-		
+
 		return false;
 	}
 
@@ -833,7 +810,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Manual Location");
 		builder.setMessage("Note that this will not allow Repeater.MY to auto-detect location.\n\nDisable Location Service now?"); // Want
-																																	// to
+		// to
 		// enable?
 
 		// if yes - bring user to enable Location Service settings
@@ -913,17 +890,17 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			return true;
 		}
 
-		boolean sensor = getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS);
+		boolean sensor = getApplicationContext().getPackageManager().hasSystemFeature(
+				PackageManager.FEATURE_SENSOR_COMPASS);
 
 		return !sensor;
 
 	}
-	
-	 public String generateCallsign() {
-		 final SecureRandom random = new SecureRandom();
-		 
-		    return new BigInteger(130, random).toString(32).substring(0,8);
-	 } 
-	 
+
+	public String generateCallsign() {
+		final SecureRandom random = new SecureRandom();
+
+		return new BigInteger(130, random).toString(32).substring(0, 8);
+	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * 
-	Copyright 2013,2015 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2013,2015,2016 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 
@@ -160,37 +160,40 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10));
 			map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
 			new GetUserInfo(latlng).execute();
-			
-			
+
 			map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-				
+
 				@Override
 				public View getInfoWindow(Marker marker) {
 					// TODO Auto-generated method stub
 					return null;
 				}
-				
+
 				@Override
 				public View getInfoContents(Marker marker) {
-					   Context context = getApplicationContext(); //or getActivity(), YourActivity.this, etc.
-					   
-			            LinearLayout info = new LinearLayout(context);
-			            info.setOrientation(LinearLayout.VERTICAL);
-			 
-			            TextView title = new TextView(context);
-			            title.setTextColor(Color.BLACK);
-			            title.setGravity(Gravity.CENTER);
-			            title.setTypeface(null, Typeface.BOLD);
-			            title.setText(marker.getTitle());
-			 
-			            TextView snippet = new TextView(context);
-			            snippet.setTextColor(Color.GRAY);
-			            snippet.setText(marker.getSnippet());
-			 
-			            info.addView(title);
-			            info.addView(snippet);
-			 
-			            return info;				}
+					Context context = getApplicationContext(); // or
+																// getActivity(),
+																// YourActivity.this,
+																// etc.
+
+					LinearLayout info = new LinearLayout(context);
+					info.setOrientation(LinearLayout.VERTICAL);
+
+					TextView title = new TextView(context);
+					title.setTextColor(Color.BLACK);
+					title.setGravity(Gravity.CENTER);
+					title.setTypeface(null, Typeface.BOLD);
+					title.setText(marker.getTitle());
+
+					TextView snippet = new TextView(context);
+					snippet.setTextColor(Color.GRAY);
+					snippet.setText(marker.getSnippet());
+
+					info.addView(title);
+					info.addView(snippet);
+
+					return info;
+				}
 			});
 
 			/*
@@ -243,7 +246,44 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 		MapInfoObject mio = hashMap.get(marker);
 
-		if (mio.getIndex() < 0) {
+		if (!mio.getIsRepeater()) {
+
+			Intent intent = new Intent();
+			intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.CallsignDetailsActivity");
+
+			HashMap<String, String> inforakanradio = listrakanradio.get(mio.getIndex());
+			/*
+			 * inforakanradio.put("callsign", callsign);
+			 * inforakanradio.put("name", jsinfo.getString("name"));
+			 * inforakanradio.put("qsx", jsinfo.getString("qsx"));
+			 * inforakanradio.put("status", jsinfo.getString("status"));
+			 * inforakanradio.put("distance", jsinfo.getString("distance"));
+			 * inforakanradio.put("time", jsinfo.getString("time"));
+			 * inforakanradio.put("lat", jsinfo.getString("lat"));
+			 * inforakanradio.put("lng", jsinfo.getString("lng"));
+			 * inforakanradio.put("valid", valid);
+			 * inforakanradio.put("deviceid", jsinfo.getString("deviceid"));
+			 * inforakanradio.put("phoneno",jsinfo.getString("phoneno"));
+			 * inforakanradio.put("client",jsinfo.getString("client"));
+			 * inforakanradio.put("locality",jsinfo.getString("locality"));
+			 */
+
+			intent.putExtra("callsign", inforakanradio.get("callsign"));
+			intent.putExtra("name", inforakanradio.get("name"));
+			intent.putExtra("qsx", inforakanradio.get("qsx"));
+			intent.putExtra("status", inforakanradio.get("status"));
+			intent.putExtra("distance", inforakanradio.get("distance"));
+			intent.putExtra("time", inforakanradio.get("time"));
+			intent.putExtra("lat", inforakanradio.get("lat"));
+			intent.putExtra("lng", inforakanradio.get("lng"));
+			intent.putExtra("valid", inforakanradio.get("valid"));
+			intent.putExtra("deviceid", inforakanradio.get("deviceid"));
+			intent.putExtra("phoneno", inforakanradio.get("phoneno"));
+			intent.putExtra("client", inforakanradio.get("client"));
+			intent.putExtra("locality", inforakanradio.get("locality"));
+
+			startActivity(intent);
+
 			return;
 		}
 
@@ -311,8 +351,9 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 			String jsonStr = sh.makeServiceCall(URL, ServiceHandler.GET, nameValuePairs);
 
-			Log.d("mypapit Json Response: ", "> " + jsonStr);
-			listrakanradio = new ArrayList<HashMap<String, String>>(50);
+			// Log.d("mypapit Json Response: ", "> " + jsonStr);
+
+			listrakanradio = new ArrayList<HashMap<String, String>>(200);
 
 			if (jsonStr != null) {
 				try {
@@ -322,54 +363,49 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 					int num_of_rakanradio = rakanradio.length();
 					for (int i = 0; i < num_of_rakanradio; i++) {
 						JSONObject jsinfo = rakanradio.getJSONObject(i);
+
 						String callsign = jsinfo.getString("callsign");
-						String name = jsinfo.getString("name");
-						String qsx = jsinfo.getString("qsx");
 
 						/*
-						 * double lat =
-						 * Double.parseDouble(jsinfo.getString("lat")); double
-						 * lng = Double.parseDouble(jsinfo.getString("lng"));
+						 * debug use only, now we shortcut String callsign =
+						 * jsinfo.getString("callsign"); String name =
+						 * jsinfo.getString("name"); String qsx =
+						 * jsinfo.getString("qsx"); String status =
+						 * jsinfo.getString("status");
+						 * 
+						 * String distance = jsinfo.getString("distance");
+						 * String time = jsinfo.getString("time"); String lat =
+						 * jsinfo.getString("lat"); String lng =
+						 * jsinfo.getString("lng"); String valid =
+						 * jsinfo.getString("valid"); String deviceid =
+						 * jsinfo.getString("deviceid"); String phoneno =
+						 * jsinfo.getString("phoneno"); String rmyclient =
+						 * jsinfo.getString("client");
 						 */
-						String status = jsinfo.getString("status");
 
-						/*
-						 * java.util.Date utilDate = new java.util.Date();
-						 * DateFormat formatter = new
-						 * SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-						 * java.util.Date time =
-						 * formatter.parse(jsinfo.getString("time"));
-						 */
-
-						String distance = jsinfo.getString("distance");
-						String time = jsinfo.getString("time");
-						String lat = jsinfo.getString("lat");
-						String lng = jsinfo.getString("lng");
 						String valid = jsinfo.getString("valid");
-						String deviceid = jsinfo.getString("deviceid");
-						String phoneno = jsinfo.getString("phoneno");
-						String rmyclient = jsinfo.getString("client");
 
 						HashMap<String, String> inforakanradio = new HashMap<String, String>();
 
-						int validity = Integer.parseInt(jsinfo.getString("valid"));
+						int validity = Integer.parseInt(valid);
 
 						if (validity == 0) {
 							callsign = callsign + " (Unverified)";
 						}
 
 						inforakanradio.put("callsign", callsign);
-						inforakanradio.put("name", name);
-						inforakanradio.put("qsx", qsx);
-						inforakanradio.put("status", status);
-						inforakanradio.put("distance", distance);
-						inforakanradio.put("time", time);
-						inforakanradio.put("lat", lat);
-						inforakanradio.put("lng", lng);
+						inforakanradio.put("name", jsinfo.getString("name"));
+						inforakanradio.put("qsx", jsinfo.getString("qsx"));
+						inforakanradio.put("status", jsinfo.getString("status"));
+						inforakanradio.put("distance", jsinfo.getString("distance"));
+						inforakanradio.put("time", jsinfo.getString("time"));
+						inforakanradio.put("lat", jsinfo.getString("lat"));
+						inforakanradio.put("lng", jsinfo.getString("lng"));
 						inforakanradio.put("valid", valid);
-						inforakanradio.put("deviceid", deviceid);
-						inforakanradio.put("phoneno",phoneno);
-						inforakanradio.put("client",rmyclient);
+						inforakanradio.put("deviceid", jsinfo.getString("deviceid"));
+						inforakanradio.put("phoneno", jsinfo.getString("phoneno"));
+						inforakanradio.put("client", jsinfo.getString("client"));
+						inforakanradio.put("locality", jsinfo.getString("locality"));
 
 						listrakanradio.add(inforakanradio);
 
@@ -389,6 +425,7 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 			super.onPostExecute(result);
 
 			Iterator<HashMap<String, String>> iter = listrakanradio.iterator();
+			int callsignIndex = 0;
 
 			while (iter.hasNext()) {
 				HashMap<String, String> inforakanradio = new HashMap<String, String>();
@@ -403,7 +440,8 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 				try {
 					time = formatter.parse(inforakanradio.get("time"));
 				} catch (ParseException e) {
-					
+					time = new java.util.Date();
+
 					e.printStackTrace();
 				}
 
@@ -411,9 +449,11 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 				marking.position(new LatLng(Double.parseDouble(inforakanradio.get("lat")), Double
 						.parseDouble(inforakanradio.get("lng"))));
-				marking.title(new StringBuilder(inforakanradio.get("callsign")).append(" - ").append(format.formatDistance(time)).toString());
+				marking.title(new StringBuilder(inforakanradio.get("callsign")).append(" - ")
+						.append(format.formatDistance(time)).toString());
 				marking.snippet(new StringBuilder("@").append(inforakanradio.get("name")).append("\n#:")
-						.append(inforakanradio.get("status")).append("\n").append(inforakanradio.get("phoneno")).append("\n").append(inforakanradio.get("client")).toString());
+						.append(inforakanradio.get("status")).append("\n").append(inforakanradio.get("phoneno"))
+						.append("\n").append(inforakanradio.get("client")).toString());
 
 				CallsignMapInfo cmi = new CallsignMapInfo(inforakanradio.get("callsign"),
 						Double.parseDouble(inforakanradio.get("lat")), Double.parseDouble(inforakanradio.get("lng")));
@@ -447,7 +487,11 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 				}
 
+				cmi.setIndex(callsignIndex);
+
 				hashMap.put(map.addMarker(marking), cmi);
+
+				callsignIndex++;
 
 			}
 

@@ -22,8 +22,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-     <uses-permission
-        android:name="net.mypapit.mobile.myrepeater.permission.MAPS_RECEIVE" />
+    <uses-permission android:name="net.mypapit.mobile.myrepeater.permission.MAPS_RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -73,7 +72,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.mypapit.mobile.myrepeater.RepeaterListActivity" />
         </activity>
-        
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
@@ -101,9 +99,8 @@
         </activity>
         <activity
             android:name=".WalkthroughActivity"
-            android:label="@string/title_activity_walkthrough" 
-            android:theme="@style/LightTheme"
-            >
+            android:label="@string/title_activity_walkthrough"
+            android:theme="@style/LightTheme" >
         </activity>
         <activity
             android:name=".HelpOverlay"
@@ -115,6 +112,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.mypapit.mobile.myrepeater.RepeaterListActivity" />
+        </activity>
+        <activity
+            android:name=".CallsignDetailsActivity"
+            android:label="@string/title_activity_callsign_details" >
         </activity>
     </application>
 

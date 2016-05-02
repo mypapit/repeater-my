@@ -1,11 +1,12 @@
 /*
  * 
 	MyRepeater Finder 
-	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2016 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 
 	This file is part of MyRepeater Finder.
+	This file represents the second-step for a two step-process for suggesting a new repeater 
 
     MyRepeater Finder is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -64,6 +65,10 @@ public class SuggestRepeaterSecondActivity extends Activity {
 		tvSTone = (EditText) findViewById(R.id.tvSTone);
 
 		tvSShift.setText("-0.600");
+
+		/*
+		 * set default tone value for ASTRA and MARTS repeater
+		 */
 		if (club.equalsIgnoreCase("ASTRA")) {
 			tvSTone.setText("103.5");
 
@@ -85,13 +90,13 @@ public class SuggestRepeaterSecondActivity extends Activity {
 		case R.id.action_suggest_done:
 
 			if (tvSFreq.getText().toString().length() < 4) {
-				Toast.makeText(this, "Please fill in frequency", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Please specify frequency", Toast.LENGTH_SHORT).show();
 				return false;
 			} else if (tvSShift.getText().toString().length() < 3) {
-				Toast.makeText(this, "Please fill in repeater shift", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Please specify shift", Toast.LENGTH_SHORT).show();
 				return false;
 			} else if (tvSTone.getText().toString().length() < 3) {
-				Toast.makeText(this, "Please fill in repeater tone", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Please specify tone", Toast.LENGTH_SHORT).show();
 				return false;
 			}
 
@@ -108,7 +113,7 @@ public class SuggestRepeaterSecondActivity extends Activity {
 				versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
 
 			} catch (NameNotFoundException nnfe) {
-
+				versionName = "Unknown";
 			}
 			emailIntent.putExtra(Intent.EXTRA_TEXT, "Please put the repeater details you want to suggest --"
 					+ "\n\nRepeater Callsign : "
