@@ -136,15 +136,36 @@
        />
 
     <View style="@style/Divider"/>
-    
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent"
+            android:layout_height="wrap_content"> 
         <TextView
             android:id="@+id/tvcmiLocality"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dip"
             android:paddingBottom="6dip"
             android:text="around Alor Setar"
             android:textSize="16sp" />
+        <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageButton
+            android:id="@+id/btnNearby"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_menu_myplaces" />
+
+        </RelativeLayout>
+        </LinearLayout>
+        
+        
+        
+        
+        
          <TextView
 
         android:layout_width="wrap_content"

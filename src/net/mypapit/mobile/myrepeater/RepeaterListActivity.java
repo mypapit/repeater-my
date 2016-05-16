@@ -66,6 +66,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
@@ -596,6 +597,17 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 				@Override
 				public void onStatusChanged(String provider, int status, Bundle extras) {
+
+					switch (status) {
+					case LocationProvider.OUT_OF_SERVICE:
+						activity.showToast("Location sensor: " + provider + " out-of-service :(");
+						break;
+
+					case LocationProvider.TEMPORARILY_UNAVAILABLE:
+						activity.showToast("Location sensor: " + provider + " temporarily unavailable");
+						break;
+
+					}
 
 				}
 
