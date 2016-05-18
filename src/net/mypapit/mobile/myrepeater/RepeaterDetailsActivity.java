@@ -52,6 +52,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +62,8 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 	private boolean noCompass = false;
 	private TextView tvCallsign, tvFreq, tvShift, tvTone, tvLocation, tvClub, tvDistance;
 	private Context mContext;
+	ImageButton btnNearby;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +84,11 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		// prevent application from crashing if Repeater == null
 		if (repeater == null) {
 			repeater = new String[] { "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "N/A", "0.0", "0.0", "0.0",
-					"0.0" };
+			"0.0" };
 
 		}
 
+		btnNearby = (ImageButton) findViewById(R.id.btnNearbyOperator);
 		tvCallsign = (TextView) findViewById(R.id.tvdCallsign);
 		tvClub = (TextView) findViewById(R.id.tvdClub);
 		tvFreq = (TextView) findViewById(R.id.tvdFreq);
@@ -124,6 +128,36 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 				prefEditor.commit();
 			}
 		}
+		
+		btnNearby.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+
+				Intent intent = new Intent(getApplicationContext(), NearbyOperatorActivity.class);
+				intent.putExtra("location", repeater[4]);
+				
+				double lat, lng;
+				
+				try {
+					lat = Double.parseDouble(repeater[7]);
+					lng = Double.parseDouble(repeater[8]);
+					
+				} catch (Exception ex){
+					lat = 0.0;
+					lng = 0.0;
+					ex.printStackTrace();
+					
+				}
+				intent.putExtra("lat", lat);
+				intent.putExtra("lng", lng);
+
+
+				startActivity(intent);
+
+			}
+		});
+		
 
 	}
 
@@ -150,8 +184,8 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 			intent.putExtra(Intent.EXTRA_TITLE, repeater[0]);
 			intent.putExtra(Intent.EXTRA_TEXT, "Repeater Callsign :" + repeater[0] + " (" + repeater[1] + ")"
 					+ "\nLocation : " + repeater[4] + "\nFrequency : " + repeater[2] + " MHz\nShift : " + repeater[3]
-					+ " MHz\nTone : " + repeater[5] + "\n\nSent from: " + Build.MANUFACTURER + " " + Build.BRAND + " "
-					+ " " + Build.PRODUCT + " " + Build.MODEL + "\nRepeater.MY version: " + versionName);
+							+ " MHz\nTone : " + repeater[5] + "\n\nSent from: " + Build.MANUFACTURER + " " + Build.BRAND + " "
+							+ " " + Build.PRODUCT + " " + Build.MODEL + "\nRepeater.MY version: " + versionName);
 
 			startActivity(Intent.createChooser(intent, "Send via "));
 			return true;
@@ -225,6 +259,8 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
 
 	}
+	
+
 
 	public void showRepeaterCorrectionDialog() {
 		CharSequence[] items = { "Callsign", "Frequency", "Shift", "Tone", "Club", "Location" };
@@ -277,5 +313,12 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 		startActivity(intent);
 
 	}
+	
+	
+
+	
 
 }
+
+
+

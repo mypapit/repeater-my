@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -27,7 +28,9 @@ public class CallsignDetailsActivity extends Activity {
 	TextView tvName, tvClient, tvDistance, tvLocality, tvLastSeen, tvPhone, tvStatus;
 
 	View dividerPhone, titlePhone;
-	ImageButton btnCall;
+	ImageButton btnCall, btnStats;
+	
+	int jokecounter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,8 @@ public class CallsignDetailsActivity extends Activity {
 		mAdView.loadAd(new AdRequest.Builder().build());
 
 		Bundle bundle = getIntent().getExtras();
+		
+		jokecounter=0;
 
 		tvName = (TextView) findViewById(R.id.tvcmiHandle);
 		tvClient = (TextView) findViewById(R.id.tvcmiClient);
@@ -49,6 +54,10 @@ public class CallsignDetailsActivity extends Activity {
 		dividerPhone = findViewById(R.id.DividercmiPhone);
 		titlePhone = findViewById(R.id.TitlecmiPhone);
 		btnCall = (ImageButton) findViewById(R.id.btnCall);
+		btnStats = (ImageButton) findViewById(R.id.btnStats);
+		
+		
+		
 
 		/*
 		 * intent.putExtra("name", inforakanradio.get("name"));
@@ -136,7 +145,34 @@ public class CallsignDetailsActivity extends Activity {
 
 			}
 		});
+		
+		btnStats.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+					
+				if (jokecounter < 4){
+					Toast.makeText(getApplicationContext(), "Not implemented yet, sorry :(", Toast.LENGTH_SHORT).show();
+					
+				} else if (jokecounter <8){
+					
+					Toast.makeText(getApplicationContext(), "Hey, not implemented yet!!", Toast.LENGTH_SHORT).show();
+				} else if (jokecounter <12) {
+					
+					Toast.makeText(getApplicationContext(), "OMGWTF!!! Get it through your skull, not implemented yet!", Toast.LENGTH_SHORT).show();
+				} else {
+					
+					Toast.makeText(getApplicationContext(), "Wait for the next release - not implemented yet!", Toast.LENGTH_SHORT).show();
+				}
+				
+				jokecounter++;
+				
+				
+			}
+		});
 
+	
+	
 	}
 
 	@Override

@@ -34,5 +34,6 @@
     <string name="title_activity_help_overlay">Tips</string>
     <string name="title_activity_simplex">Simplex Freq</string>
     <string name="title_activity_callsign_details">CallsignDetailsActivity</string>
+    <string name="title_activity_nearby_operators">Nearby Stations</string>
 
 </resources>

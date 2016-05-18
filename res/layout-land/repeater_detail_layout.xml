@@ -5,7 +5,7 @@
     android:orientation="vertical" 
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     >
-
+    
     <TextView
         android:id="@+id/tvdCallsign"
         android:layout_width="wrap_content"
@@ -16,21 +16,21 @@
         android:paddingLeft="10dp"
         />
     
-<LinearLayout
+    <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
-
-    <TableLayout
+        
+        <TableLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.0" >
-
-        <TableRow
+            
+            <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
-            <TextView
+                
+                <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
@@ -38,8 +38,8 @@
                 android:text="Frequency"
                 android:textColor="@color/holo_blue"
                 android:textStyle="bold" />
-
-            <TextView
+                
+                <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
@@ -47,14 +47,14 @@
                 android:text="Shift"
                 android:textColor="@color/holo_blue"
                 android:textStyle="bold" />
-
-        </TableRow>
-
-        <TableRow
+                
+            </TableRow>
+            
+            <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
-            <TextView
+                
+                <TextView
                 android:id="@+id/tvdFreq"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,8 +63,8 @@
                 android:paddingLeft="5dip"
                 android:paddingTop="2dip"
                 android:text="145.525 MHz" />
-
-            <TextView
+                
+                <TextView
                 android:id="@+id/tvdShift"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,15 +73,15 @@
                 android:paddingLeft="5dip"
                 android:paddingTop="2dip"
                 android:text="-0.600 MHz" />
-
-        </TableRow>
-
-        <TableRow
+                
+            </TableRow>
+            
+            <TableRow
             
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
-            <TextView
+                
+                <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
@@ -89,8 +89,8 @@
                 android:text="Tone"
                 android:textColor="@color/holo_blue"
                 android:textStyle="bold" />
-
-            <TextView
+                
+                <TextView
                 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,17 +101,17 @@
                    android:layout_weight="1"
                 android:padding="5dip"
                 />
-
-
-         
-        </TableRow>
-
-        <TableRow
+                
+                
+                
+            </TableRow>
+            
+            <TableRow
             
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
-            <TextView
+                
+                <TextView
                 android:id="@+id/tvdTone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -120,8 +120,8 @@
                 android:paddingLeft="5dip"
                 android:paddingTop="2dip"
                 android:text="103.5 Hz" />
-
-            <TextView
+                
+                <TextView
                 android:id="@+id/tvdClub"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -135,15 +135,15 @@
                   
                 
                  />
-
-        </TableRow>
-        
-        <TableRow
+                
+            </TableRow>
+            
+            <TableRow
               android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-            
-             <TextView
+                
+                <TextView
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_weight="1.0"
@@ -151,8 +151,8 @@
                  android:text="Location"
                  android:textColor="@color/holo_blue"
                  android:textStyle="bold" />
-
-            <TextView
+                
+                <TextView
                 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,32 +163,48 @@
                    android:layout_weight="1"
                 android:padding="5dip"
                 />
-
+                
+                
+                
+            </TableRow>
             
-            
-        </TableRow>
-        
-         <TableRow
+            <TableRow
             
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
-
-            <TextView
+             <LinearLayout 
+                 android:orientation="horizontal"
+                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                >
+                <TextView
                 android:id="@+id/tvdLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.0"
+                
                 android:paddingBottom="2dip"
                 android:paddingLeft="5dip"
                 android:paddingTop="2dip"
                 android:text="KELANTAN" />
+             
 
-            <TextView
+        <ImageButton
+            android:id="@+id/btnNearbyOperator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            
+            android:src="@android:drawable/ic_menu_myplaces" 
+            
+            />
+        </LinearLayout>
+                
+                <TextView
                 android:id="@+id/tvdDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="203.5 km"
-                                   android:layout_weight="1"
+                                   android:layout_weight="0.5"
                                 android:paddingTop="2dip"
                 android:paddingBottom="2dip"
 
@@ -197,18 +213,18 @@
                   
                 
                  />
-
-        </TableRow>
+                
+            </TableRow>
+            
+        </TableLayout>
         
-    </TableLayout>
-
-     <garin.artemiy.compassview.library.CompassView
+        <garin.artemiy.compassview.library.CompassView
          android:id="@+id/compassViewDetail"
          android:layout_width="128dp"
          android:layout_height="match_parent"
          android:layout_gravity="left" />
-         
-<!--          
+        
+        <!--          
          <ImageView
              android:id="@+id/compassViewDetail"
              android:layout_width="254dp"
@@ -217,15 +233,16 @@
              android:paddingRight="30dip"
              android:src="@drawable/arrow" />
          -->    
-             
-
-</LinearLayout>    
+        
+        
+    </LinearLayout>
+     
     
-     <RelativeLayout
+    <RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
-    
-      <com.google.android.gms.ads.AdView
+        
+        <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -234,9 +251,9 @@
         ads:adSize="BANNER"
         ads:adUnitId="@string/ad_unit_id"/>
         
-           
-    
-</RelativeLayout>
         
- 
+        
+    </RelativeLayout>
+    
+    
 </LinearLayout>
