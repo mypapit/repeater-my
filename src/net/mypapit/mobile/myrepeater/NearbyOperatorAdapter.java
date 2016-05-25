@@ -1,6 +1,5 @@
 package net.mypapit.mobile.myrepeater;
 
-import net.mypapit.mobile.myrepeater.RepeaterAdapter.ViewHolder;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,7 +11,7 @@ import android.widget.TextView;
 public class NearbyOperatorAdapter extends BaseAdapter {
 
 	private static LayoutInflater inflater = null;
-	private RepeaterList data, realdata;
+	
 	private int mLastPosition = -1;
 	private Activity activity;
 	private HamOperatorList hol;
@@ -78,8 +77,8 @@ public class NearbyOperatorAdapter extends BaseAdapter {
 		
 		HamOperator operator = hol.get(position);
 		
-		holder.tvCallsign.setText(operator.getCallsign());
-		holder.tvHandle.setText(operator.getHandle());
+		holder.tvCallsign.setText(  truncate(operator.getCallsign().toUpperCase(),10)  );
+		holder.tvHandle.setText(  truncate(operator.getHandle(),25) );
 		holder.tvLastSeen.setText(operator.getLastSeen());
 		holder.tvVerified.setText(operator.isValid() ? "(v)": "");
 		
@@ -88,10 +87,26 @@ public class NearbyOperatorAdapter extends BaseAdapter {
 		
 		return convertView;
 	}
+	
+	public static String truncate(final String text, int length)
+	{
+	    // The letters [iIl1] are slim enough to only count as half a character.
+	    length += Math.ceil(text.replaceAll("[^iIl]", "").length() / 2.0d);
+
+	    if (text.length() > length)
+	    {
+	        return text.substring(0, length - 1) + "\u2026";
+	    }
+
+	    return text;
+	}
+
 
 	static class ViewHolder {
 		private TextView tvCallsign, tvHandle, tvLastSeen, tvVerified, tvActiveCheckins;
 
 	}
+	
+	
 
 }

@@ -1,14 +1,10 @@
 package net.mypapit.mobile.myrepeater;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sf.jfuzzydate.FuzzyDateFormat;
 import net.sf.jfuzzydate.FuzzyDateFormatter;
-
 import android.location.Location;
 import android.os.Parcelable;
 

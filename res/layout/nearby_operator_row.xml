@@ -21,7 +21,7 @@
             android:layout_marginLeft="12dip"
             android:text="9W2WTF"
             android:textColor="@color/text_color"
-            android:textSize="18sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/tvNearbyHamHandle"

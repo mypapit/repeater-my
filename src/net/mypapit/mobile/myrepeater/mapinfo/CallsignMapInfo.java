@@ -10,7 +10,7 @@ public class CallsignMapInfo extends MapInfoObject {
 		
 		
 	}
-	
+	/*
 	public CallsignMapInfo (String callsign, double lat, double lng)
 	{
 		this();
@@ -32,10 +32,6 @@ public class CallsignMapInfo extends MapInfoObject {
 		
 	}
 	
-	public void setVerified(boolean v)
-	{
-		m_verified = v;
-	}
 	
 	public void setDistance(String distance){
 		m_middle = distance + " km";
@@ -63,6 +59,7 @@ public class CallsignMapInfo extends MapInfoObject {
 		}
 		
 	}
+	*/
 	
 	public void setIndex(int index){
 		m_index=index;

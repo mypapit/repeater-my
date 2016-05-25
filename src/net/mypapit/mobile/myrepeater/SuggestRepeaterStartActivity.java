@@ -26,9 +26,6 @@ package net.mypapit.mobile.myrepeater;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,7 +33,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-
 import android.widget.Toast;
 
 public class SuggestRepeaterStartActivity extends Activity {

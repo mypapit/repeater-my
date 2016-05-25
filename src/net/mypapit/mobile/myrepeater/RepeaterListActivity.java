@@ -94,7 +94,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	RepeaterList rl;
 	private ListView lv;
 	private TextView tvAddress;
-	private static int static_distance = 50;
+	private static int static_distance = 0;
 	private boolean excludeLink = false;
 	private boolean excludeDirection = false;
 	private float local_distance = 100.0f;
@@ -126,7 +126,9 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		lv = (ListView) findViewById(R.id.repeaterListView);
 		tvAddress = (TextView) findViewById(R.id.tvAddress);
 
-		String coordinates = new String("37.5651,126.98955");
+		String coordinates = new String("37.5651,126.98955"); // set to Seoul,
+																// far away from
+																// Malaysia!
 
 		String coord[] = coordinates.split(",");
 
@@ -340,7 +342,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 			Criteria criteria = new Criteria();
 			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-			criteria.setPowerRequirement(Criteria.POWER_LOW);
+			criteria.setSpeedRequired(false);
+			
 			/*
 			 * criteria.setSpeedRequired(false);
 			 * criteria.setAltitudeRequired(false);
@@ -353,7 +356,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			bestProvider = locationManager.getBestProvider(criteria, false);
 
 			Location location = locationManager.getLastKnownLocation(bestProvider);
-
+			
+			
 			// if couldn't get Location Provider (aka couldn't get coordinates,
 			// try GPS
 
@@ -408,6 +412,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			if (xlocation != null) {
 
 				// check again for compassSensor
+				activity.showToast("Using location sensor: " + xlocation.getProvider());
+				
 
 			} else {
 				// else if xlocation == null, get coordinate stored in Manual
@@ -613,7 +619,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 			};
 			Log.d("Best Provider mypapit", "Best Provider: " + bestProvider);
-			locationManager.requestLocationUpdates(bestProvider, 5000, static_distance, myLocationListener);
+			locationManager.requestLocationUpdates(bestProvider, 65000, static_distance, myLocationListener);
 
 			Looper.loop();
 
