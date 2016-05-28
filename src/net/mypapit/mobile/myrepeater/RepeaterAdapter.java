@@ -198,8 +198,9 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionI
 				RepeaterList list = new RepeaterList();
 
 				if (constraint != null && constraint.toString().length() > 2) {
-					for (int index = 0; index < realdata.size(); index++) {
-						Repeater repeater = realdata.get(index);
+					for (Repeater repeater: realdata){
+					
+						
 						if (repeater.getCallsign().contains(constraint.toString().toUpperCase(Locale.getDefault()))) {
 
 							list.add(repeater);
@@ -251,7 +252,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionI
 		String strSection[] = new String[i];
 
 		for (int j = 0; j < i; j++) {
-			strSection[j] = "" + interval[j] + " km";
+			strSection[j] = interval[j] + " km";
 
 		}
 

@@ -124,8 +124,8 @@ public class StaticLocationActivity extends Activity {
 		ArrayList<StaticLocation> locationList = new ArrayList<StaticLocation>();
 		int line = 0;
 		try {
-			InputStream stream = this.getResources().openRawResource(resource);
-			InputStreamReader is = new InputStreamReader(stream);
+			
+			InputStreamReader is = new InputStreamReader( this.getResources().openRawResource(resource)  );
 			BufferedReader in = new BufferedReader(is);
 			CSVReader csv = new CSVReader(in, ';', '\"', 0);
 			String data[];

@@ -107,12 +107,14 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 	private int m_passcode = 0;
 	private String m_phoneno = "+60120000";
 	private static final String URL_API = "http://api.repeater.my/v1/endp.php";
+	private static final float LAT_DEFAULT = 37.5651f;
+	private static final float LNG_DEFAULT = 126.98955f;
 
 	// device id, once assigned, never changes
 	private static String m_deviceid;
 
 	// please change this to reflect walkthrough updates
-	protected static int WALK_VERSION_CODE = 210;
+	protected static final int WALK_VERSION_CODE = 210;
 
 	// StackHistory stackhistory;
 
@@ -126,13 +128,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		lv = (ListView) findViewById(R.id.repeaterListView);
 		tvAddress = (TextView) findViewById(R.id.tvAddress);
 
-		String coordinates = new String("37.5651,126.98955"); // set to Seoul,
-																// far away from
-																// Malaysia!
-
-		String coord[] = coordinates.split(",");
-
-		xlocation = new Repeater("", Double.parseDouble(coord[0]), Double.parseDouble(coord[1]));
+		xlocation = new Repeater("", LAT_DEFAULT, LNG_DEFAULT);
 
 		rl = RepeaterListActivity.loadData(R.raw.repeaterdata5, this);
 		xlocation.calcDistanceAll(rl);
@@ -218,8 +214,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 		}
 
-		GPSThread thread = new GPSThread(this);
-		thread.start();
+		new GPSThread(this).start();
 
 		lv.setAdapter(adapter);
 
@@ -285,10 +280,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		public String geoCode(double lat, double lon) {
 			Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
 			List<Address> addressList = null;
-			StringBuffer stringBuffer = new StringBuffer("");
 			String[] addressLocality = new String[2];
-
-			Log.d("net.mypapit.mobile", "Unknown Address");
 
 			try {
 
@@ -297,7 +289,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 				// if there are no address retrieved, put in Unknown Address
 				if (addressList == null) {
-					Log.d("net.mypapit.mobile", "Unknown Address");
+					Log.d("net.mypapit.mobile", "Unknown Location");
 
 					addressLocality[0] = new String("Unknown Location");
 					return addressLocality[0];
@@ -308,16 +300,11 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 					addressLocality = new String[addressCounter];
 					addressLocality[0] = new String();
 
-					// store each of the address list in a string;
-					for (int i = 0; i < addressCounter; i++) {
-						Address singleAddress = addressList.get(i);
-						stringBuffer = new StringBuffer();
-						Log.d("net.mypapit.mobile", "address: " + stringBuffer.toString());
-						// However, only display locality info (like county,
-						// territory, area)
-						addressLocality[i] = singleAddress.getLocality();
+					// get the first address, and then store only the locality
+					// such as State or Municipal/Country/Territory
+					Address singleAddress = addressList.get(0);
+					addressLocality[0] = singleAddress.getLocality();
 
-					}
 				}
 
 			} catch (IllegalArgumentException iae) {
@@ -343,7 +330,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			Criteria criteria = new Criteria();
 			criteria.setAccuracy(Criteria.ACCURACY_COARSE);
 			criteria.setSpeedRequired(false);
-			
+
 			/*
 			 * criteria.setSpeedRequired(false);
 			 * criteria.setAltitudeRequired(false);
@@ -356,8 +343,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			bestProvider = locationManager.getBestProvider(criteria, false);
 
 			Location location = locationManager.getLastKnownLocation(bestProvider);
-			
-			
+
 			// if couldn't get Location Provider (aka couldn't get coordinates,
 			// try GPS
 
@@ -381,8 +367,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 				location = new Location("");
 				SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
-				float lat = prefs.getFloat("DefaultLat", 37.56f);
-				float lon = prefs.getFloat("DefaultLon", 126.989f);
+				float lat = prefs.getFloat("DefaultLat", LAT_DEFAULT);
+				float lon = prefs.getFloat("DefaultLon", LNG_DEFAULT);
 				excludeDirection = true;
 
 				location.setLatitude(lat);
@@ -395,7 +381,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 					@Override
 					public void run() {
-						activity.showToast("Unable to detect location, falling back on preset location");
+						activity.showToast("Unable to detect location, falling back to preset location");
 
 					}
 
@@ -406,21 +392,20 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 				m_address = this.geoCode(location.getLatitude(), location.getLongitude());
 
 				excludeDirection = checkCompassSensor(xlocation);
-				activity.showToast("Location detected, listing nearby repeater");
+				activity.showToast("Location detected, listing nearby repeaters");
 			}
 
 			if (xlocation != null) {
 
 				// check again for compassSensor
 				activity.showToast("Using location sensor: " + xlocation.getProvider());
-				
 
 			} else {
 				// else if xlocation == null, get coordinate stored in Manual
 				// Location setting
 				SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
-				float lat = prefs.getFloat("DefaultLat", 37.56f);
-				float lon = prefs.getFloat("DefaultLon", 126.989f);
+				float lat = prefs.getFloat("DefaultLat", LAT_DEFAULT);
+				float lon = prefs.getFloat("DefaultLon", LNG_DEFAULT);
 				excludeDirection = true;
 
 				xlocation = new Repeater("Simulated", lat, lon);
@@ -443,8 +428,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 					activity.setAddress(m_address);
 
 					activity.setListAdapter(adapter);
-					Log.d("latitud papit", "Geo: " + xlocation.getLatitude());
-					Log.d("latitud papit", "Address: " + m_address);
+					Log.d("latitud mypapit", "Geo: " + xlocation.getLatitude());
+					Log.d("latitud mypapit", "Address: " + m_address);
 
 					adapter.notifyDataSetChanged();
 
@@ -631,8 +616,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		int line = 0;
 		try {
 
-			InputStream stream = activity.getResources().openRawResource(resource);
-			InputStreamReader is = new InputStreamReader(stream);
+			InputStreamReader is = new InputStreamReader(activity.getResources().openRawResource(resource));
 			BufferedReader in = new BufferedReader(is);
 			CSVReader csv = new CSVReader(in, ';', '\"', 0);
 			String data[];
@@ -737,8 +721,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 		Intent intent;
 		switch (item.getItemId()) {
 		case R.id.show_map:
-			intent = new Intent();
-			intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.DisplayMap");
+			intent = new Intent(getApplicationContext(), DisplayMap.class);
 			intent.putExtra("LatLong", new LatLng(xlocation.getLatitude(), xlocation.getLongitude()));
 
 			startActivity(intent);
@@ -746,8 +729,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			return true;
 		case R.id.manual_settings:
 			if (!this.isLocationEnabled(this)) {
-				intent = new Intent();
-				intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.StaticLocationActivity");
+				intent = new Intent(getApplicationContext(), StaticLocationActivity.class);
 				startActivity(intent);
 			} else {
 				this.showAlertDialog();
@@ -766,9 +748,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 			return true;
 		case R.id.action_suggest:
 
-			intent = new Intent();
-
-			intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.SuggestRepeaterStartActivity");
+			intent = new Intent(getApplicationContext(), SuggestRepeaterStartActivity.class);
 			this.startActivity(intent);
 
 			return true;
@@ -865,8 +845,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Intent intent = new Intent();
-		intent.setClassName(this.getApplicationContext(), "net.mypapit.mobile.myrepeater.RepeaterDetailsActivity");
+		Intent intent = new Intent(this.getApplicationContext(), RepeaterDetailsActivity.class);
 
 		Repeater rpt = (Repeater) adapter.getRepeater(position);
 

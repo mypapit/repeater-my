@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -20,8 +19,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -35,12 +36,12 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 	private TextView tvNearby;
 	private HamOperatorList holist;
 	private NearbyOperatorAdapter adapter;
-	private static String URL = "http://api.repeater.my/v1/nearbyoperator.php";
+	private static final String URL = "http://api.repeater.my/v1/nearbyoperator.php";
 	private double mlat, mlng;
 	private String mlocation;
-	public final String CACHE_PREFS = "cache-prefs";
-	public final String CACHE_TIME = "cache-time-";
-	public final String CACHE_JSON = "cache-json-";
+	public static final String CACHE_PREFS = "cache-prefs";
+	public static final String CACHE_TIME = "cache-time-";
+	public static final String CACHE_JSON = "cache-json-";
 	SharedPreferences cache;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +63,28 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 		}
 
 		tvNearby = (TextView) findViewById(R.id.tvNearbyRepeater);
+		
+		//TextView emptyView = (TextView) findViewById(R.id.empty_list_item);
 
-		tvNearby.setText("Active stations near " + toTitleCase(mlocation.toLowerCase()));
+		String status = "Active stations near " + toTitleCase(mlocation.toLowerCase());
+		tvNearby.setText(NearbyOperatorAdapter.truncate(status, 52));
 
 		listview = (ListView) findViewById(R.id.HamOperatorListView);
-
+		
+	
+		//listview.setEmptyView(emptyView);
+		
+		
+		
 		holist = new HamOperatorList(120);
 
 		adapter = new NearbyOperatorAdapter(this, holist);
 
 		listview.setAdapter(adapter);
+		
+		
+		
+		
 		cache = this.getSharedPreferences(CACHE_PREFS, 0);
 
 		Date cachedate = new Date(cache.getLong(CACHE_TIME + mlocation, new Date(20000).getTime()));
@@ -81,10 +94,10 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 		secs = secs % 3600L;
 		long mins = secs / 60L;
 
-		if (hours < 6) {
+		if (hours < 8) {
 			String jsoncache = cache.getString(CACHE_JSON + mlocation, "none");
 			if (jsoncache.compareToIgnoreCase("none") == 0) {
-				new GetUserInfo(this, new LatLng(mlat, mlng)).execute();
+				new GetUserInfo(new LatLng(mlat, mlng)).execute();
 			} else {
 
 				loadfromCache(jsoncache);
@@ -92,7 +105,7 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 
 		} else {
 
-			new GetUserInfo(this, new LatLng(mlat, mlng)).execute();
+			new GetUserInfo(new LatLng(mlat, mlng)).execute();
 
 		}
 
@@ -233,11 +246,11 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 	private class GetUserInfo extends AsyncTask<Void, Void, Void> {
 
 		String currentlat, currentlng;
-		NearbyOperatorActivity activity;
+		
 		String jsonStr;
 
-		GetUserInfo(NearbyOperatorActivity activity, LatLng latlng) {
-			this.activity = activity;
+		public GetUserInfo(LatLng latlng) {
+		
 			currentlat = latlng.latitude + "";
 			currentlng = latlng.longitude + "";
 
@@ -274,6 +287,8 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 					// JSONObject jsonObj = new JSONObject(jsonStr);
 
 					rakanradio = new JSONArray(jsonStr);
+					
+					
 					int num_of_rakanradio = rakanradio.length();
 					for (int i = 0; i < num_of_rakanradio; i++) {
 						JSONObject jsinfo = rakanradio.getJSONObject(i);
@@ -347,15 +362,18 @@ public class NearbyOperatorActivity extends Activity implements OnItemClickListe
 
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
+			
+			
 
-			adapter = new NearbyOperatorAdapter(activity, holist);
+			adapter = new NearbyOperatorAdapter(getApplicationContext(), holist);
 			listview.setAdapter(adapter);
+	
 			adapter.notifyDataSetChanged();
 
 			if ((holist.size() > 0) && (jsonStr != null)) {
 				SharedPreferences.Editor editor = cache.edit();
-				editor.putLong(activity.CACHE_TIME + mlocation, new Date().getTime());
-				editor.putString(activity.CACHE_JSON + mlocation, jsonStr);
+				editor.putLong(NearbyOperatorActivity.CACHE_TIME + mlocation, new Date().getTime());
+				editor.putString(NearbyOperatorActivity.CACHE_JSON + mlocation, jsonStr);
 
 				editor.commit();
 

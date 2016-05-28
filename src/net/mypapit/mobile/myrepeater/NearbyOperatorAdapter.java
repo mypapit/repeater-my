@@ -12,15 +12,15 @@ public class NearbyOperatorAdapter extends BaseAdapter {
 
 	private static LayoutInflater inflater = null;
 	
-	private int mLastPosition = -1;
-	private Activity activity;
+	
+	private Context context;
 	private HamOperatorList hol;
 
-	public NearbyOperatorAdapter(Activity activity, HamOperatorList hol) {
-		this.activity = activity;
+	public NearbyOperatorAdapter(Context context, HamOperatorList hol) {
+		this.context= context;
 		this.hol = hol;
 
-		inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 	}
 
@@ -70,7 +70,7 @@ public class NearbyOperatorAdapter extends BaseAdapter {
 			
 		} else {
 			
-			this.mLastPosition = position;
+			//this.mLastPosition = position;
 			holder = (ViewHolder) convertView.getTag();
 					
 		}

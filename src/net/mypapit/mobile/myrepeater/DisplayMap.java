@@ -86,15 +86,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class DisplayMap extends FragmentActivity implements OnInfoWindowClickListener {
 
 	private GoogleMap map;
-	HashMap<Marker, MapInfoObject> hashMap = new HashMap<Marker, MapInfoObject>();
+	HashMap<Marker, MapInfoObject> hashMap;
 	RepeaterList rl = new RepeaterList();
 	// private static String URL ="http://192.168.1.40/rmy/getposition.php";
-	private static String URL = "http://api.repeater.my/v1/getposition.php";
-	
-	public final String CACHE_PREFS = "cache-prefs";
-	public final String CACHE_TIME = "cache-time-map-";
-	public final String CACHE_JSON = "cache-json-map-";
-	
+	private static final String URL = "http://api.repeater.my/v1/getposition.php";
+
+	public static final String CACHE_PREFS = "cache-prefs";
+	public static final String CACHE_TIME = "cache-time-map-";
+	public static final String CACHE_JSON = "cache-json-map-";
+
 	SharedPreferences cache;
 	private JSONArray rakanradio = null;
 	ArrayList<HashMap<String, String>> listrakanradio;
@@ -103,8 +103,9 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_map);
-
 		overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+		
+		hashMap = new HashMap<Marker, MapInfoObject>();
 
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
@@ -114,7 +115,7 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 		if (map == null) {
 
-			//Log.e("Map NULL", "MAP NULL");
+			// Log.e("Map NULL", "MAP NULL");
 			Toast.makeText(this, "Unable to display Map", Toast.LENGTH_SHORT).show();
 
 		} else {
@@ -136,11 +137,11 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 			// counter i, for mapping marker with integer
 			int i = 0;
-						
-			int counter = rl.size();
-			Repeater repeater; 
-			for(int j=0;j<counter;j++) {
-				repeater = rl.get(j);
+
+			
+			for (Repeater repeater: rl){
+							
+				
 				MarkerOptions marking = new MarkerOptions();
 				marking.position(new LatLng(repeater.getLatitude(), repeater.getLongitude()));
 				marking.title(repeater.getCallsign() + " - " + repeater.getDownlink() + "MHz (" + repeater.getClub()
@@ -157,14 +158,12 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 			}
 
-
 			// Marker RKG = map.addMarker(new MarkerOptions().position(new
 			// LatLng(6.1,100.3)).title("9M4RKG"));
 
 			map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10));
 			map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-			
-			
+
 			cache = this.getSharedPreferences(CACHE_PREFS, 0);
 
 			Date cachedate = new Date(cache.getLong(CACHE_TIME, new Date(20000).getTime()));
@@ -173,31 +172,24 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 			long hours = secs / 3600L;
 			secs = secs % 3600L;
 			long mins = secs / 60L;
-			
-			
-			
 
-			if (mins < 4) {
+			if (mins < 5) {
 				String jsoncache = cache.getString(CACHE_JSON, "none");
 				if (jsoncache.compareToIgnoreCase("none") == 0) {
-					new GetUserInfo(latlng,this).execute();
-					
+					new GetUserInfo(latlng, this).execute();
+
 				} else {
 
 					loadfromCache(jsoncache);
-					//Toast.makeText(this, "Loaded from cache: " + mins + " mins", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(this, "Loaded from cache: " + mins +
+					// " mins", Toast.LENGTH_SHORT).show();
 				}
 
 			} else {
 
-				
-				new GetUserInfo(latlng,this).execute();
-				
-				
+				new GetUserInfo(latlng, this).execute();
 
 			}
-			
-			
 
 			map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
@@ -234,9 +226,8 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 				}
 			});
 
-	
 		}
-		
+
 	}
 
 	@Override
@@ -250,15 +241,14 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 	public void onInfoWindowClick(Marker marker) {
 
 		MapInfoObject mio = hashMap.get(marker);
+		Intent intent = new Intent();
 
 		if (!mio.getIsRepeater()) {
 
-			Intent intent = new Intent();
+			
 			intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.CallsignDetailsActivity");
 
 			HashMap<String, String> inforakanradio = listrakanradio.get(mio.getIndex());
-	
-			
 
 			intent.putExtra("callsign", inforakanradio.get("callsign"));
 			intent.putExtra("name", inforakanradio.get("name"));
@@ -281,8 +271,7 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 		Repeater rpt = rl.get(mio.getIndex());
 
-		Intent intent = new Intent();
-		intent.setClassName(getBaseContext(), "net.mypapit.mobile.myrepeater.RepeaterDetailsActivity");
+		intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.RepeaterDetailsActivity");
 		intent.putExtra("Repeater", rpt.toArrayString());
 		startActivity(intent);
 
@@ -309,10 +298,10 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 		overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
 
 	}
-	
-	//load data from Preference cache rather from getuser info
+
+	// load data from Preference cache rather from getuser info
 	public void loadfromCache(String jsonCache) {
-		
+
 		listrakanradio = new ArrayList<HashMap<String, String>>(200);
 
 		if (jsonCache != null) {
@@ -321,12 +310,14 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 				rakanradio = new JSONArray(jsonCache);
 				int num_of_rakanradio = rakanradio.length();
+				
+				
 				for (int i = 0; i < num_of_rakanradio; i++) {
 					JSONObject jsinfo = rakanradio.getJSONObject(i);
+					
 
 					String callsign = jsinfo.getString("callsign");
 
-				
 					String valid = jsinfo.getString("valid");
 
 					HashMap<String, String> inforakanradio = new HashMap<String, String>();
@@ -352,8 +343,6 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 					inforakanradio.put("locality", jsinfo.getString("locality"));
 
 					listrakanradio.add(inforakanradio);
-					
-					
 
 				}
 			} catch (JSONException jse) {
@@ -363,23 +352,20 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 		} else {
 			Log.e("mypapit ServiceHandler-cache", "Couldn't get any data from map cache :(");
 		}
-		
-		
+
 		Iterator<HashMap<String, String>> iter = listrakanradio.iterator();
-		
+
 		HashMap<String, String> inforakanradio;
-		
-		
+		inforakanradio = new HashMap<String, String>();
 
 		int callsignIndex = 0;
-		
-		SharedPreferences repeater_prefs = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
+
+		SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 		String m_deviceid = repeater_prefs.getString("deviceid", "defaultx");
 
 		while (iter.hasNext()) {
-			inforakanradio = new HashMap<String, String>();
+			
 			inforakanradio = iter.next();
 
 			MarkerOptions marking = new MarkerOptions();
@@ -405,36 +391,31 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 			marking.snippet(new StringBuilder("@").append(inforakanradio.get("name")).append("\n#:")
 					.append(inforakanradio.get("status")).append("\n").append(inforakanradio.get("phoneno"))
 					.append("\n").append(inforakanradio.get("client")).toString());
-			
-			CallsignMapInfo cmi = new CallsignMapInfo();
 
+			
 
 			String valid = inforakanradio.get("valid");
 			String deviceId = inforakanradio.get("deviceid");
-
-			
 
 			if (Integer.parseInt(valid) == 1) {
 				marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 			} else {
 				marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 			}
-			
 
 			if (deviceId.equalsIgnoreCase(m_deviceid)) {
 				marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 
 			}
 
-			cmi.setIndex(callsignIndex);
+			//cmi.setIndex(callsignIndex);
 
-			hashMap.put(map.addMarker(marking), cmi);
+			hashMap.put(map.addMarker(marking), new CallsignMapInfo(callsignIndex));
 
 			callsignIndex++;
 
 		}
-		
-		
+
 	}
 
 	// private class AsyncTask for retrieving repeater-my user information
@@ -445,19 +426,18 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 		DisplayMap activity;
 		String jsonstringcache;
 
-		GetUserInfo(LatLng latlng,DisplayMap activity) {
+		GetUserInfo(LatLng latlng, DisplayMap activity) {
 			currentlat = latlng.latitude + "";
 			currentlng = latlng.longitude + "";
 			this.activity = activity;
 
 		}
 
-		
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 
-			Toast.makeText(activity, "Getting stations info from servers",Toast.LENGTH_SHORT).show();
+			Toast.makeText(activity, "Getting station info\u2026", Toast.LENGTH_SHORT).show();
 
 		}
 
@@ -514,7 +494,7 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 						inforakanradio.put("locality", jsinfo.getString("locality"));
 
 						listrakanradio.add(inforakanradio);
-						
+
 						jsonstringcache = jsonStr;
 
 					}
@@ -531,29 +511,27 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			
-			if ( (listrakanradio.size() >0) && (jsonstringcache != null) ){
+
+			if ((listrakanradio.size() > 0) && (jsonstringcache != null)) {
 				SharedPreferences.Editor editor = cache.edit();
-				editor.putLong(activity.CACHE_TIME, new Date().getTime());
-				editor.putString(activity.CACHE_JSON, jsonstringcache);
+				editor.putLong(DisplayMap.CACHE_TIME, new Date().getTime());
+				editor.putString(DisplayMap.CACHE_JSON, jsonstringcache);
 
 				editor.commit();
-				
+
 			}
-			
 
 			Iterator<HashMap<String, String>> iter = listrakanradio.iterator();
-			HashMap<String, String> inforakanradio;
-			
-			SharedPreferences repeater_prefs = PreferenceManager
-					.getDefaultSharedPreferences(getApplicationContext());
+			HashMap<String, String> inforakanradio = new HashMap<String, String>();
+
+			SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 			String m_deviceid = repeater_prefs.getString("deviceid", "defaultx");
 
 			int callsignIndex = 0;
 
 			while (iter.hasNext()) {
-				inforakanradio = new HashMap<String, String>();
+				
 				inforakanradio = iter.next();
 
 				MarkerOptions marking = new MarkerOptions();
@@ -580,28 +558,25 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 						.append(inforakanradio.get("status")).append("\n").append(inforakanradio.get("phoneno"))
 						.append("\n").append(inforakanradio.get("client")).toString());
 
-				CallsignMapInfo cmi = new CallsignMapInfo();
-		
 				
+
 				String valid = inforakanradio.get("valid");
 				String deviceId = inforakanradio.get("deviceid");
-
 
 				if (Integer.parseInt(valid) == 1) {
 					marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 				} else {
 					marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 				}
-			
 
 				if (deviceId.equalsIgnoreCase(m_deviceid)) {
 					marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 
 				}
 
-				cmi.setIndex(callsignIndex);
+				
 
-				hashMap.put(map.addMarker(marking), cmi);
+				hashMap.put(map.addMarker(marking), new CallsignMapInfo(callsignIndex));
 
 				callsignIndex++;
 
@@ -609,9 +584,9 @@ public class DisplayMap extends FragmentActivity implements OnInfoWindowClickLis
 
 		}
 
-	} //GetUserInfo
+	} // GetUserInfo
 
-} //Display Map Activity
+} // Display Map Activity
 
 class ServiceHandler {
 
