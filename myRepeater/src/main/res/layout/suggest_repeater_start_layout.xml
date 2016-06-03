@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Instruction"
+        android:textColor="@color/holo_blue"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dip"
+
+        />
+
+    <View style="@style/Divider" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:paddingBottom="15dip"
+        android:text="@string/title_suggest_instruction" />
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Repeater and Club"
+        android:textColor="@color/holo_blue"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dip"
+
+        />
+
+    <View style="@style/Divider" />
+
+
+    <AutoCompleteTextView
+        android:id="@+id/tvSCallsign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Repeater Callsign"
+
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:nextFocusDown="@+id/tvSClub"
+        android:inputType="textCapCharacters">
+
+        <requestFocus />
+    </AutoCompleteTextView>
+
+    <AutoCompleteTextView
+        android:id="@+id/tvSClub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Club"
+
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:nextFocusDown="@+id/tvSLocation"
+        android:inputType="textCapCharacters"
+
+        />
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:textColor="@color/holo_blue"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dip"
+
+        android:paddingTop="15dip"
+
+        />
+
+    <View style="@style/Divider" />
+
+    <AutoCompleteTextView
+        android:id="@+id/tvSLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Location or GPS coordinates"
+
+        android:imeOptions="actionNext"
+        android:singleLine="true"
+        android:nextFocusDown="@+id/tvSState"
+        android:inputType="textCapCharacters"
+
+        />
+
+    <AutoCompleteTextView
+        android:id="@+id/tvSState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="State (Johor,Kedah, etc...)"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:inputType="textCapCharacters" />
+
+
+</LinearLayout>

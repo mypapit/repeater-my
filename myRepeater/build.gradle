@@ -1,0 +1,32 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.1'
+
+    defaultConfig {
+        applicationId "net.mypapit.mobile.myrepeater"
+        minSdkVersion 16
+        targetSdkVersion 21
+        useLibrary 'org.apache.http.legacy'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        }
+    }
+}
+
+dependencies {
+    compile project(':viewpagerlibrary')
+    compile 'com.android.support:support-v4:23+'
+    compile 'com.google.android.gms:play-services-maps:7.8.0'
+    compile 'com.google.android.gms:play-services-ads:7.8.0'
+    compile 'com.android.support:appcompat-v7:23+'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
+    compile files('libs/jfuzzydate-0.2.2.jar')
+
+
+}

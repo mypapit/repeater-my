@@ -1,0 +1,73 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/action_about" />
+
+    <item
+        android:id="@+id/action_suggest"
+        android:orderInCategory="500"
+        app:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="@string/action_suggest" />
+
+    <item
+        android:id="@+id/action_contrib"
+        android:orderInCategory="102"
+        app:showAsAction="never"
+        android:icon="@android:drawable/ic_menu_help"
+        android:title="@string/action_contrib" />
+
+    <item
+        android:id="@+id/show_map"
+        android:icon="@android:drawable/ic_menu_mapmode"
+        android:titleCondensed="Map"
+        android:orderInCategory="101"
+        app:showAsAction="ifRoom|withText"
+        android:title="Map"/>
+
+
+    <item
+        android:id="@+id/search"
+        android:title="@string/search_title"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="collapseActionView|ifRoom"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+    <item
+        android:id="@+id/manual_settings"
+        android:title="@string/manual_settings_title"
+        android:orderInCategory="110"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_simplex"
+        android:title="@string/action_simplex_title"
+        android:orderInCategory="490"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="109"
+        android:title="@string/action_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+
+        />
+
+    <!-- history disabled due to memory leaks -->
+    <!--
+
+             <item android:id="@+id/action_history"
+              android:title="@string/action_history"
+              android:orderInCategory="111"
+              android:icon="@android:drawable/ic_menu_recent_history"
+              android:showAsAction="never" />
+    -->
+
+
+</menu>

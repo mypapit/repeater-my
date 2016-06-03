@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvNearbyRepeater"
+        android:layout_gravity="center_horizontal"
+
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+
+        android:text="Active stations near..." />
+
+    <ListView
+        android:id="@+id/HamOperatorListView"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content" />
+    <!--
+    <TextView
+            android:id="@+id/empty_list_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_gravity="center_horizontal"
+            android:text="No Data"
+            android:visibility="gone" />
+
+     -->
+
+
+</LinearLayout>
+

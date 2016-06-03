@@ -1,0 +1,2 @@
+include ':viewpagerlibrary'
+include ':myRepeater'

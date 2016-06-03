@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/etcCallsign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:paddingBottom="6dip"
+        android:text="9M2RKG"
+        android:textColor="@color/text_color"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:paddingBottom="3dip"
+                android:text="Frequency (MHz)"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" />
+
+            <View style="@style/Divider" />
+
+            <EditText
+                android:id="@+id/etcFreq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:paddingBottom="6dip"
+                android:text="145.525 MHz"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:paddingBottom="3dip"
+
+                android:text="Shift (MHz)"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" />
+
+            <View style="@style/Divider" />
+
+            <EditText
+                android:id="@+id/etcShift"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal|numberSigned"
+                android:paddingBottom="6dip"
+                android:text="-0.6"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:paddingBottom="3dip"
+                android:paddingTop="5dip"
+                android:text="Tone (Hz)"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" />
+
+            <View style="@style/Divider" />
+
+            <EditText
+                android:id="@+id/etcTone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:paddingBottom="6dip"
+                android:text="103.5"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="0.5">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:paddingBottom="3dip"
+                android:paddingTop="5dip"
+                android:text="Club"
+                android:textColor="@color/holo_blue"
+                android:textStyle="bold" />
+
+            <View style="@style/Divider" />
+
+            <AutoCompleteTextView
+                android:id="@+id/etcClub"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dip"
+                android:text="SARC"
+                android:ems="10"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:paddingBottom="3dip"
+        android:paddingTop="5dip"
+        android:text="Location"
+        android:textColor="@color/holo_blue"
+        android:textStyle="bold" />
+
+    <View style="@style/Divider" />
+
+    <EditText
+        android:id="@+id/etcLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="6dip"
+        android:text="Bukit Tinggi"
+        android:hint="Location or Coordinates"
+        android:textSize="16sp"
+        android:ems="10" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:paddingBottom="3dip"
+        android:paddingTop="5dip"
+        android:text="Note"
+        android:textColor="@color/holo_blue"
+        android:textStyle="bold" />
+
+    <View style="@style/Divider" />
+
+    <EditText
+        android:id="@+id/etcNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="additional note... (eg: changed freq, wrong tone..)"
+        android:minLines="3"
+        android:paddingBottom="6dip"
+        android:textSize="16sp" />
+
+</LinearLayout>
