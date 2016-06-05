@@ -30,7 +30,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,6 +58,7 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import net.mypapit.mobile.myrepeater.mapinfo.CallsignMapInfo;
 import net.mypapit.mobile.myrepeater.mapinfo.MapInfoObject;
 import net.mypapit.mobile.myrepeater.mapinfo.RepeaterMapInfo;
+import net.mypapit.mobile.myrepeater.net.mypapit.mobile.myrepeater.map.HeatMapListener;
 import net.sf.jfuzzydate.FuzzyDateFormat;
 import net.sf.jfuzzydate.FuzzyDateFormatter;
 
@@ -87,29 +88,33 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickListener {
+public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickListener, HeatMapListener {
 
-    public static final String CACHE_PREFS = "cache-prefs";
-    public static final String CACHE_TIME = "cache-time-map-";
-    public static final String CACHE_JSON = "cache-json-map-";
+    private static final String CACHE_PREFS = "cache-prefs";
+    private static final String CACHE_TIME = "cache-time-map-";
+    private static final String CACHE_JSON = "cache-json-map-";
     // private static String URL ="http://192.168.1.40/rmy/getposition.php";
     private static final String URL = "http://api.repeater.my/v1/getposition.php";
-    private static final String URL_HEATMAP = "http://api.repeater.my/v1/heatmap/getposition.php";
+    static final String URL_HEATMAP = "http://api.repeater.my/v1/heatmap/getposition.php";
+
     private boolean isHeatmap = false;
     TileOverlay heatmapTileOverlay;
-    LatLng latlng;
+    private LatLng latlng;
 
-    HashMap<Marker, MapInfoObject> hashMap;
-    RepeaterList rl = new RepeaterList();
-    SharedPreferences cache;
-    ArrayList<HashMap<String, String>> listrakanradio;
+    private SimpleArrayMap<Marker, MapInfoObject> hashMap;
+
+    private RepeaterList rl = new RepeaterList();
+    private SharedPreferences cache;
+    private ArrayList<SimpleArrayMap<String, String>> listrakanradio;
+    private FuzzyDateFormatter fuzzydateformat;
+
     //private JSONArray rakanradio = null;
-    private GoogleMap map;
+    GoogleMap map;
+
+    private final DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +122,9 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
         setContentView(R.layout.activity_display_map);
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
-        hashMap = new HashMap<Marker, MapInfoObject>();
+        hashMap = new SimpleArrayMap<Marker, MapInfoObject>();
+
+        fuzzydateformat = FuzzyDateFormat.getInstance();
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -134,8 +141,8 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
             latlng = (LatLng) getIntent().getExtras().get("LatLong");
 
-            if (latlng == null ){
-                latlng=new LatLng(RepeaterListActivity.LAT_DEFAULT,RepeaterListActivity.LNG_DEFAULT);
+            if (latlng == null) {
+                latlng = new LatLng(RepeaterListActivity.LAT_DEFAULT, RepeaterListActivity.LNG_DEFAULT);
             }
             Repeater xlocation = new Repeater("", new Double[]{latlng.latitude, latlng.longitude});
 
@@ -158,16 +165,15 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
 
                 MarkerOptions marking = new MarkerOptions();
+
                 marking.position(new LatLng(repeater.getLatitude(), repeater.getLongitude()));
                 marking.title(repeater.getCallsign() + " - " + repeater.getDownlink() + "MHz (" + repeater.getClub()
                         + ")");
 
                 marking.snippet("Tone: " + repeater.getTone() + " Shift: " + repeater.getShift());
 
-                RepeaterMapInfo rmi = new RepeaterMapInfo(repeater);
-                rmi.setIndex(i);
 
-                hashMap.put(map.addMarker(marking), rmi);
+                hashMap.put(map.addMarker(marking), new RepeaterMapInfo(repeater, i));
 
                 i++;
 
@@ -207,13 +213,11 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
             }
 
 
-
-
             map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
                 @Override
                 public View getInfoWindow(Marker marker) {
-                    // TODO Auto-generated method stub
+
                     return null;
                 }
 
@@ -266,7 +270,7 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
             intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.CallsignDetailsActivity");
 
-            HashMap<String, String> inforakanradio = listrakanradio.get(mio.getIndex());
+            SimpleArrayMap<String, String> inforakanradio = listrakanradio.get(mio.getIndex());
 
             intent.putExtra("callsign", inforakanradio.get("callsign"));
             intent.putExtra("name", inforakanradio.get("name"));
@@ -300,8 +304,8 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
             case android.R.id.home:
 
 
-                    // NavUtils.navigateUpFromSameTask(this);
-                    finish();
+                // NavUtils.navigateUpFromSameTask(this);
+                finish();
 
 
                 return true;
@@ -310,7 +314,6 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
                 toggleHeatMap();
                 return true;
-
 
 
         }
@@ -325,9 +328,9 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
     }
 
     // load data from Preference cache rather from getuser info
-    public void loadfromCache(String jsonCache) {
+    private void loadfromCache(String jsonCache) {
 
-        listrakanradio = new ArrayList<HashMap<String, String>>(200);
+        listrakanradio = new ArrayList<SimpleArrayMap<String, String>>(200);
 
         if (jsonCache != null) {
             try {
@@ -345,7 +348,7 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
                     String valid = jsinfo.getString("valid");
 
-                    HashMap<String, String> inforakanradio = new HashMap<String, String>();
+                    SimpleArrayMap<String, String> inforakanradio = new SimpleArrayMap<String, String>();
 
                     int validity = Integer.parseInt(valid);
 
@@ -378,10 +381,6 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
             Log.e("mypapit SH-cache", "Couldn't get any data from map cache :(");
         }
 
-        Iterator<HashMap<String, String>> iter = listrakanradio.iterator();
-
-        HashMap<String, String> inforakanradio;
-
 
         int callsignIndex = 0;
 
@@ -389,30 +388,28 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
         String m_deviceid = repeater_prefs.getString("deviceid", "defaultx");
 
-        while (iter.hasNext()) {
+        for (SimpleArrayMap<String, String> inforakanradio : listrakanradio) {
 
-            inforakanradio = iter.next();
 
             MarkerOptions marking = new MarkerOptions();
 
             // java.util.Date utilDate = new java.util.Date();
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
             java.util.Date time;
 
             try {
-                time = formatter.parse(inforakanradio.get("time"));
+                time = dateformatter.parse(inforakanradio.get("time"));
             } catch (ParseException e) {
                 time = new java.util.Date();
 
                 e.printStackTrace();
             }
 
-            FuzzyDateFormatter format = FuzzyDateFormat.getInstance();
 
             marking.position(new LatLng(Double.parseDouble(inforakanradio.get("lat")), Double
                     .parseDouble(inforakanradio.get("lng"))));
             marking.title(inforakanradio.get("callsign") + " - " +
-                    format.formatDistance(time));
+                    fuzzydateformat.formatDistance(time));
             marking.snippet("@" + inforakanradio.get("name") + "\n#:" +
                     inforakanradio.get("status") + "\n" + inforakanradio.get("phoneno") +
                     "\n" + inforakanradio.get("client"));
@@ -444,15 +441,21 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
     // private class AsyncTask for retrieving repeater-my user information
 
-    public void addHeatmap() {
 
-
+    @Override
+    public boolean setHeatMapStatus(boolean isHeatmap) {
+        this.isHeatmap = isHeatmap;
+        if (!isHeatmap) {
+            Toast.makeText(getApplicationContext(), "no heatmap", Toast.LENGTH_SHORT).show();
+        }
+        return isHeatmap;
     }
 
     private class GetUserInfo extends AsyncTask<Void, Void, Void> {
 
-        String currentlat, currentlng;
-        DisplayMap activity;
+        final String currentlat;
+        final String currentlng;
+        final DisplayMap activity;
         String jsonstringcache;
 
         GetUserInfo(LatLng latlng, DisplayMap activity) {
@@ -485,13 +488,16 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
             // Log.d("mypapit Json Response: ", "> " + jsonStr);
 
-            listrakanradio = new ArrayList<HashMap<String, String>>(200);
+            listrakanradio = new ArrayList<SimpleArrayMap<String, String>>(200);
+
 
             if (jsonStr != null) {
                 try {
                     // JSONObject jsonObj = new JSONObject(jsonStr);
 
                     JSONArray rakanradio = new JSONArray(jsonStr);
+                    SimpleArrayMap<String, String> inforakanradio;
+
                     int num_of_rakanradio = rakanradio.length();
                     for (int i = 0; i < num_of_rakanradio; i++) {
                         JSONObject jsinfo = rakanradio.getJSONObject(i);
@@ -500,7 +506,7 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
                         String valid = jsinfo.getString("valid");
 
-                        HashMap<String, String> inforakanradio = new HashMap<String, String>();
+                        inforakanradio = new SimpleArrayMap<String, String>();
 
                         int validity = Integer.parseInt(valid);
 
@@ -524,7 +530,6 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
                         listrakanradio.add(inforakanradio);
 
-                        jsonstringcache = jsonStr;
 
                     }
                 } catch (JSONException jse) {
@@ -534,6 +539,9 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
             } else {
                 Log.e("mypapit ServiceHandler", "Couldn't get any data from api endpoint");
             }
+
+            jsonstringcache = jsonStr;
+
             return null;
 
         }
@@ -546,12 +554,10 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
                 editor.putLong(DisplayMap.CACHE_TIME, new Date().getTime());
                 editor.putString(DisplayMap.CACHE_JSON, jsonstringcache);
 
-                editor.commit();
+                editor.apply();
 
             }
 
-            Iterator<HashMap<String, String>> iter = listrakanradio.iterator();
-            HashMap<String, String> inforakanradio;
 
             SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
@@ -559,30 +565,28 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
             int callsignIndex = 0;
 
-            while (iter.hasNext()) {
+            for (SimpleArrayMap<String, String> inforakanradio : listrakanradio) {
 
-                inforakanradio = iter.next();
 
                 MarkerOptions marking = new MarkerOptions();
 
                 // java.util.Date utilDate = new java.util.Date();
-                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
                 java.util.Date time;
 
                 try {
-                    time = formatter.parse(inforakanradio.get("time"));
+                    time = dateformatter.parse(inforakanradio.get("time"));
                 } catch (ParseException e) {
                     time = new java.util.Date();
 
                     e.printStackTrace();
                 }
 
-                FuzzyDateFormatter format = FuzzyDateFormat.getInstance();
 
                 marking.position(new LatLng(Double.parseDouble(inforakanradio.get("lat")), Double
                         .parseDouble(inforakanradio.get("lng"))));
                 marking.title(inforakanradio.get("callsign") + " - " +
-                        format.formatDistance(time));
+                        fuzzydateformat.formatDistance(time));
                 marking.snippet("@" + inforakanradio.get("name") + "\n#:" +
                         inforakanradio.get("status") + "\n" + inforakanradio.get("phoneno") +
                         "\n" + inforakanradio.get("client"));
@@ -613,184 +617,19 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
     } // GetUserInfo
 
-    private class GetHeatMapInfo extends AsyncTask<ArrayList<LatLng>, Void, ArrayList<LatLng>> {
 
-        DisplayMap activity;
-        String jsonStr;
-        ArrayList<LatLng> heatmaplist;
-        private String currentLat, currentLng;
-
-
-        public GetHeatMapInfo(LatLng latlng, DisplayMap activity) {
-            currentLat = latlng.latitude + "";
-            currentLng = latlng.longitude + "";
-
-            this.activity = activity;
-
-            heatmaplist = new ArrayList<LatLng>(450);
-
-
-        }
-
-        protected void onPreExecute() {
-            super.onPreExecute();
-            Toast.makeText(getApplicationContext(),"Generating heatmap\u2026",Toast.LENGTH_SHORT).show();
-
-
-        }
-
-
-
-        @Override
-        protected ArrayList<LatLng> doInBackground(ArrayList<LatLng>... hlist) {
-            ServiceHandler sh = new ServiceHandler();
-
-            // Making a request to url and getting response
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-
-            nameValuePairs.add(new BasicNameValuePair("lat", currentLat));
-            nameValuePairs.add(new BasicNameValuePair("lng", currentLng));
-
-            byte[] gzipjsonStr = sh.makeServiceCall(URL_HEATMAP, ServiceHandler.GET, nameValuePairs);
-
-
-            if (gzipjsonStr == null ){
-
-                return heatmaplist;
-            }
-
-            String line = "";
-            GZIPInputStream gis = null;
-            BufferedReader bf = null;
-
-            try {
-
-                gis = new GZIPInputStream(new ByteArrayInputStream(gzipjsonStr));
-
-
-                bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-
-
-                StringBuilder sbuilder = new StringBuilder();
-
-
-                while ((line = bf.readLine()) != null) {
-                    sbuilder.append(line);
-                }
-
-                jsonStr = sbuilder.toString();
-
-
-            } catch (IOException ioex) {
-                jsonStr = null;
-
-                Log.e("mypapit ioex", "IO Exception at line: " + line);
-
-                ioex.printStackTrace();
-            } finally {
-                try {
-                    if (bf != null) {
-                        bf.close();
-                        bf = null;
-                    }
-
-                    if (gis != null) {
-                        gis.close();
-                        gis = null;
-                    }
-                } catch (IOException ioex) {
-
-
-                }
-            }
-
-
-//            jsonStr = new String(gzipjsonStr);
-
-            if (jsonStr != null) {
-
-                try {
-
-                    JSONArray heatmap = new JSONArray(jsonStr);
-
-                    //Log.d("heatmap mypapit", "Number of heatmap array: " + heatmap.length());
-
-
-                    int heatmapnum = heatmap.length();
-
-
-                    for (int i = 0; i < heatmapnum; i++) {
-
-                        JSONObject heatmaprow = heatmap.getJSONObject(i);
-                        heatmaplist.add(new LatLng(Double.parseDouble(heatmaprow.getString("lat")), Double.parseDouble(heatmaprow.getString("lng"))));
-
-
-                    }
-
-
-                } catch (JSONException jsonex) {
-
-                    Toast.makeText(getApplicationContext(), "Json Exception", Toast.LENGTH_SHORT).show();
-                } catch (NumberFormatException nfex) {
-
-                    Toast.makeText(getApplicationContext(), "NumberFormat Exception", Toast.LENGTH_SHORT).show();
-
-                } catch (Exception ex) {
-
-
-                    Toast.makeText(getApplicationContext(), "General Exception : " + ex.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-
-
-            //Log.d("heatmap mypapit", "Number of heatmap points: " + heatmaplist.size());
-
-
-            return heatmaplist;
-
-        } // doInBackground;
-
-        protected void onPostExecute(ArrayList<LatLng> heatpointlist) {
-
-            if (heatpointlist.size() > 0) {
-
-                HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder().data(heatpointlist).build();
-
-                mProvider.setRadius(HeatmapTileProvider.DEFAULT_RADIUS);
-
-               heatmapTileOverlay= map.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-
-
-                isHeatmap=true;
-
-
-
-            } else {
-
-                Toast.makeText(getApplicationContext(), "no heatmap", Toast.LENGTH_SHORT).show();
-                isHeatmap=false;
-            }
-
-
-        }
-
-
-    }
-
-    public void toggleHeatMap() {
+    private void toggleHeatMap() {
 
         if (!this.isHeatmap) {
-            new GetHeatMapInfo(this.latlng, this).execute();
+
+            new GetHeatMapInfo(this.latlng, this, this).execute();
         } else {
-            if (heatmapTileOverlay !=null){
+            if (heatmapTileOverlay != null) {
                 heatmapTileOverlay.remove();
                 this.isHeatmap = !this.isHeatmap;
-                Toast.makeText(getApplicationContext(),"Heatmap off",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Heatmap off", Toast.LENGTH_SHORT).show();
             }
         }
-
 
 
     }
@@ -857,12 +696,10 @@ class ServiceHandler {
             response = EntityUtils.toByteArray(httpEntity);
 
 
-        }catch (UnknownHostException unknownHostExceptiopn){
+        } catch (UnknownHostException unknownHostExceptiopn) {
             //no internet??
             return null;
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
@@ -888,4 +725,173 @@ class ServiceHandler {
 
 
     }
+}
+
+class GetHeatMapInfo extends AsyncTask<ArrayList<LatLng>, Void, ArrayList<LatLng>> {
+
+    private final DisplayMap activity;
+    private String jsonStr;
+    private final ArrayList<LatLng> heatmaplist;
+    private final String currentLat;
+    private final String currentLng;
+
+    private final HeatMapListener heatMapListener;
+
+
+    public GetHeatMapInfo(LatLng latlng, HeatMapListener heatMapListener, DisplayMap activity) {
+        currentLat = latlng.latitude + "";
+        currentLng = latlng.longitude + "";
+        this.heatMapListener = heatMapListener;
+
+        this.activity = activity;
+
+        heatmaplist = new ArrayList<LatLng>(500);
+
+
+    }
+
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Toast.makeText(activity, "Generating heatmap\u2026", Toast.LENGTH_SHORT).show();
+
+
+    }
+
+
+    @SafeVarargs
+    @Override
+    protected final ArrayList<LatLng> doInBackground(ArrayList<LatLng>... hlist) {
+        ServiceHandler sh = new ServiceHandler();
+
+        // Making a request to url and getting response
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+        nameValuePairs.add(new BasicNameValuePair("lat", currentLat));
+        nameValuePairs.add(new BasicNameValuePair("lng", currentLng));
+
+        byte[] gzipjsonStr = sh.makeServiceCall(DisplayMap.URL_HEATMAP, ServiceHandler.GET, nameValuePairs);
+
+
+        if (gzipjsonStr == null) {
+
+            return heatmaplist;
+        }
+
+        String line = "";
+        GZIPInputStream gis = null;
+        BufferedReader bf = null;
+
+        try {
+
+            gis = new GZIPInputStream(new ByteArrayInputStream(gzipjsonStr));
+
+
+            bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+
+
+            StringBuilder sbuilder = new StringBuilder();
+
+
+            while ((line = bf.readLine()) != null) {
+                sbuilder.append(line);
+            }
+
+            jsonStr = sbuilder.toString();
+
+
+        } catch (IOException ioex) {
+            jsonStr = null;
+
+            Log.e("mypapit ioex", "IO Exception at line: " + line);
+
+            ioex.printStackTrace();
+        } finally {
+            try {
+                if (bf != null) {
+                    bf.close();
+                    bf = null;
+                }
+
+                if (gis != null) {
+                    gis.close();
+                    gis = null;
+                }
+            } catch (IOException ioex) {
+
+
+            }
+        }
+
+
+//            jsonStr = new String(gzipjsonStr);
+
+        if (jsonStr != null) {
+
+            try {
+
+                JSONArray heatmap = new JSONArray(jsonStr);
+
+                //Log.d("heatmap mypapit", "Number of heatmap array: " + heatmap.length());
+
+
+                int heatmapnum = heatmap.length();
+
+
+                for (int i = 0; i < heatmapnum; i++) {
+
+                    JSONObject heatmaprow = heatmap.getJSONObject(i);
+                    heatmaplist.add(new LatLng(Double.parseDouble(heatmaprow.getString("lat")), Double.parseDouble(heatmaprow.getString("lng"))));
+
+
+                }
+
+
+            } catch (JSONException jsonex) {
+
+                Toast.makeText(activity, "Json Exception", Toast.LENGTH_SHORT).show();
+            } catch (NumberFormatException nfex) {
+
+                Toast.makeText(activity, "NumberFormat Exception", Toast.LENGTH_SHORT).show();
+
+            } catch (Exception ex) {
+
+
+                Toast.makeText(activity, "General Exception : " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+
+        }
+
+
+        //Log.d("heatmap mypapit", "Number of heatmap points: " + heatmaplist.size());
+
+
+        return heatmaplist;
+
+    } // doInBackground;
+
+    protected void onPostExecute(ArrayList<LatLng> heatpointlist) {
+
+        if (heatpointlist.size() > 0) {
+
+            HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder().data(heatpointlist).build();
+
+            mProvider.setRadius(HeatmapTileProvider.DEFAULT_RADIUS);
+
+            activity.heatmapTileOverlay = activity.map.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+
+
+            heatMapListener.setHeatMapStatus(true);
+
+
+        } else {
+
+
+            heatMapListener.setHeatMapStatus(false);
+        }
+
+
+    }
+
+
 }

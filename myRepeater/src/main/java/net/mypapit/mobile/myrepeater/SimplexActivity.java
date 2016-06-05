@@ -23,7 +23,6 @@
 
 package net.mypapit.mobile.myrepeater;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -51,7 +50,7 @@ public class SimplexActivity extends ActionBarActivity {
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         ListView lv = (ListView) findViewById(R.id.lvSimplex);
@@ -69,7 +68,7 @@ public class SimplexActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
 
-                    finish();
+                finish();
 
                 return true;
 

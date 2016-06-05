@@ -23,7 +23,6 @@
  */
 package net.mypapit.mobile.myrepeater;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
@@ -97,7 +96,6 @@ public class CorrectActivity extends ActionBarActivity {
         etcClub.setAdapter(adapterClub);
 
 
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
@@ -125,7 +123,7 @@ public class CorrectActivity extends ActionBarActivity {
             case android.R.id.home:
 
 
-                    finish();
+                finish();
 
                 return true;
 

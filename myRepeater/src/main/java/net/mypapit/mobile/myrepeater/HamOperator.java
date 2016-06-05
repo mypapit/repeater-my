@@ -20,7 +20,6 @@ public class HamOperator extends Location implements Comparable<HamOperator>, Pa
     private boolean valid;
 
 
-
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         super.writeToParcel(dest, flags);
@@ -44,7 +43,6 @@ public class HamOperator extends Location implements Comparable<HamOperator>, Pa
     public int describeContents() {
         return 0;
     }
-
 
 
     public String getHandle() {

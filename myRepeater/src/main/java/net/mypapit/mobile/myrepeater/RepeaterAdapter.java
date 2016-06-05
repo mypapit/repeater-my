@@ -45,18 +45,21 @@ import java.util.Locale;
 
 import garin.artemiy.compassview.library.CompassView;
 
-public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer {
+class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer {
 
     private static LayoutInflater inflater = null;
-    private RepeaterList data, realdata;
+    private RepeaterList data;
+    private final RepeaterList realdata;
     private int mLastPosition = -1;
-    float local_distance;
-    boolean excludeLink, excludeDirection;
-    private Repeater userLocation;
+    private float local_distance;
+    private boolean excludeLink;
+    private final boolean excludeDirection;
+    private final Repeater userLocation;
     private static final int[] interval = new int[]{0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
             700, 800, 900, 1000, 1250, 1500, 1750, 2000};
 
     private final Activity activity;
+    private final DecimalFormat numberFormat;
 
     public RepeaterAdapter(Activity activity, RepeaterList rl, Repeater userLocation, float local_distance,
                            boolean excludeLink, boolean excludeDirection) {
@@ -69,6 +72,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionI
 
         this.excludeLink = excludeLink;
         this.local_distance = local_distance;
+        numberFormat = new DecimalFormat("#.00 km");
 
         SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (repeater_prefs == null) {
@@ -142,13 +146,13 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionI
         }
 
         Repeater repeater = data.get(position);
-        DecimalFormat nf = new DecimalFormat("#.00");
+
 
         // Log.d("mypapit.excludeLink", "mypapit.local_distance: " +
         // local_distance);
 
         holder.tvCallsign.setText((repeater.getCallsign()));
-        holder.tvFreq.setText(Double.toString(repeater.getDownlink()) + " MHz (" + repeater.getShift() + ")");
+        holder.tvFreq.setText(repeater.getDownlinkShift());
         holder.tvTone.setText(Double.toString(repeater.getTone()));
         holder.tvLocation.setText(repeater.getLocation());
         holder.tvClub.setText(repeater.getClub());
@@ -160,7 +164,7 @@ public class RepeaterAdapter extends BaseAdapter implements Filterable, SectionI
         }
 
         double distance = repeater.getDistance() / 1000.0;
-        holder.tvDistance.setText(nf.format(distance) + " km");
+        holder.tvDistance.setText(numberFormat.format(distance));
 
         if (distance > local_distance) {
             holder.tvDistance.setTextColor(Color.rgb(200, 0, 0));

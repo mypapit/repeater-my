@@ -25,7 +25,7 @@ public class SettingsActivity extends PreferenceActivity {
             count++;
             SharedPreferences.Editor prefEditor = prefs.edit();
             prefEditor.putInt("callsign_settings_k220", count);
-            prefEditor.commit();
+            prefEditor.apply();
         }
 
     }

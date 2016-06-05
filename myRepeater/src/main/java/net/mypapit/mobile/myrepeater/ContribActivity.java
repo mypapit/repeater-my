@@ -25,7 +25,6 @@
 
 package net.mypapit.mobile.myrepeater;
 
-import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -34,7 +33,7 @@ import android.widget.TextView;
 import java.io.InputStream;
 
 public class ContribActivity extends ActionBarActivity {
-    TextView tvContrib;
+    private TextView tvContrib;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

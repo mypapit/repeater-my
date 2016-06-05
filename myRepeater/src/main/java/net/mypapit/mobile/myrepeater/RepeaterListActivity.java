@@ -28,7 +28,6 @@ package net.mypapit.mobile.myrepeater;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -87,13 +86,13 @@ import au.com.bytecode.opencsv.CSVReader;
 import garin.artemiy.compassview.library.CompassSensorsActivity;
 
 public class RepeaterListActivity extends CompassSensorsActivity implements OnItemClickListener {
-    Repeater xlocation;
-    RepeaterAdapter adapter;
-    RepeaterList rl;
+    private Repeater xlocation;
+    private RepeaterAdapter adapter;
+    private RepeaterList rl;
     private ListView lv;
     private TextView tvAddress;
     @SuppressWarnings("FieldCanBeLocal")
-    private static int static_distance = 0;
+    private static final int static_distance = 0;
     private boolean excludeLink = false;
     private boolean excludeDirection = false;
     private float local_distance = 100.0f;
@@ -113,7 +112,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
     private static String m_deviceid;
 
     // please change this to reflect walkthrough updates
-    protected static final int WALK_VERSION_CODE = 220;
+    static final int WALK_VERSION_CODE = 220;
 
     // StackHistory stackhistory;
 
@@ -158,12 +157,10 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
             // prefEditor.putString("callsign", new
             // StringBuilder("9W2-").append(this.generateCallsign()).toString());
             prefEditor.putString("deviceid", m_deviceid);
-            prefEditor.commit();
+            prefEditor.apply();
 
-            Intent intent = new Intent(getApplicationContext(),SettingsActivity.class);
+            Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
             startActivity(intent);
-
-
 
 
         }
@@ -230,7 +227,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
     }
 
-    public void refreshList() {
+    private void refreshList() {
         SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         excludeLink = repeater_prefs.getBoolean("excludeLinkRepeater", false);
@@ -246,12 +243,12 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
             m_qsx = Double.parseDouble(repeater_prefs.getString("qsx", "145.00"));
 
         } catch (NumberFormatException nfe) {
-            m_qsx=145.00;
+            m_qsx = 145.00;
             m_passcode = 0;
         } catch (Exception ex) {
 
             m_passcode = 0;
-            m_qsx=145.00;
+            m_qsx = 145.00;
         }
 
         local_distance = repeater_prefs.getInt("range", 100);
@@ -264,7 +261,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
     }
 
     class GPSThread extends Thread {
-        private RepeaterListActivity activity;
+        private final RepeaterListActivity activity;
 
         private String bestProvider;
         private String m_address;
@@ -280,7 +277,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
         public String geoCode(double lat, double lon) {
             Geocoder geocoder = new Geocoder(activity, Locale.getDefault());
-            List<Address> addressList = null;
+            List<Address> addressList;
             String[] addressLocality = new String[2];
 
             try {
@@ -688,34 +685,34 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
         getMenuInflater().inflate(R.menu.repeater_list, menu);
 
 
-            //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
-            //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         //    searchView.setIconifiedByDefault(false);
 
-            searchView.setQueryHint("part of repeater callsign");
+        searchView.setQueryHint("part of repeater callsign");
 
-            SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
+        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
 
-                @Override
-                public boolean onQueryTextSubmit(String searchText) {
+            @Override
+            public boolean onQueryTextSubmit(String searchText) {
 
-                    adapter.getFilter().filter(searchText);
-                    Log.d("MYRepeater", "search: " + searchText);
-                    adapter.notifyDataSetChanged();
-                    return true;
-                }
+                adapter.getFilter().filter(searchText);
+                Log.d("MYRepeater", "search: " + searchText);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
 
-                @Override
-                public boolean onQueryTextChange(String searchText) {
-                    // TODO Auto-generated method stub
-                    adapter.getFilter().filter(searchText);
-                    adapter.notifyDataSetChanged();
-                    return true;
-                }
-            };
+            @Override
+            public boolean onQueryTextChange(String searchText) {
+                // TODO Auto-generated method stub
+                adapter.getFilter().filter(searchText);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+        };
 
-            searchView.setOnQueryTextListener(textChangeListener);
+        searchView.setOnQueryTextListener(textChangeListener);
 
 
         return super.onCreateOptionsMenu(menu);
@@ -784,7 +781,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
         return false;
     }
 
-    public void showDialog() throws NameNotFoundException {
+    private void showDialog() throws NameNotFoundException {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.about_dialog);
         dialog.setTitle("About Repeater.MY " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
@@ -802,7 +799,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
     }
 
-    public void showAlertDialog() {
+    private void showAlertDialog() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Manual Location");
@@ -835,7 +832,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
     }
 
-    public boolean isLocationEnabled(Context context) {
+    private boolean isLocationEnabled(Context context) {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         String provider = lm.getBestProvider(new Criteria(), true);
         return (!TextUtils.isEmpty(provider) && !LocationManager.PASSIVE_PROVIDER.equals(provider));
@@ -893,15 +890,14 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
     }
 
-    public String generateCallsign() {
+    private String generateCallsign() {
         final SecureRandom random = new SecureRandom();
 
         return new BigInteger(130, random).toString(32).substring(0, 8);
     }
 
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-
 
 
     }

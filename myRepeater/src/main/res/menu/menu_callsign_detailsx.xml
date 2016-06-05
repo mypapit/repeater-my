@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_heatmap"
+        android:id="@+id/action_callsign_stats"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_action_view_as_grid"
+        android:icon="@drawable/ic_action_bulleted_list"
         app:showAsAction="always|withText"
-        android:title="@string/action_heatmap" />
+        android:title="@string/action_callsign_stats" />
 </menu>

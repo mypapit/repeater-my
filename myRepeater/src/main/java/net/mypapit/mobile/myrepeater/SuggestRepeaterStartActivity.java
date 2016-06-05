@@ -23,7 +23,6 @@
 
 package net.mypapit.mobile.myrepeater;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -36,7 +35,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SuggestRepeaterStartActivity extends ActionBarActivity{
+public class SuggestRepeaterStartActivity extends ActionBarActivity {
     private final String club[] = {"ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC",
             "PEMANCAR", "PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS", "SARC"};
     private final String state[] = {"JOHOR", "KEDAH", "KELANTAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN",
@@ -44,7 +43,6 @@ public class SuggestRepeaterStartActivity extends ActionBarActivity{
     private final String callsign[] = {"9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6", "9M4C", "9M8",
             "9M6"};
     private final String location[] = {"BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL ", "HUTAN "};
-
 
 
     private ArrayList<String> rlist;
@@ -69,12 +67,6 @@ public class SuggestRepeaterStartActivity extends ActionBarActivity{
 
         tvClub = (AutoCompleteTextView) findViewById(R.id.tvSClub);
         tvState = (AutoCompleteTextView) findViewById(R.id.tvSState);
-
-
-
-
-
-
 
 
         tvClub.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, club));

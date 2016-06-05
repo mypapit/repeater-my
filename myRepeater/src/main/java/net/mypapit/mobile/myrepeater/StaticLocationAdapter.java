@@ -46,8 +46,8 @@ public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer
      *
      */
 
-    private ArrayList<StaticLocation> list;
-    private Context activity;
+    private final ArrayList<StaticLocation> list;
+    private final Context activity;
     private final String[] states = new String[]{"#", "Johor", "Kedah", "Kelantan", "Kuala Lumpur", "Melaka",
             "N. Sembilan", "Pahang", "Penang", "Perlis", "Putrajaya", "Sabah", "Sarawak", "Selangor", "Terengganu"};
 

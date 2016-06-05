@@ -168,6 +168,13 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
         this.tone = tone;
     }
 
+    public String getDownlinkShift() {
+
+
+
+        return new StringBuilder(Double.toString(getDownlink())).append("MHz (").append(getShift()).append(")").toString();
+    }
+
 	/*
      * public void setDistance(double lat, double lon){ distance =
 	 * Distance.distance(this.lat, this.lon, lat, lon);
@@ -178,6 +185,8 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
     public ListIterator<Repeater> calcDistanceAll(RepeaterList rl) {
         ListIterator<Repeater> venum = rl.listIterator();
         Repeater temp;
+
+
         while (venum.hasNext()) {
             temp = venum.next();
             temp.distanceTo(this);

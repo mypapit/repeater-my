@@ -36,7 +36,6 @@ import java.util.List;
  * A very simple CSV reader released under a commercial-friendly license.
  *
  * @author Glen Smith
- *
  */
 public class CSVReader {
 
@@ -52,7 +51,9 @@ public class CSVReader {
 
     private boolean linesSkiped;
 
-    /** The default separator to use if none is supplied to the constructor. */
+    /**
+     * The default separator to use if none is supplied to the constructor.
+     */
     public static final char DEFAULT_SEPARATOR = ',';
 
     /**
@@ -69,8 +70,7 @@ public class CSVReader {
     /**
      * Constructs CSVReader using a comma for the separator.
      *
-     * @param reader
-     *            the reader to an underlying CSV source.
+     * @param reader the reader to an underlying CSV source.
      */
     public CSVReader(Reader reader) {
         this(reader, DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER,
@@ -80,14 +80,10 @@ public class CSVReader {
     /**
      * Constructs CSVReader with supplied separator and quote char.
      *
-     * @param reader
-     *            the reader to an underlying CSV source.
-     * @param separator
-     *            the delimiter to use for separating entries
-     * @param quotechar
-     *            the character to use for quoted elements
-     * @param line
-     *            the line number to skip for start reading
+     * @param reader    the reader to an underlying CSV source.
+     * @param separator the delimiter to use for separating entries
+     * @param quotechar the character to use for quoted elements
+     * @param line      the line number to skip for start reading
      */
     public CSVReader(Reader reader, char separator, char quotechar, int line) {
         this.br = new BufferedReader(reader);
@@ -100,10 +96,8 @@ public class CSVReader {
      * Reads the next line from the buffer and converts to a string array.
      *
      * @return a string array with each comma-separated element as a separate
-     *         entry.
-     *
-     * @throws IOException
-     *             if bad things happen during the read
+     * entry.
+     * @throws IOException if bad things happen during the read
      */
     public String[] readNext() throws IOException {
 
@@ -115,8 +109,7 @@ public class CSVReader {
      * Reads the next line from the file.
      *
      * @return the next line from the file without trailing newline
-     * @throws IOException
-     *             if bad things happen during the read
+     * @throws IOException if bad things happen during the read
      */
     private String getNextLine() throws IOException {
         if (!this.linesSkiped) {
@@ -135,8 +128,7 @@ public class CSVReader {
     /**
      * Parses an incoming String and returns an array of elements.
      *
-     * @param nextLine
-     *            the string to parse
+     * @param nextLine the string to parse
      * @return the comma-tokenized list of elements, or null if nextLine is null
      * @throws IOException if bad things happen during the read
      */

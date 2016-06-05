@@ -56,10 +56,10 @@ import garin.artemiy.compassview.library.CompassView;
 
 public class RepeaterDetailsActivity extends CompassSensorsActivity {
     private String[] repeater;
-    private boolean noCompass = false;
+
 
     private Context mContext;
-    ImageButton btnNearby;
+    private ImageButton btnNearby;
 
 
     @Override
@@ -68,7 +68,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
         mContext = this.getApplicationContext();
 
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         setContentView(R.layout.repeater_detail_layout);
@@ -78,7 +78,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
         // get repeater information from ListView
         repeater = (String[]) getIntent().getExtras().get("Repeater");
-        noCompass = getIntent().getExtras().getBoolean("noCompass");
+        boolean noCompass = getIntent().getExtras().getBoolean("noCompass");
 
         // prevent application from crashing if Repeater == null
         if (repeater == null) {
@@ -126,7 +126,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
                 count++;
                 SharedPreferences.Editor prefEditor = prefs.edit();
                 prefEditor.putInt("walkthrough_k220", count);
-                prefEditor.commit();
+                prefEditor.apply();
             }
         }
 
@@ -196,7 +196,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
                 return true;
             case android.R.id.home:
-                    finish();
+                finish();
 
 
                 return true;
@@ -261,7 +261,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
     }
 
 
-    public void showRepeaterCorrectionDialog() {
+    private void showRepeaterCorrectionDialog() {
         CharSequence[] items = {"Callsign", "Frequency", "Shift", "Tone", "Club", "Location"};
         boolean[] states = {false, false, false, false, false, false};
 
@@ -271,7 +271,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
 
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                // TODO Auto-generated method stub
+
 
             }
         });
@@ -290,8 +290,8 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
                     submitToCorrect(checked, repeater);
 
                 } else {
-                    Toast x = Toast.makeText(mContext, "Please select at least one detail", Toast.LENGTH_SHORT);
-                    x.show();
+                    Toast.makeText(mContext, "Please select at least one detail", Toast.LENGTH_SHORT).show();
+
 
                 }
 

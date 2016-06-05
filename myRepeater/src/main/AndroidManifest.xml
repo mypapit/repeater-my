@@ -68,7 +68,7 @@
         <!-- <meta-data android:name="com.google.android.gms.version" android:value="4030500" /> -->
         <activity
             android:name=".ContribActivity"
-            android:label="@string/title_activity_contrib"/>
+            android:label="@string/title_activity_contrib" />
         <activity
             android:name=".StaticLocationActivity"
             android:label="@string/title_activity_static_location">
@@ -92,7 +92,7 @@
             android:label="@string/title_activity_suggest" />
         <activity
             android:name=".CorrectActivity"
-            android:label="@string/title_activity_correc"/>
+            android:label="@string/title_activity_correc" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings">
@@ -103,12 +103,12 @@
         <activity
             android:name=".WalkthroughActivity"
             android:label="@string/title_activity_walkthrough"
-            android:theme="@style/LightTheme"/>
+            android:theme="@style/LightTheme" />
 
 
         <activity
             android:name=".NearbyOperatorActivity"
-            android:label="@string/title_activity_nearby_operators"/>
+            android:label="@string/title_activity_nearby_operators" />
 
         <activity
             android:name=".SimplexActivity"
@@ -119,7 +119,7 @@
         </activity>
         <activity
             android:name=".CallsignDetailsActivity"
-            android:label="@string/title_activity_callsign_details"/>
+            android:label="@string/title_activity_callsign_details" />
     </application>
 
 </manifest>

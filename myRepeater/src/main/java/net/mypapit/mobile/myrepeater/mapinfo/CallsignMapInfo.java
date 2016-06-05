@@ -17,7 +17,7 @@ public class CallsignMapInfo extends MapInfoObject {
 
     }
     /*
-	public CallsignMapInfo (String callsign, double lat, double lng)
+    public CallsignMapInfo (String callsign, double lat, double lng)
 	{
 		this();
 		m_callsign=callsign;

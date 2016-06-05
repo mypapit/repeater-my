@@ -63,7 +63,7 @@ public class StaticLocationActivity extends ActionBarActivity {
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         localActivity = this;
@@ -94,7 +94,7 @@ public class StaticLocationActivity extends ActionBarActivity {
                 // select manual location dialog
                 // token = today's date in dd/MM format
                 editor.putString("token", dateFormat.format(new Date()));
-                editor.commit();
+                editor.apply();
 
                 NavUtils.navigateUpFromSameTask(localActivity);
 
@@ -171,7 +171,7 @@ public class StaticLocationActivity extends ActionBarActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
 
-                    NavUtils.navigateUpFromSameTask(this);
+                NavUtils.navigateUpFromSameTask(this);
 
                 return true;
 

@@ -33,7 +33,6 @@ import java.io.Writer;
  * A very simple CSV writer released under a commercial-friendly license.
  *
  * @author Glen Smith
- *
  */
 public class CSVWriter {
 
@@ -47,10 +46,14 @@ public class CSVWriter {
 
     private String lineEnd;
 
-    /** The character used for escaping quotes. */
+    /**
+     * The character used for escaping quotes.
+     */
     public static final char DEFAULT_ESCAPE_CHARACTER = '"';
 
-    /** The default separator to use if none is supplied to the constructor. */
+    /**
+     * The default separator to use if none is supplied to the constructor.
+     */
     public static final char DEFAULT_SEPARATOR = ',';
 
     /**
@@ -59,20 +62,25 @@ public class CSVWriter {
      */
     public static final char DEFAULT_QUOTE_CHARACTER = '"';
 
-    /** The quote constant to use when you wish to suppress all quoting. */
+    /**
+     * The quote constant to use when you wish to suppress all quoting.
+     */
     public static final char NO_QUOTE_CHARACTER = '\u0000';
 
-    /** The escape constant to use when you wish to suppress all escaping. */
+    /**
+     * The escape constant to use when you wish to suppress all escaping.
+     */
     public static final char NO_ESCAPE_CHARACTER = '\u0000';
 
-    /** Default line terminator uses platform encoding. */
+    /**
+     * Default line terminator uses platform encoding.
+     */
     public static final String DEFAULT_LINE_END = "\n";
 
     /**
      * Constructs CSVWriter using a comma for the separator.
      *
-     * @param writer
-     *            the writer to an underlying CSV source.
+     * @param writer the writer to an underlying CSV source.
      */
     public CSVWriter(Writer writer) {
         this(writer, DEFAULT_SEPARATOR, DEFAULT_QUOTE_CHARACTER,
@@ -82,16 +90,11 @@ public class CSVWriter {
     /**
      * Constructs CSVWriter with supplied separator, quote char, escape char and line ending.
      *
-     * @param writer
-     *            the writer to an underlying CSV source.
-     * @param separator
-     *            the delimiter to use for separating entries
-     * @param quotechar
-     *            the character to use for quoted elements
-     * @param escapechar
-     *            the character to use for escaping quotechars or escapechars
-     * @param lineEnd
-     * 			  the line feed terminator to use
+     * @param writer     the writer to an underlying CSV source.
+     * @param separator  the delimiter to use for separating entries
+     * @param quotechar  the character to use for quoted elements
+     * @param escapechar the character to use for escaping quotechars or escapechars
+     * @param lineEnd    the line feed terminator to use
      */
     public CSVWriter(Writer writer, char separator, char quotechar, char escapechar, String lineEnd) {
         this.pw = new PrintWriter(writer);
@@ -104,9 +107,8 @@ public class CSVWriter {
     /**
      * Writes the next line to the file.
      *
-     * @param nextLine
-     *            a string array with each comma-separated element as a separate
-     *            entry.
+     * @param nextLine a string array with each comma-separated element as a separate
+     *                 entry.
      */
     public void writeNext(String[] nextLine) {
 
@@ -159,7 +161,6 @@ public class CSVWriter {
      * Close the underlying stream writer flushing any buffered content.
      *
      * @throws IOException if bad things happen
-     *
      */
     public void close() throws IOException {
         pw.flush();

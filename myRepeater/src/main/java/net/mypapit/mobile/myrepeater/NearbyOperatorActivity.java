@@ -1,6 +1,5 @@
 package net.mypapit.mobile.myrepeater;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -32,16 +31,17 @@ import java.util.List;
 public class NearbyOperatorActivity extends ActionBarActivity implements OnItemClickListener {
 
     private ListView listview;
-    private TextView tvNearby;
+
     private HamOperatorList holist;
     private NearbyOperatorAdapter adapter;
     private static final String URL = "http://api.repeater.my/v1/nearbyoperator.php";
 
     private String mlocation;
-    public static final String CACHE_PREFS = "cache-prefs";
-    public static final String CACHE_TIME = "cache-time-";
-    public static final String CACHE_JSON = "cache-json-";
-    SharedPreferences cache;
+    private static final String CACHE_PREFS = "cache-prefs";
+    private static final String CACHE_TIME = "cache-time-";
+    private static final String CACHE_JSON = "cache-json-";
+    private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private SharedPreferences cache;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +57,14 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
         mlat = bundle.getDouble("lat");
         mlng = bundle.getDouble("lng");
 
+
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
+        TextView tvNearby;
         tvNearby = (TextView) findViewById(R.id.tvNearbyRepeater);
 
         //TextView emptyView = (TextView) findViewById(R.id.empty_list_item);
@@ -111,7 +113,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
     }
 
-    public void loadfromCache(String jsonCache) {
+    private void loadfromCache(String jsonCache) {
         JSONArray rakanradio = null;
         try {
             // JSONObject jsonObj = new JSONObject(jsonStr);
@@ -127,7 +129,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
                 int validity = Integer.parseInt(valid);
 
-                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
                 java.util.Date time;
 
                 try {
@@ -188,8 +190,8 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
             case android.R.id.home:
 
 
-                    // NavUtils.navigateUpFromSameTask(this);
-                    finish();
+                // NavUtils.navigateUpFromSameTask(this);
+                finish();
 
 
         }
@@ -197,7 +199,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
     }
 
-    public static String toTitleCase(String input) {
+    private static String toTitleCase(String input) {
         StringBuilder titleCase = new StringBuilder();
         boolean nextTitleCase = true;
 
@@ -243,7 +245,8 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
     private class GetUserInfo extends AsyncTask<Void, Void, Void> {
 
-        String currentlat, currentlng;
+        final String currentlat;
+        final String currentlng;
 
         String jsonStr;
 
@@ -298,7 +301,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
                         int validity = Integer.parseInt(valid);
 
-                        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
                         java.util.Date time;
 
                         try {
@@ -320,7 +323,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
                             holng = 115.0;
 
                         }
-						/*
+                        /*
 						 * (String callsign, String handle, String status,
 						 * String phoneno, String locality, String client,
 						 * String deviceid, String qsx, Date date, double lat,
@@ -330,7 +333,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
                         HamOperator hamoperator = new HamOperator(callsign, jsinfo.getString("name"),
                                 jsinfo.getString("status"), jsinfo.getString("phoneno"), jsinfo.getString("locality"),
                                 jsinfo.getString("client"), jsinfo.getString("deviceid"), jsinfo.getString("qsx"),
-                                time, jsinfo.getString("time"), holat, holng, (validity < 1) ? false : true
+                                time, jsinfo.getString("time"), holat, holng, validity > 0
 
                         );
 
@@ -371,7 +374,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
                 editor.putLong(NearbyOperatorActivity.CACHE_TIME + mlocation, new Date().getTime());
                 editor.putString(NearbyOperatorActivity.CACHE_JSON + mlocation, jsonStr);
 
-                editor.commit();
+                editor.apply();
 
             }
 

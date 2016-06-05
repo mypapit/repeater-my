@@ -2,7 +2,6 @@ package net.mypapit.mobile.myrepeater;
 
 //uses vierpagerindicator libary from Patrik Akerfeldt and Jake Wharton
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;

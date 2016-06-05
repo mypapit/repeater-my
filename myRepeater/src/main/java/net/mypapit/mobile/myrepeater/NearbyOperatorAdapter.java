@@ -4,20 +4,24 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class NearbyOperatorAdapter extends BaseAdapter {
+class NearbyOperatorAdapter extends BaseAdapter {
 
     private static LayoutInflater inflater = null;
 
+    private final Context context;
 
 
-    private HamOperatorList hol;
+    private final HamOperatorList hol;
 
     public NearbyOperatorAdapter(Context context, HamOperatorList hol) {
 
         this.hol = hol;
+        this.context = context;
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -78,6 +82,11 @@ public class NearbyOperatorAdapter extends BaseAdapter {
         holder.tvVerified.setText(operator.isValid() ? "(v)" : "");
 
         holder.tvActiveCheckins.setText("Checkins: " + operator.getActiveNo());
+
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_left_in);
+        animation.setDuration(200);
+        convertView.startAnimation(animation);
+        animation = null;
 
 
         return convertView;

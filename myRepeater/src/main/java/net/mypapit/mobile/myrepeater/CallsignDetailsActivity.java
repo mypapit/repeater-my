@@ -1,10 +1,7 @@
 package net.mypapit.mobile.myrepeater;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -26,10 +23,16 @@ import java.text.SimpleDateFormat;
 
 public class CallsignDetailsActivity extends ActionBarActivity {
 
-    TextView tvName, tvClient, tvDistance, tvLocality, tvLastSeen, tvPhone, tvStatus;
+    private TextView tvName;
+    private TextView tvClient;
+    private TextView tvDistance;
+    private TextView tvLocality;
+    private TextView tvLastSeen;
+    private TextView tvPhone;
+    private TextView tvStatus;
 
     View dividerPhone, titlePhone;
-    ImageButton btnCall, btnStats;
+    ImageButton btnCall;
 
     int jokecounter;
 
@@ -55,21 +58,12 @@ public class CallsignDetailsActivity extends ActionBarActivity {
         dividerPhone = findViewById(R.id.DividercmiPhone);
         titlePhone = findViewById(R.id.TitlecmiPhone);
         btnCall = (ImageButton) findViewById(R.id.btnCall);
-        btnStats = (ImageButton) findViewById(R.id.btnStats);
+
 
 		
 		
 
-		/*
-         * intent.putExtra("name", inforakanradio.get("name"));
-		 * intent.putExtra("status", inforakanradio.get("status"));
-		 * intent.putExtra("distance", inforakanradio.get("distance"));
-		 * intent.putExtra("time", inforakanradio.get("time"));
-		 * intent.putExtra("deviceid", inforakanradio.get("deviceid"));
-		 * intent.putExtra("phoneno", inforakanradio.get("phoneno"));
-		 * intent.putExtra("client", inforakanradio.get("client"));
-		 * intent.putExtra("locality", inforakanradio.get("locality"));
-		 */
+
 
         String phoneNo = bundle.getString("phoneno");
         String status = bundle.getString("status");
@@ -112,15 +106,10 @@ public class CallsignDetailsActivity extends ActionBarActivity {
         String callsign = bundle.getString("callsign");
 
 
+        android.support.v7.app.ActionBar ab = this.getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
-            android.support.v7.app.ActionBar   ab = this.getSupportActionBar();
-            ab.setDisplayHomeAsUpEnabled(true);
-
-            ab.setTitle(callsign);
-
-
-
-
+        ab.setTitle(callsign);
 
 
         btnCall.setOnClickListener(new View.OnClickListener() {
@@ -135,30 +124,6 @@ public class CallsignDetailsActivity extends ActionBarActivity {
             }
         });
 
-        btnStats.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                if (jokecounter < 4) {
-                    Toast.makeText(getApplicationContext(), "Not implemented yet, sorry :(", Toast.LENGTH_SHORT).show();
-
-                } else if (jokecounter < 8) {
-
-                    Toast.makeText(getApplicationContext(), "Hey, not implemented yet!!", Toast.LENGTH_SHORT).show();
-                } else if (jokecounter < 12) {
-
-                    Toast.makeText(getApplicationContext(), "OMGWTF!!! Get it through your skull, not implemented yet!", Toast.LENGTH_SHORT).show();
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "Wait for the next release - not implemented yet!", Toast.LENGTH_SHORT).show();
-                }
-
-                jokecounter++;
-
-
-            }
-        });
 
 
     }
@@ -166,7 +131,7 @@ public class CallsignDetailsActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        // getMenuInflater().inflate(R.menu.callsign_details, menu);
+        getMenuInflater().inflate(R.menu.menu_callsign_detailsx, menu);
         return true;
     }
 
@@ -179,8 +144,7 @@ public class CallsignDetailsActivity extends ActionBarActivity {
             case android.R.id.home:
 
 
-
-                    finish();
+                finish();
 
                 return true;
             case R.id.btnCall:

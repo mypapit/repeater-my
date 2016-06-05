@@ -24,7 +24,6 @@
 
 package net.mypapit.mobile.myrepeater;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
@@ -44,7 +43,6 @@ import java.util.Locale;
 import java.util.Stack;
 
 public class SuggestRepeaterSecondActivity extends ActionBarActivity {
-
 
 
     private String callsign, club, location, state;
