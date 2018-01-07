@@ -102,7 +102,7 @@ public class SuggestRepeaterSecondActivity extends ActionBarActivity {
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
 
                 emailIntent.setType("text/plain");
-                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mypapit+new_repeater_suggest@gmail.com"});
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"repeaterbot+new_repeater_suggest@gmail.com"});
 
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Repeater.MY - new Repeater");
 
@@ -157,7 +157,7 @@ public class SuggestRepeaterSecondActivity extends ActionBarActivity {
 
     public Intent createEmailOnlyChooserIntent(Intent source, CharSequence chooserTitle) {
         Stack<Intent> intents = new Stack<Intent>();
-        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "mypapit+new_repeater_suggest@gmail.com",
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "repeaterbot+new_repeater_suggest@gmail.com",
                 null));
         List<ResolveInfo> activities = getPackageManager().queryIntentActivities(i, 0);
 

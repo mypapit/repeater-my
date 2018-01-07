@@ -118,14 +118,14 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
             compassView.initializeCompass(userloc, repeaterloc, R.drawable.arrow);
 
             SharedPreferences prefs = getSharedPreferences("Location", MODE_PRIVATE);
-            int count = prefs.getInt("walkthrough_k220", RepeaterListActivity.WALK_VERSION_CODE);
+            int count = prefs.getInt(RepeaterListActivity.WALK_PREFS, RepeaterListActivity.WALK_VERSION_CODE);
             // count=count-4;
 
             if (count < (RepeaterListActivity.WALK_VERSION_CODE + 3)) {
                 showOverlay();
                 count++;
                 SharedPreferences.Editor prefEditor = prefs.edit();
-                prefEditor.putInt("walkthrough_k220", count);
+                prefEditor.putInt(RepeaterListActivity.WALK_PREFS, count);
                 prefEditor.apply();
             }
         }
@@ -232,7 +232,7 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
      */
     public Intent createEmailOnlyChooserIntent(Intent source, CharSequence chooserTitle) {
         Stack<Intent> intents = new Stack<Intent>();
-        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "mypapit+repeater_correction@gmail.com",
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "repeaterbot+repeater_correction@gmail.com",
                 null));
         List<ResolveInfo> activities = getPackageManager().queryIntentActivities(i, 0);
 

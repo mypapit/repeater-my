@@ -33,5 +33,10 @@
     <string name="title_activity_simplex">Simplex Freq</string>
     <string name="title_activity_callsign_details">CallsignDetailsActivity</string>
     <string name="title_activity_nearby_operators">Nearby Stations</string>
+    <string name="graph_weekday">  weekday activity last 30 days</string>
+    <string name="graph_weekly">  weekly activity last 30 days</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

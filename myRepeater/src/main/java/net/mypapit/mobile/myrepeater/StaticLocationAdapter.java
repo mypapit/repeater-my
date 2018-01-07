@@ -42,14 +42,14 @@ import java.util.ArrayList;
  */
 public class StaticLocationAdapter extends BaseAdapter implements SectionIndexer {
 
+    private static final String[] states = new String[]{"#", "Johor", "Kedah", "Kelantan", "Kuala Lumpur", "Melaka",
+            "N. Sembilan", "Pahang", "Penang", "Perlis", "Putrajaya", "Sabah", "Sarawak", "Selangor", "Terengganu"};
     /**
      *
      */
 
     private final ArrayList<StaticLocation> list;
     private final Context activity;
-    private final String[] states = new String[]{"#", "Johor", "Kedah", "Kelantan", "Kuala Lumpur", "Melaka",
-            "N. Sembilan", "Pahang", "Penang", "Perlis", "Putrajaya", "Sabah", "Sarawak", "Selangor", "Terengganu"};
 
     public StaticLocationAdapter(ArrayList<StaticLocation> list, Context context) {
         super();

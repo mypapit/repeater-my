@@ -47,19 +47,18 @@ import garin.artemiy.compassview.library.CompassView;
 
 class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer {
 
+    private static final int[] interval = new int[]{0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
+            700, 800, 900, 1000, 1250, 1500, 1750, 2000};
     private static LayoutInflater inflater = null;
-    private RepeaterList data;
     private final RepeaterList realdata;
+    private final boolean excludeDirection;
+    private final Repeater userLocation;
+    private final Activity activity;
+    private final DecimalFormat numberFormat;
+    private RepeaterList data;
     private int mLastPosition = -1;
     private float local_distance;
     private boolean excludeLink;
-    private final boolean excludeDirection;
-    private final Repeater userLocation;
-    private static final int[] interval = new int[]{0, 25, 50, 75, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600,
-            700, 800, 900, 1000, 1250, 1500, 1750, 2000};
-
-    private final Activity activity;
-    private final DecimalFormat numberFormat;
 
     public RepeaterAdapter(Activity activity, RepeaterList rl, Repeater userLocation, float local_distance,
                            boolean excludeLink, boolean excludeDirection) {
@@ -233,19 +232,6 @@ class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer 
 
     }
 
-    static class ViewHolder {
-
-        TextView tvCallsign;
-        TextView tvDistance;
-        TextView tvFreq;
-        TextView tvTone;
-        TextView tvClub;
-        TextView tvLocation;
-        TextView tvLink;
-        CompassView compassView;
-
-    }
-
     @Override
     public Object[] getSections() {
 
@@ -280,6 +266,7 @@ class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer 
     @Override
     public int getSectionForPosition(int position) {
 
+        /*
         Repeater repeater = this.data.get(position);
         double distance = repeater.getDistance() / 1000.0;
         // Log.d("net.mypapit distance","distance: " + distance);
@@ -325,8 +312,21 @@ class RepeaterAdapter extends BaseAdapter implements Filterable, SectionIndexer 
             return 19;
         } else if (distance <= 2000.0) {
             return 20;
-        }
+        }*/
 
         return 0;
+    }
+
+    static class ViewHolder {
+
+        TextView tvCallsign;
+        TextView tvDistance;
+        TextView tvFreq;
+        TextView tvTone;
+        TextView tvClub;
+        TextView tvLocation;
+        TextView tvLink;
+        CompassView compassView;
+
     }
 }

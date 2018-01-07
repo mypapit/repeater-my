@@ -43,11 +43,8 @@ public class SuggestRepeaterStartActivity extends ActionBarActivity {
     private final String callsign[] = {"9M4R", "9M2R", "9M2L", "9M4L", "9M4C", "9M2C", "9M6R", "9M6", "9M4C", "9M8",
             "9M6"};
     private final String location[] = {"BUKIT ", "GUNUNG ", "KUALA ", "TELUK ", "HOTEL ", "HUTAN "};
-
-
-    private ArrayList<String> rlist;
-
     AutoCompleteTextView tvClub, tvState, tvSCallsign, tvSLocation;
+    private ArrayList<String> rlist;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

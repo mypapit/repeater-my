@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -23,6 +22,9 @@ import java.text.SimpleDateFormat;
 
 public class CallsignDetailsActivity extends ActionBarActivity {
 
+    View dividerPhone, titlePhone;
+    ImageButton btnCall;
+    int jokecounter;
     private TextView tvName;
     private TextView tvClient;
     private TextView tvDistance;
@@ -30,11 +32,8 @@ public class CallsignDetailsActivity extends ActionBarActivity {
     private TextView tvLastSeen;
     private TextView tvPhone;
     private TextView tvStatus;
-
-    View dividerPhone, titlePhone;
-    ImageButton btnCall;
-
-    int jokecounter;
+    private String m_callsign;
+    private String m_deviceid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +57,6 @@ public class CallsignDetailsActivity extends ActionBarActivity {
         dividerPhone = findViewById(R.id.DividercmiPhone);
         titlePhone = findViewById(R.id.TitlecmiPhone);
         btnCall = (ImageButton) findViewById(R.id.btnCall);
-
-
-		
-		
-
 
 
         String phoneNo = bundle.getString("phoneno");
@@ -103,13 +97,14 @@ public class CallsignDetailsActivity extends ActionBarActivity {
         tvLastSeen.setText(format.formatDistance(time));
 
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-        String callsign = bundle.getString("callsign");
+        m_callsign = bundle.getString("callsign", "");
+        m_deviceid = bundle.getString("deviceid", "");
 
 
         android.support.v7.app.ActionBar ab = this.getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        ab.setTitle(callsign);
+        ab.setTitle(m_callsign);
 
 
         btnCall.setOnClickListener(new View.OnClickListener() {
@@ -123,7 +118,6 @@ public class CallsignDetailsActivity extends ActionBarActivity {
 
             }
         });
-
 
 
     }
@@ -140,6 +134,8 @@ public class CallsignDetailsActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+        Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
 
@@ -148,10 +144,18 @@ public class CallsignDetailsActivity extends ActionBarActivity {
 
                 return true;
             case R.id.btnCall:
-                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent = new Intent(Intent.ACTION_DIAL);
                 intent.setData(Uri.parse("tel:" + tvPhone.getText().toString()));
                 startActivity(intent);
                 return true;
+
+            case R.id.action_callsign_stats:
+                intent = new Intent(this, OperatorStatsActivity.class);
+                intent.putExtra("callsign", m_callsign);
+                intent.putExtra("deviceid", m_deviceid);
+                startActivity(intent);
+                return true;
+
 
         }
         return false;

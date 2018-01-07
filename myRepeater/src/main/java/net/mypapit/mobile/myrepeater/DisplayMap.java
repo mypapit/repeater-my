@@ -32,6 +32,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.util.SimpleArrayMap;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -46,6 +47,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -55,24 +57,17 @@ import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
+import net.mypapit.mobile.myrepeater.map.HeatMapListener;
+import net.mypapit.mobile.myrepeater.map.UserInfoRetrievedListener;
 import net.mypapit.mobile.myrepeater.mapinfo.CallsignMapInfo;
 import net.mypapit.mobile.myrepeater.mapinfo.MapInfoObject;
 import net.mypapit.mobile.myrepeater.mapinfo.RepeaterMapInfo;
-import net.mypapit.mobile.myrepeater.net.mypapit.mobile.myrepeater.map.HeatMapListener;
+import net.mypapit.mobile.myrepeater.utility.ServiceHandler;
 import net.sf.jfuzzydate.FuzzyDateFormat;
 import net.sf.jfuzzydate.FuzzyDateFormatter;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -81,8 +76,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,30 +84,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickListener, HeatMapListener {
+public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback, OnInfoWindowClickListener, HeatMapListener, UserInfoRetrievedListener {
 
-    private static final String CACHE_PREFS = "cache-prefs";
-    private static final String CACHE_TIME = "cache-time-map-";
-    private static final String CACHE_JSON = "cache-json-map-";
+    static final String CACHE_TIME = "cache-time-map-";
+    static final String CACHE_JSON = "cache-json-map-";
     // private static String URL ="http://192.168.1.40/rmy/getposition.php";
-    private static final String URL = "http://api.repeater.my/v1/getposition.php";
+    static final String URL = "http://api.repeater.my/v1/getposition.php";
     static final String URL_HEATMAP = "http://api.repeater.my/v1/heatmap/getposition.php";
-
-    private boolean isHeatmap = false;
+    private static final String CACHE_PREFS = "cache-prefs";
+    private final DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     TileOverlay heatmapTileOverlay;
+    //private JSONArray rakanradio = null;
+    GoogleMap map;
+    SupportMapFragment mapFragment;
+    private boolean isHeatmap = false;
     private LatLng latlng;
-
     private SimpleArrayMap<Marker, MapInfoObject> hashMap;
-
     private RepeaterList rl = new RepeaterList();
     private SharedPreferences cache;
     private ArrayList<SimpleArrayMap<String, String>> listrakanradio;
     private FuzzyDateFormatter fuzzydateformat;
-
-    //private JSONArray rakanradio = null;
-    GoogleMap map;
-
-    private final DateFormat dateformatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,125 +119,10 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        map = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+        mapFragment = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
 
-        if (map == null) {
+        mapFragment.getMapAsync(this);
 
-            // Log.e("Map NULL", "MAP NULL");
-            Toast.makeText(this, "Unable to display Map", Toast.LENGTH_SHORT).show();
-
-        } else {
-
-            latlng = (LatLng) getIntent().getExtras().get("LatLong");
-
-            if (latlng == null) {
-                latlng = new LatLng(RepeaterListActivity.LAT_DEFAULT, RepeaterListActivity.LNG_DEFAULT);
-            }
-            Repeater xlocation = new Repeater("", new Double[]{latlng.latitude, latlng.longitude});
-
-            rl = RepeaterListActivity.loadData(R.raw.repeaterdata5, this);
-            xlocation.calcDistanceAll(rl);
-            rl.sort();
-
-            map.setMyLocationEnabled(true);
-            map.setOnInfoWindowClickListener(this);
-            map.getUiSettings().setZoomControlsEnabled(true);
-
-            AdView mAdView = (AdView) findViewById(R.id.adViewMap);
-            mAdView.loadAd(new AdRequest.Builder().build());
-
-            // counter i, for mapping marker with integer
-            int i = 0;
-
-
-            for (Repeater repeater : rl) {
-
-
-                MarkerOptions marking = new MarkerOptions();
-
-                marking.position(new LatLng(repeater.getLatitude(), repeater.getLongitude()));
-                marking.title(repeater.getCallsign() + " - " + repeater.getDownlink() + "MHz (" + repeater.getClub()
-                        + ")");
-
-                marking.snippet("Tone: " + repeater.getTone() + " Shift: " + repeater.getShift());
-
-
-                hashMap.put(map.addMarker(marking), new RepeaterMapInfo(repeater, i));
-
-                i++;
-
-            }
-
-            // Marker RKG = map.addMarker(new MarkerOptions().position(new
-            // LatLng(6.1,100.3)).title("9M4RKG"));
-
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10));
-            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
-
-            cache = this.getSharedPreferences(CACHE_PREFS, 0);
-
-            Date cachedate = new Date(cache.getLong(CACHE_TIME, new Date(20000).getTime()));
-
-            long secs = (new Date().getTime() - cachedate.getTime()) / 1000;
-            long hours = secs / 3600L;
-            secs = secs % 3600L;
-            long mins = secs / 60L;
-
-            if (mins < 5) {
-                String jsoncache = cache.getString(CACHE_JSON, "none");
-                if (jsoncache.compareToIgnoreCase("none") == 0) {
-                    new GetUserInfo(latlng, this).execute();
-
-                } else {
-
-                    loadfromCache(jsoncache);
-                    // Toast.makeText(this, "Loaded from cache: " + mins +
-                    // " mins", Toast.LENGTH_SHORT).show();
-                }
-
-            } else {
-
-                new GetUserInfo(latlng, this).execute();
-
-            }
-
-
-            map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
-                @Override
-                public View getInfoWindow(Marker marker) {
-
-                    return null;
-                }
-
-                @Override
-                public View getInfoContents(Marker marker) {
-                    Context context = getApplicationContext(); // or
-                    // getActivity(),
-                    // YourActivity.this,
-                    // etc.
-
-                    LinearLayout info = new LinearLayout(context);
-                    info.setOrientation(LinearLayout.VERTICAL);
-
-                    TextView title = new TextView(context);
-                    title.setTextColor(Color.BLACK);
-                    title.setGravity(Gravity.CENTER);
-                    title.setTypeface(null, Typeface.BOLD);
-                    title.setText(marker.getTitle());
-
-                    TextView snippet = new TextView(context);
-                    snippet.setTextColor(Color.GRAY);
-                    snippet.setText(marker.getSnippet());
-
-                    info.addView(title);
-                    info.addView(snippet);
-
-                    return info;
-                }
-            });
-
-        }
 
     }
 
@@ -331,6 +205,7 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
     private void loadfromCache(String jsonCache) {
 
         listrakanradio = new ArrayList<SimpleArrayMap<String, String>>(200);
+        FuzzyDateFormatter fuzzydateformat = FuzzyDateFormat.getInstance();
 
         if (jsonCache != null) {
             try {
@@ -411,7 +286,7 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
             marking.title(inforakanradio.get("callsign") + " - " +
                     fuzzydateformat.formatDistance(time));
             marking.snippet("@" + inforakanradio.get("name") + "\n#:" +
-                    inforakanradio.get("status") + "\n" + inforakanradio.get("phoneno") +
+                    NearbyOperatorAdapter.truncate(inforakanradio.get("status"), 68) + "\n" + inforakanradio.get("phoneno") +
                     "\n" + inforakanradio.get("client"));
 
 
@@ -451,172 +326,6 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
         return isHeatmap;
     }
 
-    private class GetUserInfo extends AsyncTask<Void, Void, Void> {
-
-        final String currentlat;
-        final String currentlng;
-        final DisplayMap activity;
-        String jsonstringcache;
-
-        GetUserInfo(LatLng latlng, DisplayMap activity) {
-            currentlat = latlng.latitude + "";
-            currentlng = latlng.longitude + "";
-            this.activity = activity;
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            Toast.makeText(activity, "Getting station info\u2026", Toast.LENGTH_SHORT).show();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            // Creating service handler class instance
-            ServiceHandler sh = new ServiceHandler();
-
-            // Making a request to url and getting response
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-
-            nameValuePairs.add(new BasicNameValuePair("lat", currentlat));
-            nameValuePairs.add(new BasicNameValuePair("lng", currentlng));
-
-            String jsonStr = sh.makeServiceCall(URL, ServiceHandler.GET, nameValuePairs, true);
-
-            // Log.d("mypapit Json Response: ", "> " + jsonStr);
-
-            listrakanradio = new ArrayList<SimpleArrayMap<String, String>>(200);
-
-
-            if (jsonStr != null) {
-                try {
-                    // JSONObject jsonObj = new JSONObject(jsonStr);
-
-                    JSONArray rakanradio = new JSONArray(jsonStr);
-                    SimpleArrayMap<String, String> inforakanradio;
-
-                    int num_of_rakanradio = rakanradio.length();
-                    for (int i = 0; i < num_of_rakanradio; i++) {
-                        JSONObject jsinfo = rakanradio.getJSONObject(i);
-
-                        String callsign = jsinfo.getString("callsign");
-
-                        String valid = jsinfo.getString("valid");
-
-                        inforakanradio = new SimpleArrayMap<String, String>();
-
-                        int validity = Integer.parseInt(valid);
-
-                        if (validity == 0) {
-                            callsign = callsign + " (Unverified)";
-                        }
-
-                        inforakanradio.put("callsign", callsign);
-                        inforakanradio.put("name", jsinfo.getString("name"));
-                        inforakanradio.put("qsx", jsinfo.getString("qsx"));
-                        inforakanradio.put("status", jsinfo.getString("status"));
-                        inforakanradio.put("distance", jsinfo.getString("distance"));
-                        inforakanradio.put("time", jsinfo.getString("time"));
-                        inforakanradio.put("lat", jsinfo.getString("lat"));
-                        inforakanradio.put("lng", jsinfo.getString("lng"));
-                        inforakanradio.put("valid", valid);
-                        inforakanradio.put("deviceid", jsinfo.getString("deviceid"));
-                        inforakanradio.put("phoneno", jsinfo.getString("phoneno"));
-                        inforakanradio.put("client", jsinfo.getString("client"));
-                        inforakanradio.put("locality", jsinfo.getString("locality"));
-
-                        listrakanradio.add(inforakanradio);
-
-
-                    }
-                } catch (JSONException jse) {
-                    jse.printStackTrace();
-                }
-
-            } else {
-                Log.e("mypapit ServiceHandler", "Couldn't get any data from api endpoint");
-            }
-
-            jsonstringcache = jsonStr;
-
-            return null;
-
-        }
-
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-
-            if ((listrakanradio.size() > 0) && (jsonstringcache != null)) {
-                SharedPreferences.Editor editor = cache.edit();
-                editor.putLong(DisplayMap.CACHE_TIME, new Date().getTime());
-                editor.putString(DisplayMap.CACHE_JSON, jsonstringcache);
-
-                editor.apply();
-
-            }
-
-
-            SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-            String m_deviceid = repeater_prefs.getString("deviceid", "defaultx");
-
-            int callsignIndex = 0;
-
-            for (SimpleArrayMap<String, String> inforakanradio : listrakanradio) {
-
-
-                MarkerOptions marking = new MarkerOptions();
-
-                // java.util.Date utilDate = new java.util.Date();
-
-                java.util.Date time;
-
-                try {
-                    time = dateformatter.parse(inforakanradio.get("time"));
-                } catch (ParseException e) {
-                    time = new java.util.Date();
-
-                    e.printStackTrace();
-                }
-
-
-                marking.position(new LatLng(Double.parseDouble(inforakanradio.get("lat")), Double
-                        .parseDouble(inforakanradio.get("lng"))));
-                marking.title(inforakanradio.get("callsign") + " - " +
-                        fuzzydateformat.formatDistance(time));
-                marking.snippet("@" + inforakanradio.get("name") + "\n#:" +
-                        inforakanradio.get("status") + "\n" + inforakanradio.get("phoneno") +
-                        "\n" + inforakanradio.get("client"));
-
-
-                String valid = inforakanradio.get("valid");
-                String deviceId = inforakanradio.get("deviceid");
-
-                if (Integer.parseInt(valid) == 1) {
-                    marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                } else {
-                    marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                }
-
-                if (deviceId.equalsIgnoreCase(m_deviceid)) {
-                    marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-
-                }
-
-
-                hashMap.put(map.addMarker(marking), new CallsignMapInfo(callsignIndex));
-
-                callsignIndex++;
-
-            }
-
-        }
-
-    } // GetUserInfo
-
 
     private void toggleHeatMap() {
 
@@ -634,108 +343,221 @@ public class DisplayMap extends ActionBarActivity implements OnInfoWindowClickLi
 
     }
 
-} // Display Map Activity
+    @Override
+    public void userInfoRetrieved(final ArrayList<SimpleArrayMap<String, String>> result, final String jsoncache) {
 
-class ServiceHandler {
+        if ((result.size() > 0) && (jsoncache != null)) {
+            SharedPreferences.Editor editor = cache.edit();
+            editor.putLong(DisplayMap.CACHE_TIME, new Date().getTime());
+            editor.putString(DisplayMap.CACHE_JSON, jsoncache);
 
-    public final static int GET = 1;
-    public final static int POST = 2;
-    static byte[] response = null;
+            this.listrakanradio = result;
 
-    public ServiceHandler() {
-
-    }
-
-    /**
-     * Making service call
-     *
-     * @url - url to make request
-     * @method - http request method
-     */
-    public String makeServiceCall(String url, int method) {
-        return this.makeServiceCall(url, method, null, true);
-    }
-
-    /**
-     * Making service call
-     *
-     * @url - url to make request
-     * @method - http request method
-     * @params - http request params
-     */
-    public byte[] makeServiceCall(String url, int method, List<NameValuePair> params) {
-        try {
-            // http client
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpEntity httpEntity = null;
-            HttpResponse httpResponse = null;
-
-            // Checking http request method type
-            if (method == POST) {
-                HttpPost httpPost = new HttpPost(url);
-                // adding post params
-                if (params != null) {
-                    httpPost.setEntity(new UrlEncodedFormEntity(params));
-                }
-
-                httpResponse = httpClient.execute(httpPost);
-
-            } else if (method == GET) {
-                // appending params to url
-                if (params != null) {
-                    String paramString = URLEncodedUtils.format(params, "utf-8");
-                    url += "?" + paramString;
-                }
-                HttpGet httpGet = new HttpGet(url);
-
-                httpResponse = httpClient.execute(httpGet);
-
-            }
-            httpEntity = httpResponse.getEntity();
-            // response = EntityUtils.toString(httpEntity);
-            response = EntityUtils.toByteArray(httpEntity);
+            editor.apply();
 
 
-        } catch (UnknownHostException unknownHostExceptiopn) {
-            //no internet??
-            return null;
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response;
-
-    }
-
-    public String makeServiceCall(String url, int method, List<NameValuePair> params, boolean isString) {
-
-        if (!isString) {
-            return null;
         } else {
 
-            byte[] byteArray = makeServiceCall(url, method, params);
-            if (byteArray == null) {
-                return null;
+            return;
+        }
 
-            } else {
-                return new String(byteArray);
+
+        SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        String m_deviceid = repeater_prefs.getString("deviceid", "defaultx");
+
+        int callsignIndex = 0;
+
+        for (SimpleArrayMap<String, String> inforakanradio : listrakanradio) {
+
+
+            MarkerOptions marking = new MarkerOptions();
+
+            // java.util.Date utilDate = new java.util.Date();
+
+            java.util.Date time;
+
+            try {
+                time = dateformatter.parse(inforakanradio.get("time"));
+            } catch (ParseException e) {
+                time = new java.util.Date();
+
+                e.printStackTrace();
             }
+
+
+            marking.position(new LatLng(Double.parseDouble(inforakanradio.get("lat")), Double
+                    .parseDouble(inforakanradio.get("lng"))));
+            marking.title(inforakanradio.get("callsign") + " - " +
+                    fuzzydateformat.formatDistance(time));
+            marking.snippet("@" + inforakanradio.get("name") + "\n#:" +
+                    NearbyOperatorAdapter.truncate(inforakanradio.get("status"), 68) + "\n" + inforakanradio.get("phoneno") +
+                    "\n" + inforakanradio.get("client"));
+
+
+            String valid = inforakanradio.get("valid");
+            String deviceId = inforakanradio.get("deviceid");
+
+            if (Integer.parseInt(valid) == 1) {
+                marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+            } else {
+                marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+            }
+
+            if (deviceId.equalsIgnoreCase(m_deviceid)) {
+                marking.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+
+            }
+
+
+            hashMap.put(map.addMarker(marking), new CallsignMapInfo(callsignIndex));
+
+            callsignIndex++;
+
         }
 
 
     }
-}
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        map = googleMap;
+        setupMap();
+
+
+    }
+
+    public void setupMap() {
+        if (map == null) {
+
+            // Log.e("Map NULL", "MAP NULL");
+            Toast.makeText(this, "Unable to display Map", Toast.LENGTH_SHORT).show();
+
+        } else {
+
+            latlng = (LatLng) getIntent().getExtras().get("LatLong");
+
+            if (latlng == null) {
+                latlng = new LatLng(RepeaterListActivity.LAT_DEFAULT, RepeaterListActivity.LNG_DEFAULT);
+            }
+            Repeater xlocation = new Repeater("", new Double[]{latlng.latitude, latlng.longitude});
+
+            rl = RepeaterListActivity.loadData(R.raw.repeaterdata5, this);
+            xlocation.calcDistanceAll(rl);
+            rl.sort();
+
+            map.setMyLocationEnabled(true);
+            map.setOnInfoWindowClickListener(this);
+            map.getUiSettings().setZoomControlsEnabled(true);
+
+            AdView mAdView = (AdView) findViewById(R.id.adViewMap);
+            mAdView.loadAd(new AdRequest.Builder().build());
+
+            // counter i, for mapping marker with integer
+            int i = 0;
+
+
+            for (Repeater repeater : rl) {
+
+
+                MarkerOptions marking = new MarkerOptions();
+
+                marking.position(new LatLng(repeater.getLatitude(), repeater.getLongitude()));
+                marking.title(repeater.getCallsign() + " - " + repeater.getDownlink() + "MHz (" + repeater.getClub()
+                        + ")");
+
+                marking.snippet("Tone: " + repeater.getTone() + " Shift: " + repeater.getShift());
+
+
+                hashMap.put(map.addMarker(marking), new RepeaterMapInfo(repeater, i));
+
+                i++;
+
+            }
+
+            // Marker RKG = map.addMarker(new MarkerOptions().position(new
+            // LatLng(6.1,100.3)).title("9M4RKG"));
+
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10));
+            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+
+            cache = this.getSharedPreferences(CACHE_PREFS, 0);
+
+            Date cachedate = new Date(cache.getLong(CACHE_TIME, new Date(20000).getTime()));
+
+            long secs = (new Date().getTime() - cachedate.getTime()) / 1000;
+            long hours = secs / 3600L;
+            secs = secs % 3600L;
+            long mins = secs / 60L;
+
+            if (mins < 5) {
+                String jsoncache = cache.getString(CACHE_JSON, "none");
+                if (jsoncache.compareToIgnoreCase("none") == 0) {
+                    new GetUserInfo(latlng, this, this).execute();
+
+                } else {
+
+                    loadfromCache(jsoncache);
+                    // Toast.makeText(this, "Loaded from cache: " + mins +
+                    // " mins", Toast.LENGTH_SHORT).show();
+                }
+
+            } else {
+
+                new GetUserInfo(latlng, this, this).execute();
+
+            }
+
+
+            map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+                @Override
+                public View getInfoWindow(Marker marker) {
+
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    Context context = getApplicationContext(); // or
+                    // getActivity(),
+                    // YourActivity.this,
+                    // etc.
+
+                    LinearLayout info = new LinearLayout(context);
+                    info.setOrientation(LinearLayout.VERTICAL);
+
+                    TextView title = new TextView(context);
+                    title.setTextColor(Color.BLACK);
+                    title.setGravity(Gravity.CENTER);
+                    title.setTypeface(null, Typeface.BOLD);
+                    title.setText(marker.getTitle());
+
+                    TextView snippet = new TextView(context);
+                    snippet.setTextColor(Color.GRAY);
+                    snippet.setText(marker.getSnippet());
+
+                    info.addView(title);
+                    info.addView(snippet);
+
+                    return info;
+                }
+            });
+
+        }
+    }
+} // Display Map Activity
+
 
 class GetHeatMapInfo extends AsyncTask<ArrayList<LatLng>, Void, ArrayList<LatLng>> {
 
     private final DisplayMap activity;
-    private String jsonStr;
     private final ArrayList<LatLng> heatmaplist;
     private final String currentLat;
     private final String currentLng;
-
     private final HeatMapListener heatMapListener;
+    private String jsonStr;
 
 
     public GetHeatMapInfo(LatLng latlng, HeatMapListener heatMapListener, DisplayMap activity) {
@@ -895,3 +717,115 @@ class GetHeatMapInfo extends AsyncTask<ArrayList<LatLng>, Void, ArrayList<LatLng
 
 
 }
+
+
+class GetUserInfo extends AsyncTask<Void, Void, ArrayList<SimpleArrayMap<String, String>>> {
+
+    final String currentlat;
+    final String currentlng;
+    final DisplayMap activity;
+    String jsonstringcache;
+
+    UserInfoRetrievedListener userinfoRetriveListener;
+
+
+    GetUserInfo(LatLng latlng, DisplayMap activity, UserInfoRetrievedListener userinfoRetriveListener) {
+
+        currentlat = latlng.latitude + "";
+        currentlng = latlng.longitude + "";
+        this.activity = activity;
+        this.userinfoRetriveListener = userinfoRetriveListener;
+
+
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        Toast.makeText(activity, "Getting station info\u2026", Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    protected ArrayList<SimpleArrayMap<String, String>> doInBackground(Void... params) {
+        // Creating service handler class instance
+        ServiceHandler sh = new ServiceHandler();
+
+        // Making a request to url and getting response
+        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+        nameValuePairs.add(new BasicNameValuePair("lat", currentlat));
+        nameValuePairs.add(new BasicNameValuePair("lng", currentlng));
+
+        String jsonStr = sh.makeServiceCall(DisplayMap.URL, ServiceHandler.GET, nameValuePairs, true);
+
+        // Log.d("mypapit Json Response: ", "> " + jsonStr);
+
+        ArrayList<SimpleArrayMap<String, String>> listrakanradio = new ArrayList<SimpleArrayMap<String, String>>(200);
+
+
+        if (jsonStr != null) {
+            try {
+                // JSONObject jsonObj = new JSONObject(jsonStr);
+
+                JSONArray rakanradio = new JSONArray(jsonStr);
+                SimpleArrayMap<String, String> inforakanradio;
+
+                int num_of_rakanradio = rakanradio.length();
+                for (int i = 0; i < num_of_rakanradio; i++) {
+                    JSONObject jsinfo = rakanradio.getJSONObject(i);
+
+                    String callsign = jsinfo.getString("callsign");
+
+                    String valid = jsinfo.getString("valid");
+
+                    inforakanradio = new SimpleArrayMap<String, String>();
+
+                    int validity = Integer.parseInt(valid);
+
+                    if (validity == 0) {
+                        callsign = callsign + " (Unverified)";
+                    }
+
+                    inforakanradio.put("callsign", callsign);
+                    inforakanradio.put("name", jsinfo.getString("name"));
+                    inforakanradio.put("qsx", jsinfo.getString("qsx"));
+                    inforakanradio.put("status", jsinfo.getString("status"));
+                    inforakanradio.put("distance", jsinfo.getString("distance"));
+                    inforakanradio.put("time", jsinfo.getString("time"));
+                    inforakanradio.put("lat", jsinfo.getString("lat"));
+                    inforakanradio.put("lng", jsinfo.getString("lng"));
+                    inforakanradio.put("valid", valid);
+                    inforakanradio.put("deviceid", jsinfo.getString("deviceid"));
+                    inforakanradio.put("phoneno", jsinfo.getString("phoneno"));
+                    inforakanradio.put("client", jsinfo.getString("client"));
+                    inforakanradio.put("locality", jsinfo.getString("locality"));
+
+                    listrakanradio.add(inforakanradio);
+
+
+                }
+            } catch (JSONException jse) {
+                jse.printStackTrace();
+            }
+
+        } else {
+            Log.e("mypapit ServiceHandler", "Couldn't get any data from api endpoint");
+        }
+
+        jsonstringcache = jsonStr;
+
+        return listrakanradio;
+
+    }
+
+    protected void onPostExecute(ArrayList<SimpleArrayMap<String, String>> result) {
+        super.onPostExecute(result);
+
+        userinfoRetriveListener.userInfoRetrieved(result, jsonstringcache);
+
+
+    }
+
+} // GetUserInfo

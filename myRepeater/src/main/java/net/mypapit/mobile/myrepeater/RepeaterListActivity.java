@@ -26,8 +26,6 @@
 package net.mypapit.mobile.myrepeater;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,7 +43,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -55,6 +57,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,17 +89,24 @@ import au.com.bytecode.opencsv.CSVReader;
 import garin.artemiy.compassview.library.CompassSensorsActivity;
 
 public class RepeaterListActivity extends CompassSensorsActivity implements OnItemClickListener {
+    public static final float LAT_DEFAULT = 37.5651f;
+    public static final float LNG_DEFAULT = 126.98955f;
+    // please change this to reflect walkthrough updates
+    static final int WALK_VERSION_CODE = 220;
+    static final String WALK_PREFS = "walkthrough_k220";
+    @SuppressWarnings("FieldCanBeLocal")
+    private static final int static_distance = 0;
+    private static final String URL_API = "http://api.repeater.my/v1/endp.php";
+    // device id, once assigned, never changes
+    private static String m_deviceid;
     private Repeater xlocation;
     private RepeaterAdapter adapter;
     private RepeaterList rl;
     private ListView lv;
     private TextView tvAddress;
-    @SuppressWarnings("FieldCanBeLocal")
-    private static final int static_distance = 0;
     private boolean excludeLink = false;
     private boolean excludeDirection = false;
     private float local_distance = 100.0f;
-
     private boolean mrefresh = true;
     private String m_callsign = "9W-newbie";
     private String m_handle = "Mr Newbie";
@@ -104,22 +114,86 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
     private String m_status = "no status";
     private int m_passcode = 0;
     private String m_phoneno = "+60120000";
-    private static final String URL_API = "http://api.repeater.my/v1/endp.php";
-    public static final float LAT_DEFAULT = 37.5651f;
-    public static final float LNG_DEFAULT = 126.98955f;
 
-    // device id, once assigned, never changes
-    private static String m_deviceid;
-
-    // please change this to reflect walkthrough updates
-    static final int WALK_VERSION_CODE = 220;
+    private CoordinatorLayout coordinatorLayout;
 
     // StackHistory stackhistory;
+
+    public static RepeaterList loadData(int resource, Activity activity) {
+        RepeaterList mlist = new RepeaterList(150);
+        int line = 0;
+        try {
+
+            InputStreamReader is = new InputStreamReader(activity.getResources().openRawResource(resource));
+            BufferedReader in = new BufferedReader(is);
+            CSVReader csv = new CSVReader(in, ';', '\"', 0);
+            String data[];
+
+            while ((data = csv.readNext()) != null) {
+                line++;
+                mlist.add(new Repeater("", data[1], data[2], data[3], data[9], Double.parseDouble(data[4]), Double
+                        .parseDouble(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double
+                        .parseDouble(data[8])));
+
+            }
+
+            in.close();
+            is.close();
+
+        } catch (IOException ioe) {
+            Log.e("Read CSV Error mypapit", "Some CSV Error: ", ioe.getCause());
+
+        } catch (NumberFormatException nfe) {
+            Log.e("Number error", "parse number error - line: " + line + "  " + nfe.getMessage(), nfe.getCause());
+        } catch (Exception ex) {
+            Log.e("Some Exception", "some exception at line :" + line + " \n " + ex.getCause());
+            ex.printStackTrace(System.err);
+        }
+
+        return mlist;
+
+    }
+
+    public static ArrayList<String> loadStringData(InputStream stream) {
+        ArrayList<String> mlist = new ArrayList<String>(150);
+        int line = 0;
+
+        try {
+            InputStreamReader is = new InputStreamReader(stream);
+            BufferedReader in = new BufferedReader(is);
+            CSVReader csv = new CSVReader(in, ';', '\"', 0);
+            String data[];
+
+            while ((data = csv.readNext()) != null) {
+                line++;
+                mlist.add(data[1]);
+            }
+
+            in.close();
+            is.close();
+
+        } catch (IOException ioe) {
+            Log.e("Read CSV Error mypapit", "Some CSV Error: ", ioe.getCause());
+
+        } catch (NumberFormatException nfe) {
+            Log.e("Number error", "parse number error - line: " + line + "  " + nfe.getMessage(), nfe.getCause());
+        } catch (Exception ex) {
+            Log.e("Some Exception", "some exception at line :" + line + " \n " + ex.getCause());
+            ex.printStackTrace(System.err);
+        }
+        // Collections.sort(mlist);
+
+        return mlist;
+
+    }
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         setContentView(R.layout.repeater_list);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.repeaterLayoutView);
+
 
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
@@ -143,7 +217,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
         // SharedPreferences prefs = getSharedPreferences("Location",
         // MODE_PRIVATE);
         SharedPreferences prefshare = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int walkcount = prefshare.getInt("walkthrough_k220", WALK_VERSION_CODE);
+        int walkcount = prefshare.getInt(WALK_PREFS, WALK_VERSION_CODE);
         if (walkcount < (WALK_VERSION_CODE + 1)) {
 
 
@@ -153,7 +227,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
             SharedPreferences repeater_prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
             m_deviceid = repeater_prefs.getString("deviceid", this.generateCallsign());
-            prefEditor.putInt("walkthrough_k220", walkcount);
+            prefEditor.putInt(WALK_PREFS, walkcount);
             // prefEditor.putString("callsign", new
             // StringBuilder("9W2-").append(this.generateCallsign()).toString());
             prefEditor.putString("deviceid", m_deviceid);
@@ -199,8 +273,8 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent();
-                    intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.StaticLocationActivity");
+                    Intent intent = new Intent(getApplicationContext(), StaticLocationActivity.class);
+
                     startActivity(intent);
 
                 }
@@ -257,6 +331,235 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
         mrefresh = false;
 
         lv.setAdapter(adapter);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.repeater_list, menu);
+
+
+        //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //    searchView.setIconifiedByDefault(false);
+
+        searchView.setQueryHint("part of repeater callsign");
+
+        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String searchText) {
+
+                adapter.getFilter().filter(searchText);
+                Log.d("MYRepeater", "search: " + searchText);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String searchText) {
+                // TODO Auto-generated method stub
+                adapter.getFilter().filter(searchText);
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+        };
+
+        searchView.setOnQueryTextListener(textChangeListener);
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.show_map:
+                intent = new Intent(getApplicationContext(), DisplayMap.class);
+                intent.putExtra("LatLong", new LatLng(xlocation.getLatitude(), xlocation.getLongitude()));
+
+                startActivity(intent);
+
+                return true;
+            case R.id.manual_settings:
+                if (!this.isLocationEnabled(this)) {
+                    intent = new Intent(getApplicationContext(), StaticLocationActivity.class);
+                    startActivity(intent);
+                } else {
+                    this.showAlertDialog();
+                }
+                return true;
+
+            case R.id.action_about:
+                try {
+                    showDialog();
+                } catch (NameNotFoundException ex) {
+                    Toast toast = Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
+                    toast.show();
+
+                }
+
+                return true;
+            case R.id.action_suggest:
+
+                intent = new Intent(getApplicationContext(), SuggestRepeaterStartActivity.class);
+                this.startActivity(intent);
+
+                return true;
+
+            case R.id.action_contrib:
+                intent = new Intent();
+                intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.ContribActivity");
+                startActivity(intent);
+
+                return true;
+
+            case R.id.action_settings:
+                intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                mrefresh = true;
+                startActivity(intent);
+
+                return true;
+
+
+            case R.id.action_simplex:
+                intent = new Intent(getApplicationContext(), SimplexActivity.class);
+                startActivity(intent);
+                return true;
+
+        }
+
+        return false;
+    }
+
+    private void showDialog() throws NameNotFoundException {
+
+        final AppCompatDialog dialog = new AppCompatDialog(this);
+
+        dialog.setContentView(R.layout.about_dialog);
+        dialog.setTitle("About Repeater.MY " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
+        dialog.setCancelable(true);
+
+        // text
+        TextView text = (TextView) dialog.findViewById(R.id.tvAbout);
+        text.setText(R.string.txtLicense);
+
+        // icon image
+        ImageView img = (ImageView) dialog.findViewById(R.id.ivAbout);
+        img.setImageResource(R.drawable.ic_launcher);
+
+        dialog.show();
+
+    }
+
+    private void showAlertDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Manual Location");
+        builder.setMessage("Note that this will not allow Repeater.MY to auto-detect location.\n\nDisable Location Service now?"); // Want
+        // to
+        // enable?
+
+        // if yes - bring user to enable Location Service settings
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                getApplicationContext().startActivity(intent);
+            }
+        });
+
+        // if no - bring user to selecting Static Location Activity
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+
+        });
+        builder.create().show();
+
+    }
+
+    private boolean isLocationEnabled(Context context) {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        String provider = lm.getBestProvider(new Criteria(), true);
+        return (!TextUtils.isEmpty(provider) && !LocationManager.PASSIVE_PROVIDER.equals(provider));
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(this.getApplicationContext(), RepeaterDetailsActivity.class);
+
+        Repeater rpt = adapter.getRepeater(position);
+
+        String pass[] = rpt.toArrayString();
+        pass[9] = xlocation.getLatitude() + "";
+        pass[10] = xlocation.getLongitude() + "";
+
+        intent.putExtra("Repeater", pass);
+        intent.putExtra("noCompass", excludeDirection);
+        startActivity(intent);
+
+    }
+
+    public void setListAdapter(RepeaterAdapter adapter) {
+        lv.setAdapter(adapter);
+
+    }
+
+    public void setAddress(String address) {
+        tvAddress.setText(address);
+
+    }
+
+    public void showToast(String message) {
+       // Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+
+        Snackbar.make(lv,message, Snackbar.LENGTH_LONG).show();
+
+    }
+
+    protected void onPause() {
+        super.onPause();
+
+        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
+    }
+
+    // check for compass sensor
+    public boolean checkCompassSensor(Location xlocation) {
+
+        // if using Simulated provider, then automatically return true
+        if (xlocation.getProvider().equalsIgnoreCase("Simulated")) {
+            return true;
+        }
+
+        boolean sensor = getApplicationContext().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_SENSOR_COMPASS);
+
+        return !sensor;
+
+    }
+
+    private String generateCallsign() {
+        final SecureRandom random = new SecureRandom();
+
+        return new BigInteger(130, random).toString(32).substring(0, 8);
+    }
+
+    protected void onResume() {
+        super.onResume();
+
 
     }
 
@@ -327,7 +630,9 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+            criteria.setAltitudeRequired(false);
             criteria.setSpeedRequired(false);
+            criteria.setCostAllowed(true);
 
 			/*
              * criteria.setSpeedRequired(false);
@@ -598,6 +903,11 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
                             activity.showToast("Location sensor: " + provider + " temporarily unavailable");
                             break;
 
+                        case LocationProvider.AVAILABLE:
+                            activity.showToast("Location sensor "+provider+" is back available");
+                            break;
+
+
                     }
 
                 }
@@ -609,297 +919,6 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
             Looper.loop();
 
         }
-    }
-
-    public static RepeaterList loadData(int resource, Activity activity) {
-        RepeaterList mlist = new RepeaterList(150);
-        int line = 0;
-        try {
-
-            InputStreamReader is = new InputStreamReader(activity.getResources().openRawResource(resource));
-            BufferedReader in = new BufferedReader(is);
-            CSVReader csv = new CSVReader(in, ';', '\"', 0);
-            String data[];
-
-            while ((data = csv.readNext()) != null) {
-                line++;
-                mlist.add(new Repeater("", data[1], data[2], data[3], data[9], Double.parseDouble(data[4]), Double
-                        .parseDouble(data[5]), Double.parseDouble(data[6]), Double.parseDouble(data[7]), Double
-                        .parseDouble(data[8])));
-
-            }
-
-            in.close();
-            is.close();
-
-        } catch (IOException ioe) {
-            Log.e("Read CSV Error mypapit", "Some CSV Error: ", ioe.getCause());
-
-        } catch (NumberFormatException nfe) {
-            Log.e("Number error", "parse number error - line: " + line + "  " + nfe.getMessage(), nfe.getCause());
-        } catch (Exception ex) {
-            Log.e("Some Exception", "some exception at line :" + line + " \n " + ex.getCause());
-            ex.printStackTrace(System.err);
-        }
-
-        return mlist;
-
-    }
-
-    public static ArrayList<String> loadStringData(InputStream stream) {
-        ArrayList<String> mlist = new ArrayList<String>(150);
-        int line = 0;
-
-        try {
-            InputStreamReader is = new InputStreamReader(stream);
-            BufferedReader in = new BufferedReader(is);
-            CSVReader csv = new CSVReader(in, ';', '\"', 0);
-            String data[];
-
-            while ((data = csv.readNext()) != null) {
-                line++;
-                mlist.add(data[1]);
-            }
-
-            in.close();
-            is.close();
-
-        } catch (IOException ioe) {
-            Log.e("Read CSV Error mypapit", "Some CSV Error: ", ioe.getCause());
-
-        } catch (NumberFormatException nfe) {
-            Log.e("Number error", "parse number error - line: " + line + "  " + nfe.getMessage(), nfe.getCause());
-        } catch (Exception ex) {
-            Log.e("Some Exception", "some exception at line :" + line + " \n " + ex.getCause());
-            ex.printStackTrace(System.err);
-        }
-        // Collections.sort(mlist);
-
-        return mlist;
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.repeater_list, menu);
-
-
-        //SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
-        //searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        //    searchView.setIconifiedByDefault(false);
-
-        searchView.setQueryHint("part of repeater callsign");
-
-        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
-
-            @Override
-            public boolean onQueryTextSubmit(String searchText) {
-
-                adapter.getFilter().filter(searchText);
-                Log.d("MYRepeater", "search: " + searchText);
-                adapter.notifyDataSetChanged();
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String searchText) {
-                // TODO Auto-generated method stub
-                adapter.getFilter().filter(searchText);
-                adapter.notifyDataSetChanged();
-                return true;
-            }
-        };
-
-        searchView.setOnQueryTextListener(textChangeListener);
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.show_map:
-                intent = new Intent(getApplicationContext(), DisplayMap.class);
-                intent.putExtra("LatLong", new LatLng(xlocation.getLatitude(), xlocation.getLongitude()));
-
-                startActivity(intent);
-
-                return true;
-            case R.id.manual_settings:
-                if (!this.isLocationEnabled(this)) {
-                    intent = new Intent(getApplicationContext(), StaticLocationActivity.class);
-                    startActivity(intent);
-                } else {
-                    this.showAlertDialog();
-                }
-                return true;
-
-            case R.id.action_about:
-                try {
-                    showDialog();
-                } catch (NameNotFoundException ex) {
-                    Toast toast = Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT);
-                    toast.show();
-
-                }
-
-                return true;
-            case R.id.action_suggest:
-
-                intent = new Intent(getApplicationContext(), SuggestRepeaterStartActivity.class);
-                this.startActivity(intent);
-
-                return true;
-
-            case R.id.action_contrib:
-                intent = new Intent();
-                intent.setClassName(getApplicationContext(), "net.mypapit.mobile.myrepeater.ContribActivity");
-                startActivity(intent);
-
-                return true;
-
-            case R.id.action_settings:
-                intent = new Intent(getApplicationContext(), SettingsActivity.class);
-                mrefresh = true;
-                startActivity(intent);
-
-                return true;
-
-
-            case R.id.action_simplex:
-                intent = new Intent(getApplicationContext(), SimplexActivity.class);
-                startActivity(intent);
-                return true;
-
-        }
-
-        return false;
-    }
-
-    private void showDialog() throws NameNotFoundException {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.about_dialog);
-        dialog.setTitle("About Repeater.MY " + getPackageManager().getPackageInfo(getPackageName(), 0).versionName);
-        dialog.setCancelable(true);
-
-        // text
-        TextView text = (TextView) dialog.findViewById(R.id.tvAbout);
-        text.setText(R.string.txtLicense);
-
-        // icon image
-        ImageView img = (ImageView) dialog.findViewById(R.id.ivAbout);
-        img.setImageResource(R.drawable.ic_launcher);
-
-        dialog.show();
-
-    }
-
-    private void showAlertDialog() {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Manual Location");
-        builder.setMessage("Note that this will not allow Repeater.MY to auto-detect location.\n\nDisable Location Service now?"); // Want
-        // to
-        // enable?
-
-        // if yes - bring user to enable Location Service settings
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                Intent intent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-                getApplicationContext().startActivity(intent);
-            }
-        });
-
-        // if no - bring user to selecting Static Location Activity
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-
-            }
-
-        });
-        builder.create().show();
-
-    }
-
-    private boolean isLocationEnabled(Context context) {
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        String provider = lm.getBestProvider(new Criteria(), true);
-        return (!TextUtils.isEmpty(provider) && !LocationManager.PASSIVE_PROVIDER.equals(provider));
-
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(this.getApplicationContext(), RepeaterDetailsActivity.class);
-
-        Repeater rpt = adapter.getRepeater(position);
-
-        String pass[] = rpt.toArrayString();
-        pass[9] = xlocation.getLatitude() + "";
-        pass[10] = xlocation.getLongitude() + "";
-
-        intent.putExtra("Repeater", pass);
-        intent.putExtra("noCompass", excludeDirection);
-        startActivity(intent);
-
-    }
-
-    public void setListAdapter(RepeaterAdapter adapter) {
-        lv.setAdapter(adapter);
-
-    }
-
-    public void setAddress(String address) {
-        tvAddress.setText(address);
-
-    }
-
-    public void showToast(String message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    protected void onPause() {
-        super.onPause();
-
-        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
-    }
-
-    // check for compass sensor
-    public boolean checkCompassSensor(Location xlocation) {
-
-        // if using Simulated provider, then automatically return true
-        if (xlocation.getProvider().equalsIgnoreCase("Simulated")) {
-            return true;
-        }
-
-        boolean sensor = getApplicationContext().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_SENSOR_COMPASS);
-
-        return !sensor;
-
-    }
-
-    private String generateCallsign() {
-        final SecureRandom random = new SecureRandom();
-
-        return new BigInteger(130, random).toString(32).substring(0, 8);
-    }
-
-    protected void onResume() {
-        super.onResume();
-
-
     }
 
 }

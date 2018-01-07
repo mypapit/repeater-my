@@ -27,6 +27,17 @@ class NearbyOperatorAdapter extends BaseAdapter {
 
     }
 
+    public static String truncate(final String text, int length) {
+        // The letters [iIl1] are slim enough to only count as half a character.
+        length += Math.ceil(text.replaceAll("[^iIl]", "").length() / 2.0d);
+
+        if (text.length() > length) {
+            return text.substring(0, length - 1) + "\u2026";
+        }
+
+        return text;
+    }
+
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
@@ -91,18 +102,6 @@ class NearbyOperatorAdapter extends BaseAdapter {
 
         return convertView;
     }
-
-    public static String truncate(final String text, int length) {
-        // The letters [iIl1] are slim enough to only count as half a character.
-        length += Math.ceil(text.replaceAll("[^iIl]", "").length() / 2.0d);
-
-        if (text.length() > length) {
-            return text.substring(0, length - 1) + "\u2026";
-        }
-
-        return text;
-    }
-
 
     static class ViewHolder {
         private TextView tvCallsign, tvHandle, tvLastSeen, tvVerified, tvActiveCheckins;

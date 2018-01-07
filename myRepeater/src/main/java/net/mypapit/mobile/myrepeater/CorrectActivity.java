@@ -31,6 +31,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -42,17 +43,15 @@ import android.widget.Toast;
 import java.util.List;
 import java.util.Stack;
 
-public class CorrectActivity extends ActionBarActivity {
+public class CorrectActivity extends AppCompatActivity {
 
+    private final String club[] = {"ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC",
+            "PEMANCAR", "PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS"};
     private EditText etcFreq, etcShift, etcTone, etcLocation, etcNote;
-
     private AutoCompleteTextView etcClub;
     private TextView etcCallsign;
     private String[] repeater;
     private boolean[] checked;
-
-    private final String club[] = {"ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC",
-            "PEMANCAR", "PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +133,7 @@ public class CorrectActivity extends ActionBarActivity {
     public void submitToEmail(boolean[] checked) {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("text/plain");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mypapit+wrong_info_repeater_suggest@gmail.com"});
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"repeaterbot+wrong_info_repeater_suggest@gmail.com"});
 
         String versionName;
         try {
@@ -169,7 +168,7 @@ public class CorrectActivity extends ActionBarActivity {
      */
     public Intent createEmailOnlyChooserIntent(Intent source, CharSequence chooserTitle) {
         Stack<Intent> intents = new Stack<Intent>();
-        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "mypapit+repeater_correction@gmail.com",
+        Intent i = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "repeaterbot+repeater_correction@gmail.com",
                 null));
         List<ResolveInfo> activities = getPackageManager().queryIntentActivities(i, 0);
 

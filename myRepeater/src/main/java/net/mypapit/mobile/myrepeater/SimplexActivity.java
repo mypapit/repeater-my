@@ -30,6 +30,9 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,6 +54,9 @@ public class SimplexActivity extends ActionBarActivity {
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        AdView mAdView = (AdView) findViewById(R.id.adViewcallsign);
+        mAdView.loadAd(new AdRequest.Builder().build());
 
 
         ListView lv = (ListView) findViewById(R.id.lvSimplex);

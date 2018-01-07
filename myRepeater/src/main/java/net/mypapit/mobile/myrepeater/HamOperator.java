@@ -13,12 +13,67 @@ import java.util.Date;
 public class HamOperator extends Location implements Comparable<HamOperator>, Parcelable, Serializable {
 
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 6532664149391248677L;
     private String callsign, handle, status, phoneno, locality, client, deviceid, qsx, strDate;
     private Date date;
     private double lat, lng, distance;
     private int activeNo;
     private boolean valid;
 
+    /**
+     * @param handle
+     * @param status
+     * @param phoneno
+     * @param locality
+     * @param client
+     * @param deviceid
+     * @param qsx
+     * @param date
+     * @param lat
+     * @param lng
+     * @param valid
+     */
+    public HamOperator(String callsign, String handle, String status, String phoneno, String locality, String client,
+                       String deviceid, String qsx, Date date, String strDate, double lat, double lng, boolean valid) {
+        super("Simulated");
+        this.callsign = callsign;
+        this.handle = handle;
+        this.status = status;
+        this.phoneno = phoneno;
+        this.locality = locality;
+        this.client = client;
+        this.deviceid = deviceid;
+        this.qsx = qsx;
+        this.date = date;
+        this.lat = lat;
+        this.lng = lng;
+        this.strDate = strDate;
+
+        this.valid = valid;
+
+
+        this.valid = valid;
+
+        this.activeNo = 0;
+    }
+
+
+    public HamOperator(String provider) {
+        super(provider);
+        // TODO Auto-generated constructor stub
+    }
+
+    public HamOperator(Location l) {
+        super(l);
+        // TODO Auto-generated constructor stub
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -43,7 +98,6 @@ public class HamOperator extends Location implements Comparable<HamOperator>, Pa
     public int describeContents() {
         return 0;
     }
-
 
     public String getHandle() {
         return handle;
@@ -97,10 +151,6 @@ public class HamOperator extends Location implements Comparable<HamOperator>, Pa
         return valid;
     }
 
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
-
     public String getLastSeen() {
 
 
@@ -123,60 +173,6 @@ public class HamOperator extends Location implements Comparable<HamOperator>, Pa
     public String getStrDate() {
 
         return this.strDate;
-    }
-
-
-    /**
-     * @param handle
-     * @param status
-     * @param phoneno
-     * @param locality
-     * @param client
-     * @param deviceid
-     * @param qsx
-     * @param date
-     * @param lat
-     * @param lng
-     * @param valid
-     */
-    public HamOperator(String callsign, String handle, String status, String phoneno, String locality, String client,
-                       String deviceid, String qsx, Date date, String strDate, double lat, double lng, boolean valid) {
-        super("Simulated");
-        this.callsign = callsign;
-        this.handle = handle;
-        this.status = status;
-        this.phoneno = phoneno;
-        this.locality = locality;
-        this.client = client;
-        this.deviceid = deviceid;
-        this.qsx = qsx;
-        this.date = date;
-        this.lat = lat;
-        this.lng = lng;
-        this.strDate = strDate;
-
-        this.valid = valid;
-
-
-        this.valid = valid;
-
-        this.activeNo = 0;
-    }
-
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 6532664149391248677L;
-
-    public HamOperator(String provider) {
-        super(provider);
-        // TODO Auto-generated constructor stub
-    }
-
-    public HamOperator(Location l) {
-        super(l);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

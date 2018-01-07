@@ -25,15 +25,6 @@ package net.mypapit.mobile.myrepeater;
 
 public class StaticLocation {
     private String name, statename;
-
-    public String getStatename() {
-        return statename;
-    }
-
-    public void setStatename(String statename) {
-        this.statename = statename;
-    }
-
     private double lat, lon;
 
     /**
@@ -46,6 +37,14 @@ public class StaticLocation {
         this.statename = statename;
         this.lat = lat;
         this.lon = lon;
+    }
+
+    public String getStatename() {
+        return statename;
+    }
+
+    public void setStatename(String statename) {
+        this.statename = statename;
     }
 
     @Override

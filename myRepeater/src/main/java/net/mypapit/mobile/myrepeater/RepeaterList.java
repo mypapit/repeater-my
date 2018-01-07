@@ -1,7 +1,7 @@
 /*
  * 
 	MyRepeater Finder 
-	Copyright 2013 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
+	Copyright 2013,2017 Mohammad Hafiz bin Ismail <mypapit@gmail.com>
 	http://blog.mypapit.net/
 	https://github.com/mypapit/repeater-my
 
@@ -54,7 +54,7 @@ class RepeaterList extends ArrayList<Repeater> {
      * Skips linked repeater
      */
     public RepeaterList filterLink(RepeaterList input, boolean excludeLink) {
-        RepeaterList output = new RepeaterList(100);
+        RepeaterList output = new RepeaterList(130);
 
         for (Repeater temp : input) {
             if ((temp.getLink().length() > 0) && excludeLink) {

@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.mypapit.mobile.myrepeater.utility.ServiceHandler;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -30,18 +32,34 @@ import java.util.List;
 
 public class NearbyOperatorActivity extends ActionBarActivity implements OnItemClickListener {
 
-    private ListView listview;
-
-    private HamOperatorList holist;
-    private NearbyOperatorAdapter adapter;
     private static final String URL = "http://api.repeater.my/v1/nearbyoperator.php";
-
-    private String mlocation;
     private static final String CACHE_PREFS = "cache-prefs";
     private static final String CACHE_TIME = "cache-time-";
     private static final String CACHE_JSON = "cache-json-";
     private final DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private ListView listview;
+    private HamOperatorList holist;
+    private NearbyOperatorAdapter adapter;
+    private String mlocation;
     private SharedPreferences cache;
+
+    private static String toTitleCase(String input) {
+        StringBuilder titleCase = new StringBuilder();
+        boolean nextTitleCase = true;
+
+        for (char c : input.toCharArray()) {
+            if (Character.isSpaceChar(c)) {
+                nextTitleCase = true;
+            } else if (nextTitleCase) {
+                c = Character.toTitleCase(c);
+                nextTitleCase = false;
+            }
+
+            titleCase.append(c);
+        }
+
+        return titleCase.toString();
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +76,10 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
         mlng = bundle.getDouble("lng");
 
 
-        overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        TextView tvNearby;
-        tvNearby = (TextView) findViewById(R.id.tvNearbyRepeater);
+        TextView tvNearby = (TextView) findViewById(R.id.tvNearbyRepeater);
 
         //TextView emptyView = (TextView) findViewById(R.id.empty_list_item);
 
@@ -199,24 +213,6 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
     }
 
-    private static String toTitleCase(String input) {
-        StringBuilder titleCase = new StringBuilder();
-        boolean nextTitleCase = true;
-
-        for (char c : input.toCharArray()) {
-            if (Character.isSpaceChar(c)) {
-                nextTitleCase = true;
-            } else if (nextTitleCase) {
-                c = Character.toTitleCase(c);
-                nextTitleCase = false;
-            }
-
-            titleCase.append(c);
-        }
-
-        return titleCase.toString();
-    }
-
     protected void onPause() {
         super.onPause();
 
@@ -238,6 +234,8 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
         intent.putExtra("callsign", hop.getCallsign());
         intent.putExtra("time", hop.getStrDate());
         intent.putExtra("name", hop.getHandle());
+        intent.putExtra("deviceid", hop.getDeviceid());
+
 
         startActivity(intent);
 
@@ -280,12 +278,12 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
             // Log.d("mypapit Json Response: ", "> " + jsonStr);
 
-            // listrakanradio = new ArrayList<HashMap<String, String>>(200);
+
             JSONArray rakanradio = null;
 
             if (jsonStr != null) {
                 try {
-                    // JSONObject jsonObj = new JSONObject(jsonStr);
+
 
                     rakanradio = new JSONArray(jsonStr);
 
@@ -324,7 +322,7 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
 
                         }
                         /*
-						 * (String callsign, String handle, String status,
+                         * (String callsign, String handle, String status,
 						 * String phoneno, String locality, String client,
 						 * String deviceid, String qsx, Date date, double lat,
 						 * double lng, boolean valid
