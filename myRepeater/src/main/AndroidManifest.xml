@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.mypapit.mobile.myrepeater"
-    android:versionCode="235"
-    android:versionName="2.3.5">
+    android:versionCode="236"
+    android:versionName="2.3.6">
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="21" />
 
     <permission
