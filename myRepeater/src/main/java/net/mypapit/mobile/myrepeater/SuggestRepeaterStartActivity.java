@@ -25,7 +25,8 @@ package net.mypapit.mobile.myrepeater;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -35,7 +36,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class SuggestRepeaterStartActivity extends ActionBarActivity {
+public class SuggestRepeaterStartActivity extends AppCompatActivity {
     private final String club[] = {"ASTRA", "AKRAB", "ARECTMJ", "MARTS", "MARES", "JASRA", "ARCS", "NESRAC",
             "PEMANCAR", "PERAMAH", "ARECS", "SARES", "UNKNOWN", "OTHERS", "SARC"};
     private final String state[] = {"JOHOR", "KEDAH", "KELANTAN", "KUALA LUMPUR", "MELAKA", "NEGERI SEMBILAN",

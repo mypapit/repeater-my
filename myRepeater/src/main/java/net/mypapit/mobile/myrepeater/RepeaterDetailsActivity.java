@@ -107,7 +107,9 @@ public class RepeaterDetailsActivity extends CompassSensorsActivity {
         tvDistance.setText("" + repeater[6] + " km");
 
         AdView mAdView = (AdView) findViewById(R.id.adView);
-        mAdView.loadAd(new AdRequest.Builder().build());
+        AdRequest request = new AdRequest.Builder().setGender(AdRequest.GENDER_MALE).build();
+
+        mAdView.loadAd(request);
 
         Repeater userloc = new Repeater("", Double.parseDouble(repeater[9]), Double.parseDouble(repeater[10]));
         Repeater repeaterloc = new Repeater("", Double.parseDouble(repeater[7]), Double.parseDouble(repeater[8]));

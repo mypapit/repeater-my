@@ -528,6 +528,7 @@ public class RepeaterListActivity extends CompassSensorsActivity implements OnIt
 
         Snackbar.make(lv,message, Snackbar.LENGTH_LONG).show();
 
+
     }
 
     protected void onPause() {

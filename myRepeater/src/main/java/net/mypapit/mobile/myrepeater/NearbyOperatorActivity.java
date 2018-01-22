@@ -4,7 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.maps.model.LatLng;
 
 import net.mypapit.mobile.myrepeater.utility.ServiceHandler;
@@ -30,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NearbyOperatorActivity extends ActionBarActivity implements OnItemClickListener {
+public class NearbyOperatorActivity extends AppCompatActivity implements OnItemClickListener {
 
     private static final String URL = "http://api.repeater.my/v1/nearbyoperator.php";
     private static final String CACHE_PREFS = "cache-prefs";
@@ -68,6 +71,10 @@ public class NearbyOperatorActivity extends ActionBarActivity implements OnItemC
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
 
         Bundle bundle = this.getIntent().getExtras();
+
+        AdView mAdView = (AdView) findViewById(R.id.adViewNearby);
+        mAdView.loadAd(new AdRequest.Builder().setGender(AdRequest.GENDER_MALE).build());
+
 
         mlocation = bundle.getString("location");
 

@@ -31,7 +31,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -42,7 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Stack;
 
-public class SuggestRepeaterSecondActivity extends ActionBarActivity {
+public class SuggestRepeaterSecondActivity extends AppCompatActivity {
 
 
     private String callsign, club, location, state;

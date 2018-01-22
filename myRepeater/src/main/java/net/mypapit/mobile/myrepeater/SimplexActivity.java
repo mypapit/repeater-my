@@ -24,7 +24,8 @@
 package net.mypapit.mobile.myrepeater;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -44,7 +45,7 @@ import java.util.Map;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class SimplexActivity extends ActionBarActivity {
+public class SimplexActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

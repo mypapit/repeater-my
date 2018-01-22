@@ -5,12 +5,12 @@ package net.mypapit.mobile.myrepeater;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
 import com.ViewPagerAdapter.ViewPagerAdapter;
 import com.viewpagerindicator.CirclePageIndicator;
 
-public class WalkthroughActivity extends ActionBarActivity {
+public class WalkthroughActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -28,7 +28,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,7 +53,7 @@ import java.util.Date;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class StaticLocationActivity extends ActionBarActivity {
+public class StaticLocationActivity extends AppCompatActivity {
 
     private StaticLocationAdapter adapter;
     private Activity localActivity;

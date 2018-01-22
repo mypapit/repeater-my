@@ -3,7 +3,8 @@ package net.mypapit.mobile.myrepeater;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class CallsignDetailsActivity extends ActionBarActivity {
+public class CallsignDetailsActivity extends AppCompatActivity {
 
     View dividerPhone, titlePhone;
     ImageButton btnCall;
@@ -41,7 +42,7 @@ public class CallsignDetailsActivity extends ActionBarActivity {
         setContentView(R.layout.callsign_detail_layout);
 
         AdView mAdView = (AdView) findViewById(R.id.adViewcallsign);
-        mAdView.loadAd(new AdRequest.Builder().build());
+        mAdView.loadAd(new AdRequest.Builder().setGender(AdRequest.GENDER_MALE).build());
 
         Bundle bundle = getIntent().getExtras();
 

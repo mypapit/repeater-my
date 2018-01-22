@@ -27,12 +27,13 @@ package net.mypapit.mobile.myrepeater;
 
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import java.io.InputStream;
 
-public class ContribActivity extends ActionBarActivity {
+public class ContribActivity extends AppCompatActivity {
     private TextView tvContrib;
 
     @Override

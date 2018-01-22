@@ -31,7 +31,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.util.SimpleArrayMap;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -84,6 +84,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import android.support.design.widget.Snackbar;
+
+
 public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback, OnInfoWindowClickListener, HeatMapListener, UserInfoRetrievedListener {
 
     static final String CACHE_TIME = "cache-time-map-";
@@ -104,12 +107,16 @@ public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback,
     private SharedPreferences cache;
     private ArrayList<SimpleArrayMap<String, String>> listrakanradio;
     private FuzzyDateFormatter fuzzydateformat;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_map);
         overridePendingTransition(R.anim.activity_open_translate, R.anim.activity_close_scale);
+
+        linearLayout = (LinearLayout) findViewById(R.id.layoutDisplayMap);
+
 
         hashMap = new SimpleArrayMap<Marker, MapInfoObject>();
 
@@ -321,7 +328,9 @@ public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback,
     public boolean setHeatMapStatus(boolean isHeatmap) {
         this.isHeatmap = isHeatmap;
         if (!isHeatmap) {
-            Toast.makeText(getApplicationContext(), "no heatmap", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "no heatmap", Toast.LENGTH_SHORT).show();
+            Snackbar.make(linearLayout, getString(R.string.no_heatmap), Snackbar.LENGTH_SHORT).show();
+
         }
         return isHeatmap;
     }
@@ -336,7 +345,8 @@ public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback,
             if (heatmapTileOverlay != null) {
                 heatmapTileOverlay.remove();
                 this.isHeatmap = !this.isHeatmap;
-                Toast.makeText(getApplicationContext(), "Heatmap off", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Heatmap off", Toast.LENGTH_SHORT).show();
+                Snackbar.make(linearLayout, getString(R.string.heatmap_off), Snackbar.LENGTH_SHORT).show();
             }
         }
 
@@ -432,7 +442,9 @@ public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback,
         if (map == null) {
 
             // Log.e("Map NULL", "MAP NULL");
-            Toast.makeText(this, "Unable to display Map", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Unable to display Map", Toast.LENGTH_SHORT).show();
+            Snackbar.make(linearLayout, getString(R.string.no_map), Snackbar.LENGTH_SHORT).show();
+
 
         } else {
 
@@ -452,7 +464,11 @@ public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback,
             map.getUiSettings().setZoomControlsEnabled(true);
 
             AdView mAdView = (AdView) findViewById(R.id.adViewMap);
-            mAdView.loadAd(new AdRequest.Builder().build());
+
+            AdRequest request = new AdRequest.Builder().setGender(AdRequest.GENDER_MALE).build();
+
+
+            mAdView.loadAd(request);
 
             // counter i, for mapping marker with integer
             int i = 0;
@@ -575,6 +591,7 @@ class GetHeatMapInfo extends AsyncTask<ArrayList<LatLng>, Void, ArrayList<LatLng
     protected void onPreExecute() {
         super.onPreExecute();
         Toast.makeText(activity, "Generating heatmap\u2026", Toast.LENGTH_SHORT).show();
+//        Snackbar.make(activity.linearLayout,activity.getString(R.string.no_map),Snackbar.LENGTH_SHORT);
 
 
     }

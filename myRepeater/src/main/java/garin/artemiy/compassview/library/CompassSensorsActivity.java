@@ -6,7 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+//import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Surface;
 
 /**
@@ -14,7 +15,7 @@ import android.view.Surface;
  * Date: 26.11.13
  */
 
-public class CompassSensorsActivity extends ActionBarActivity implements SensorEventListener {
+public class CompassSensorsActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
