@@ -156,6 +156,18 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
         return shift;
     }
 
+    public String getSignedShift() {
+
+        if (shift > 0) {
+
+            return "+" + shift;
+
+        }
+
+        return shift + "";
+
+    }
+
     public void setShift(double shift) {
         this.shift = shift;
     }
@@ -171,7 +183,7 @@ public class Repeater extends Location implements Comparable<Repeater>, Parcelab
     public String getDownlinkShift() {
 
 
-        return new StringBuilder(Double.toString(getDownlink())).append("MHz (").append(getShift()).append(")").toString();
+        return new StringBuilder(Double.toString(getDownlink())).append("MHz (").append(getSignedShift()).append(")").toString();
     }
 
 	/*

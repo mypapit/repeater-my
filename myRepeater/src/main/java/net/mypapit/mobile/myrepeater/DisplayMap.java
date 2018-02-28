@@ -483,7 +483,7 @@ public class DisplayMap extends AppCompatActivity implements OnMapReadyCallback,
                 marking.title(repeater.getCallsign() + " - " + repeater.getDownlink() + "MHz (" + repeater.getClub()
                         + ")");
 
-                marking.snippet("Tone: " + repeater.getTone() + " Shift: " + repeater.getShift());
+                marking.snippet("Tone: " + repeater.getTone() + " Shift: " + repeater.getSignedShift());
 
 
                 hashMap.put(map.addMarker(marking), new RepeaterMapInfo(repeater, i));
