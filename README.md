@@ -12,11 +12,11 @@ Repeater.my for Android - Malaysian Hamradio Repeater Finder
 
 
 ## Downloads
-  * Available in Google Play Store - [net.mypapit.myrepeater] (https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater)
+  * Available in Google Play Store - [net.mypapit.myrepeater](https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater)
   
 
 
-[![alt GooglePlay](https://conversations.im/images/en-play-badge.png)] (https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater) 
+[![alt GooglePlay](https://conversations.im/images/en-play-badge.png)](https://play.google.com/store/apps/details?id=net.mypapit.mobile.myrepeater)
 
 
 
