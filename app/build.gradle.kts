@@ -60,6 +60,7 @@ dependencies {
 
     implementation(libs.datastore.preferences)
     implementation(libs.okhttp)
+    implementation(libs.maplibre)
     implementation(libs.coroutines.android)
 
     testImplementation(libs.junit)

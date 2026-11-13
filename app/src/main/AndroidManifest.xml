@@ -3,6 +3,8 @@
 
     <!-- Used only to download the public repeater and callsign CSV files. -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Lets the map retry its background when a connection comes back. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- Foreground only, and optional: sorts repeaters by distance. Never sent anywhere. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

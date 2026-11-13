@@ -76,7 +76,7 @@ class SyncRepository(
             if (response.code == 304) return
             if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
 
-            val body = response.body
+            val body = response.body ?: throw IOException("Empty response")
             val total = body.contentLength().takeIf { it > 0 }
             val file = File.createTempFile(dataset.name.lowercase(), ".csv", cacheDir)
             try {

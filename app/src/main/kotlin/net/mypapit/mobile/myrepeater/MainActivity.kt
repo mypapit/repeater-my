@@ -12,6 +12,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.remember
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.compose.currentBackStackEntryAsState
+import net.mypapit.mobile.myrepeater.ui.map.MapScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -41,6 +56,8 @@ private object Routes {
     const val LIST = "list"
     const val SETTINGS = "settings"
     const val PRESETS = "presets"
+    const val MAP = "map"
+    val TOP_LEVEL = setOf(LIST, MAP)
 }
 
 class MainActivity : ComponentActivity() {
@@ -117,7 +134,49 @@ private fun AppNavigation(
     val locationGranted by viewModel.locationPermission.collectAsStateWithLifecycle()
     val current = settings ?: return
 
-    NavHost(navController = navController, startDestination = Routes.LIST) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val route = backStackEntry?.destination?.route
+    val openTab = { target: String ->
+        navController.navigate(target) {
+            popUpTo(Routes.LIST) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+
+    Scaffold(
+        contentWindowInsets = WindowInsets(0),
+        bottomBar = {
+            // Only the top-level screens carry the bar; Settings and the place picker are full-height.
+            if (route == null || route in Routes.TOP_LEVEL) {
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = route != Routes.MAP,
+                        onClick = { openTab(Routes.LIST) },
+                        icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+                        label = { Text(stringResource(R.string.nav_repeaters)) },
+                    )
+                    NavigationBarItem(
+                        selected = route == Routes.MAP,
+                        onClick = { openTab(Routes.MAP) },
+                        icon = { Icon(Icons.Default.Place, contentDescription = null) },
+                        label = { Text(stringResource(R.string.nav_map)) },
+                    )
+                }
+            }
+        },
+    ) { barPadding ->
+    NavHost(
+        navController = navController,
+        startDestination = Routes.LIST,
+        modifier = Modifier.padding(barPadding).consumeWindowInsets(barPadding),
+    ) {
+        composable(Routes.MAP) {
+            val items by viewModel.items.collectAsStateWithLifecycle()
+            val position by viewModel.position.collectAsStateWithLifecycle()
+            val repeaters = remember(items) { items.map { it.repeater } }
+            MapScreen(repeaters = repeaters, position = position)
+        }
         composable(Routes.LIST) {
             val items by viewModel.items.collectAsStateWithLifecycle()
             val position by viewModel.position.collectAsStateWithLifecycle()
@@ -158,5 +217,6 @@ private fun AppNavigation(
                 },
             )
         }
+    }
     }
 }

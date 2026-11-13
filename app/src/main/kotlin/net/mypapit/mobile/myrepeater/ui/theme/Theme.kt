@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.Color
 val SignalOrange = Color(0xFFFF8500)
 val SkyBlue = Color(0xFF33B5E5)
 val OnAirGreen = Color(0xFF6DD58C)
+val MixedBandPurple = Color(0xFFC9A0FF)
 val OffAirRed = Color(0xFFFF6B5E)
 
 private val DarkColors = darkColorScheme(

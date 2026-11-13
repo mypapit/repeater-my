@@ -3,6 +3,15 @@
     <string name="app_name">Repeater.MY</string>
     <string name="action_back">Back</string>
     <string name="action_settings">Settings</string>
+    <string name="action_close">Close</string>
+    <string name="nav_repeaters">Repeaters</string>
+    <string name="nav_map">Map</string>
+
+    <!-- Map -->
+    <string name="map_legend_2m">2 m</string>
+    <string name="map_legend_70cm">70 cm</string>
+    <string name="map_legend_mixed">Both</string>
+    <string name="map_offline_notice">Offline: showing a simplified outline</string>
 
     <!-- Onboarding -->
     <string name="onboarding_welcome_title">Selamat datang!</string>
