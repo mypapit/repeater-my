@@ -20,6 +20,10 @@ object RepeaterFormat {
         }
     }
 
+    /** One decimal under 10 km ("3.4"), whole kilometres beyond ("42"). */
+    fun distance(km: Double): String =
+        if (km < 10) String.format(Locale.US, "%.1f", km) else String.format(Locale.US, "%.0f", km)
+
     /** The callsign prefix shown in the avatar when there is no compass, e.g. "9M4". */
     fun prefix(callsign: String): String = callsign.take(3)
 

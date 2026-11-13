@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Repeater.MY</string>
+    <string name="action_back">Back</string>
+    <string name="action_settings">Settings</string>
 
+    <!-- Onboarding -->
+    <string name="onboarding_welcome_title">Selamat datang!</string>
+    <string name="onboarding_welcome_body">Find Malaysian amateur radio repeaters wherever you are.</string>
+    <string name="onboarding_modes_title">Find a repeater your way</string>
+    <string name="onboarding_modes_nearest_title">Nearest first</string>
+    <string name="onboarding_modes_nearest_body">Repeaters sorted by distance as you travel.</string>
+    <string name="onboarding_modes_map_title">On the map</string>
+    <string name="onboarding_modes_map_body">See repeaters pinned around you.</string>
+    <string name="onboarding_modes_search_title">By name</string>
+    <string name="onboarding_modes_search_body">Search by callsign, place, state or club.</string>
+    <string name="onboarding_modes_offline_title">No signal, no problem</string>
+    <string name="onboarding_modes_offline_body">The list is saved on your phone for the trail.</string>
+    <string name="onboarding_location_title">Let the app find the nearest repeater</string>
+    <string name="onboarding_location_body">With location on, the list is sorted nearest first and a compass points the way. Your position is used only on this phone and only while the app is open.</string>
+    <string name="onboarding_location_enable">Turn on location</string>
+    <string name="onboarding_location_enabled">Location is on</string>
+    <string name="onboarding_location_alternative">Prefer not to? You can pick your area by hand in Settings.</string>
+    <string name="onboarding_permissions_title">What the app uses</string>
+    <string name="onboarding_permissions_internet_title">Internet</string>
+    <string name="onboarding_permissions_internet_body">Downloads the public repeater and callsign lists, and map tiles.</string>
+    <string name="onboarding_permissions_location_title">Location (optional)</string>
+    <string name="onboarding_permissions_location_body">Sorts repeaters by distance and aims the compass.</string>
+    <string name="onboarding_permissions_privacy_title">Your privacy</string>
+    <string name="onboarding_permissions_privacy_body">No account, no ads, no tracking. Nothing about you or where you are ever leaves this phone.</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_done">Get started</string>
+    <string name="onboarding_page">Page %1$d of %2$d</string>
+
+    <!-- First-start download -->
     <string name="sync_title">Getting the repeater list ready</string>
     <string name="sync_downloading_repeaters">Downloading repeaters</string>
     <string name="sync_downloading_callsigns">Downloading callsign directory</string>
@@ -12,19 +44,54 @@
     <string name="sync_failed_data">The downloaded data couldn\'t be read. Please try again later.</string>
     <string name="sync_retry">Try again</string>
 
+    <!-- Repeater list -->
     <string name="list_title">Repeaters</string>
     <plurals name="list_count">
         <item quantity="one">%1$d repeater</item>
         <item quantity="other">%1$d repeaters</item>
     </plurals>
     <string name="list_empty">No repeaters to show.</string>
+    <string name="list_nearest_to_you">Nearest to you</string>
+    <string name="list_nearest_to_place">Nearest to %1$s</string>
+    <string name="list_compass_disclaimer">Compass directions are approximate. The arrow is hidden within 10 km of a repeater to avoid pointing the wrong way.</string>
+    <string name="list_locating">Finding your location…</string>
+    <string name="list_location_off_title">Location is off</string>
+    <string name="list_location_off_body">Choose your area in Settings to see the nearest repeaters first.</string>
+    <string name="list_location_off_action">Open Settings</string>
+    <string name="list_change_place">Change</string>
     <string name="repeater_no_tone">No tone</string>
     <string name="repeater_tone">Tone %1$s</string>
     <string name="repeater_offset">Offset %1$s</string>
-    <string name="repeater_mhz">%1$s MHz</string>
+    <string name="repeater_distance_km">%1$s km</string>
+    <string name="repeater_distance_km_approx">≈ %1$s km</string>
+    <string name="repeater_nearby">NEAR</string>
+    <string name="repeater_nearby_description">Within 10 km</string>
+    <string name="repeater_direction_description">Direction to repeater</string>
     <string name="status_on_air">On air</string>
     <string name="status_off_air">Off air</string>
     <string name="status_unknown">Status unknown</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_location_section">Your location</string>
+    <string name="settings_location_device">Use this phone\'s location</string>
+    <string name="settings_location_device_on">On while the app is open</string>
+    <string name="settings_location_device_needs_permission">Needs location permission</string>
+    <string name="settings_location_preset">Choose a place</string>
+    <string name="settings_location_preset_none">None chosen</string>
+    <string name="settings_location_permission_hint">Location permission is off. Allow it, or choose a place instead.</string>
+    <string name="settings_location_allow">Allow location</string>
+    <string name="settings_location_system">App permissions</string>
+    <string name="settings_data_section">Repeater data</string>
+    <string name="settings_data_last_updated">Last updated %1$s</string>
+    <string name="settings_data_never">Not downloaded yet</string>
+    <string name="settings_data_update">Update now</string>
+    <string name="settings_data_updating">Updating…</string>
+    <string name="settings_data_failed">Couldn\'t update. The saved list is still available.</string>
+    <string name="settings_privacy_section">Privacy</string>
+    <string name="settings_privacy_body">Repeater.MY has no account, ads or analytics. It connects to the internet only to download the public repeater and callsign lists. Your location is used on this phone to sort the list and is never sent anywhere.</string>
+    <string name="settings_about_version">Version %1$s</string>
+    <string name="presets_title">Choose a place</string>
 
     <string-array name="loading_quotes">
         <item>Tuning the dial…</item>

@@ -4,6 +4,10 @@
     <!-- Used only to download the public repeater and callsign CSV files. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Foreground only, and optional: sorts repeaters by distance. Never sent anywhere. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".RepeaterApp"
         android:allowBackup="false"
