@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Repeater.MY</string>
+
+    <string name="sync_title">Getting the repeater list ready</string>
+    <string name="sync_downloading_repeaters">Downloading repeaters</string>
+    <string name="sync_downloading_callsigns">Downloading callsign directory</string>
+    <string name="sync_processing_repeaters">Sorting out repeaters</string>
+    <string name="sync_processing_callsigns">Indexing callsigns</string>
+    <string name="sync_starting">Connecting</string>
+    <string name="sync_failed_network">Couldn\'t reach the server. The first start needs an internet connection; after that the app works offline.</string>
+    <string name="sync_failed_data">The downloaded data couldn\'t be read. Please try again later.</string>
+    <string name="sync_retry">Try again</string>
+
+    <string name="list_title">Repeaters</string>
+    <plurals name="list_count">
+        <item quantity="one">%1$d repeater</item>
+        <item quantity="other">%1$d repeaters</item>
+    </plurals>
+    <string name="list_empty">No repeaters to show.</string>
+    <string name="repeater_no_tone">No tone</string>
+    <string name="repeater_tone">Tone %1$s</string>
+    <string name="repeater_offset">Offset %1$s</string>
+    <string name="repeater_mhz">%1$s MHz</string>
+    <string name="status_on_air">On air</string>
+    <string name="status_off_air">Off air</string>
+    <string name="status_unknown">Status unknown</string>
+
+    <string-array name="loading_quotes">
+        <item>Tuning the dial…</item>
+        <item>CQ CQ CQ, this is your phone calling.</item>
+        <item>Checking the SWR on the data line.</item>
+        <item>Listening before transmitting.</item>
+        <item>73 means best regards. 88 is a different matter.</item>
+        <item>Hilltops make the best neighbours.</item>
+        <item>Remember to leave a pause between overs.</item>
+        <item>A repeater is only as good as its antenna.</item>
+        <item>Packing spare batteries for the trail.</item>
+        <item>QRX, one moment please.</item>
+    </string-array>
+</resources>
