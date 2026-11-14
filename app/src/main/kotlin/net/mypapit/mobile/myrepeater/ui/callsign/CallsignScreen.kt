@@ -1,5 +1,6 @@
 package net.mypapit.mobile.myrepeater.ui.callsign
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,7 +40,8 @@ fun CallsignScreen(
 ) {
     Scaffold(
         topBar = {
-            Column {
+            // Opaque, so results scroll underneath the search field rather than showing through.
+            Column(Modifier.background(MaterialTheme.colorScheme.background)) {
                 TopAppBar(title = { Text(stringResource(R.string.callsign_title)) })
                 SearchField(
                     value = query,

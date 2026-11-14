@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import net.mypapit.mobile.myrepeater.R
+import net.mypapit.mobile.myrepeater.ui.theme.AppLogo
 
 private const val PAGE_COUNT = 4
 private const val LOCATION_PAGE = 2
@@ -116,13 +117,9 @@ fun OnboardingScreen(
 @Composable
 private fun WelcomePage() {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Icon(
-            painter = painterResource(R.drawable.ic_launcher_foreground),
-            contentDescription = null,
-            modifier = Modifier.size(160.dp),
-            tint = MaterialTheme.colorScheme.primary,
-        )
+        AppLogo(size = 128.dp)
     }
+    Spacer(Modifier.height(28.dp))
     Text(
         text = stringResource(R.string.onboarding_welcome_title),
         modifier = Modifier.fillMaxWidth(),

@@ -30,6 +30,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +50,7 @@ import net.mypapit.mobile.myrepeater.ui.UserPosition
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterFormat
 import net.mypapit.mobile.myrepeater.ui.theme.OffAirRed
 import net.mypapit.mobile.myrepeater.ui.theme.OnAirGreen
+import kotlin.math.roundToInt
 
 /** Everything the source lists about one repeater, laid out for programming a radio. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,6 +58,7 @@ import net.mypapit.mobile.myrepeater.ui.theme.OnAirGreen
 fun RepeaterDetailScreen(
     repeater: Repeater,
     position: UserPosition?,
+    heading: () -> Float?,
     onBack: () -> Unit,
     onShowOnMap: () -> Unit,
 ) {
@@ -82,6 +87,7 @@ fun RepeaterDetailScreen(
         ) {
             FrequencyCard(repeater)
             LocationCard(repeater, position, onShowOnMap)
+            DirectionCard(repeater, position, heading)
             AboutCard(repeater)
             if (repeater.notes.isNotBlank()) {
                 DetailCard(stringResource(R.string.detail_notes)) {
@@ -184,6 +190,58 @@ private fun LocationCard(repeater: Repeater, position: UserPosition?, onShowOnMa
                 Text(stringResource(R.string.detail_show_on_map))
             }
         }
+    }
+}
+
+/**
+ * The compass, shown only when measuring from the phone's own position. Within
+ * [Geo.COMPASS_MIN_DISTANCE_KM] it is replaced by an explanation, because the
+ * listed coordinates are too coarse to point with at short range.
+ */
+@Composable
+private fun DirectionCard(repeater: Repeater, position: UserPosition?, heading: () -> Float?) {
+    val lat = repeater.latitude ?: return
+    val lon = repeater.longitude ?: return
+    if (position == null || position.source != LocationMode.DEVICE) return
+
+    val target = GeoPoint(lat, lon)
+    val distance = Geo.distanceKm(position.point, target)
+    val bearing = Geo.bearingDeg(position.point, target)
+    // Derived so that a turning phone redraws the dial without recomposing this card.
+    val hasHeading by remember(heading) { derivedStateOf { heading() != null } }
+
+    DetailCard(stringResource(R.string.detail_direction)) {
+        if (distance <= Geo.COMPASS_MIN_DISTANCE_KM) {
+            Text(
+                text = stringResource(R.string.detail_compass_near),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            return@DetailCard
+        }
+        Text(
+            text = stringResource(
+                R.string.detail_bearing,
+                bearing.roundToInt() % 360,
+                Geo.compassPoint(bearing),
+                RepeaterFormat.distance(distance),
+            ),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        if (hasHeading) {
+            Spacer(Modifier.height(16.dp))
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                CompassDial(bearing = bearing.toFloat(), heading = heading)
+            }
+            Spacer(Modifier.height(12.dp))
+        }
+        Text(
+            text = stringResource(
+                if (hasHeading) R.string.detail_compass_note else R.string.detail_compass_unavailable,
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

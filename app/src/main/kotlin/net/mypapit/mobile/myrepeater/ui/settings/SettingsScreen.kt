@@ -62,6 +62,7 @@ fun SettingsScreen(
     onOpenSystemSettings: () -> Unit,
     onChoosePreset: () -> Unit,
     onSync: () -> Unit,
+    onOpenAbout: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -163,12 +164,20 @@ fun SettingsScreen(
                 )
             }
 
-            Text(
-                text = stringResource(R.string.settings_about_version, BuildConfig.VERSION_NAME),
+            Card(
+                onClick = onOpenAbout,
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+            ) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(stringResource(R.string.about_title), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        text = stringResource(R.string.settings_about_summary, BuildConfig.VERSION_NAME),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }

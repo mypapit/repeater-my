@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 18 72 72" width="512" height="512">
+  <title>Repeater.MY</title>
+  <defs>
+    <clipPath id="shape"><rect x="18" y="18" width="72" height="72" rx="15"/></clipPath>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.28"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0.04"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#shape)">
+    <path fill="#D8121B" d="M0,0h108v108h-108z"/>
+    <path fill="#FFFFFF" d="M0,9h108v9h-108z M0,27h108v9h-108z M0,45h108v9h-108z M0,63h108v9h-108z M0,81h108v9h-108z M0,99h108v9h-108z"/>
+    <path fill="#17309A" d="M0,0h72v54h-72z"/>
+    <path fill="#FFD21F" d="M23.5,36a13.5,13.5 0 1,0 27,0a13.5,13.5 0 1,0 -27,0z"/>
+    <path fill="#17309A" d="M29.8,35a11.4,11.4 0 1,0 22.8,0a11.4,11.4 0 1,0 -22.8,0z"/>
+    <path fill="#FFD21F" d="M57,25.5 L57.96,31.81 L61.56,26.54 L59.68,32.64 L65.21,29.45 L60.87,34.13 L67.24,33.66 L61.3,36 L67.24,38.34 L60.87,37.87 L65.21,42.55 L59.68,39.36 L61.56,45.46 L57.96,40.19 L57,46.5 L56.04,40.19 L52.44,45.46 L54.32,39.36 L48.79,42.55 L53.13,37.87 L46.76,38.34 L52.7,36 L46.76,33.66 L53.13,34.13 L48.79,29.45 L54.32,32.64 L52.44,26.54 L56.04,31.81z"/>
+    <rect x="18" y="18" width="72" height="72" fill="url(#gloss)"/>
+    <g fill="none" stroke-linecap="round">
+      <path stroke="#FFFFFF" stroke-width="5.4" d="M62.54,76.51A8.5,8.5 0 1,1 73.46,76.51 M58.68,81.11A14.5,14.5 0 1,1 77.32,81.11 M68,70V94"/>
+      <path fill="#FFFFFF" stroke="none" d="M63,70a5,5 0 1,0 10,0a5,5 0 1,0 -10,0z"/>
+      <path stroke="#1F6FE0" stroke-width="3" d="M62.54,76.51A8.5,8.5 0 1,1 73.46,76.51 M58.68,81.11A14.5,14.5 0 1,1 77.32,81.11 M68,70V94"/>
+      <path fill="#1F6FE0" stroke="none" d="M64.4,70a3.6,3.6 0 1,0 7.2,0a3.6,3.6 0 1,0 -7.2,0z"/>
+    </g>
+  </g>
+</svg>

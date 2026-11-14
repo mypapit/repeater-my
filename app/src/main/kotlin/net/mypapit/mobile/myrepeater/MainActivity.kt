@@ -57,6 +57,7 @@ import net.mypapit.mobile.myrepeater.ui.list.RepeaterFilter
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterListScreen
 import net.mypapit.mobile.myrepeater.ui.map.MapScreen
 import net.mypapit.mobile.myrepeater.ui.onboarding.OnboardingScreen
+import net.mypapit.mobile.myrepeater.ui.settings.AboutScreen
 import net.mypapit.mobile.myrepeater.ui.settings.PresetPickerScreen
 import net.mypapit.mobile.myrepeater.ui.settings.SettingsScreen
 import net.mypapit.mobile.myrepeater.ui.sync.SyncScreen
@@ -70,6 +71,7 @@ private object Routes {
     const val PRESETS = "presets"
     const val MAP = "map"
     const val CALLSIGNS = "callsigns"
+    const val ABOUT = "about"
     const val REPEATER = "repeater/{id}"
     val TOP_LEVEL = setOf(LIST, MAP, CALLSIGNS)
 
@@ -247,11 +249,13 @@ private fun AppNavigation(
                 val id = entry.arguments?.getLong("id")
                 val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
                 val position by viewModel.position.collectAsStateWithLifecycle()
+                val heading = viewModel.heading.collectAsStateWithLifecycle()
                 val repeater = all.firstOrNull { it.id == id }
                 if (repeater != null) {
                     RepeaterDetailScreen(
                         repeater = repeater,
                         position = position,
+                        heading = { heading.value },
                         onBack = { navController.popBackStack() },
                         onShowOnMap = {
                             val lat = repeater.latitude
@@ -282,7 +286,11 @@ private fun AppNavigation(
                     onOpenSystemSettings = openAppSettings,
                     onChoosePreset = { navController.navigate(Routes.PRESETS) { launchSingleTop = true } },
                     onSync = viewModel::sync,
+                    onOpenAbout = { navController.navigate(Routes.ABOUT) { launchSingleTop = true } },
                 )
+            }
+            composable(Routes.ABOUT) {
+                AboutScreen(onBack = { navController.popBackStack() })
             }
             composable(Routes.PRESETS) {
                 PresetPickerScreen(

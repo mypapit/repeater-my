@@ -31,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -41,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -80,16 +78,15 @@ fun RepeaterListScreen(
     onOpenRepeater: (Long) -> Unit,
     onOpenSettings: () -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val onDevice = position?.source == LocationMode.DEVICE
     // Derived so that a turning phone does not recompose the whole list.
     val hasHeading by remember(heading) { derivedStateOf { heading() != null } }
     val compassShown = onDevice && hasHeading
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Column {
+            // Opaque and fixed, so list rows scroll underneath it rather than showing through.
+            Column(Modifier.background(MaterialTheme.colorScheme.background).padding(bottom = 8.dp)) {
                 TopAppBar(
                     title = {
                         Column {
@@ -110,7 +107,6 @@ fun RepeaterListScreen(
                             Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings))
                         }
                     },
-                    scrollBehavior = scrollBehavior,
                 )
                 FilterBar(filter, bands, states, onFilterChange)
                 if (refreshing) LinearProgressIndicator(Modifier.fillMaxWidth())

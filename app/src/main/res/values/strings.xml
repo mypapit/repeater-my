@@ -140,6 +140,30 @@
     <string name="settings_privacy_body">Repeater.MY has no account, ads or analytics. It connects to the internet only to download the public repeater and callsign lists. Your location is used on this phone to sort the list and is never sent anywhere.</string>
     <string name="settings_about_version">Version %1$s</string>
     <string name="presets_title">Choose a place</string>
+    <string name="settings_about_summary">Version %1$s · copyright, licence and source code</string>
+
+    <!-- About -->
+    <string name="about_title">About Repeater.MY</string>
+    <string name="about_copyright_title">Copyright</string>
+    <string name="about_copyright">Copyright © 2018–2026 Mohammad Hafiz bin Ismail</string>
+    <string name="about_licence_title">Licence</string>
+    <string name="about_licence_body">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="about_licence_warranty">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</string>
+    <string name="about_licence_link">Read the GNU General Public License</string>
+    <string name="about_source_title">Source code</string>
+    <string name="about_source_body">Repeater.MY is open source. The code is on GitHub:</string>
+    <string name="about_disclaimer_title">Disclaimer</string>
+    <string name="about_disclaimer_position">The latitude and longitude listed for a repeater are approximate. They are used for distance and direction only and do not show the actual repeater site.</string>
+    <string name="about_disclaimer_data">Repeater information is gathered from public sources, including amateur radio club websites, logbooks, publicly accessible databases and individual contributors. Frequencies, tones and locations may change without notice, so always confirm on air.</string>
+    <string name="about_credits_title">Credits</string>
+    <string name="about_credits_body">Map data © OpenStreetMap contributors, with tiles from OpenFreeMap. Map rendering by MapLibre. The offline outline is derived from Natural Earth.</string>
+
+    <!-- Repeater detail: direction -->
+    <string name="detail_direction">Direction</string>
+    <string name="detail_bearing">%1$d° %2$s · %3$s km away</string>
+    <string name="detail_compass_note">The direction is approximate. Hold the phone flat and away from metal.</string>
+    <string name="detail_compass_unavailable">This phone has no compass sensor, so only the bearing is shown.</string>
+    <string name="detail_compass_near">This repeater is within 10 km. The compass is switched off at this range, because the listed position is too approximate to point with.</string>
 
     <string-array name="loading_quotes">
         <item>Tuning the dial…</item>

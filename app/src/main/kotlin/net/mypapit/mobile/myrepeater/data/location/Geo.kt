@@ -15,6 +15,14 @@ object Geo {
 
     private const val EARTH_RADIUS_KM = 6371.0088
 
+    private val COMPASS_POINTS = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+
+    /** The nearest of the eight compass points to [bearing], for example "SW" for 225 degrees. */
+    fun compassPoint(bearing: Double): String {
+        val normalised = ((bearing % 360.0) + 360.0) % 360.0
+        return COMPASS_POINTS[((normalised + 22.5) / 45.0).toInt() % COMPASS_POINTS.size]
+    }
+
     /** Great-circle distance between two points, in kilometres. */
     fun distanceKm(from: GeoPoint, to: GeoPoint): Double {
         val lat1 = Math.toRadians(from.latitude)
