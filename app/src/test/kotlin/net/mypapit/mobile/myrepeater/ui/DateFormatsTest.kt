@@ -48,6 +48,16 @@ class DateFormatsTest {
         assertEquals("14/11/2026 5:06 AM", DateFormats.dateTime(millis, kualaLumpur, use24Hour = false))
     }
 
+    @Test
+    fun `malaysian time is UTC+8 and marked MYT whatever the phone zone`() {
+        // 2026-11-13 21:06 UTC.
+        val millis = 1_794_603_960_000L
+        assertEquals("14/11/2026 05:06 MYT", DateFormats.malaysiaDateTime(millis, use24Hour = true))
+        assertEquals("14/11/2026 5:06 AM MYT", DateFormats.malaysiaDateTime(millis, use24Hour = false))
+        // Just before midnight UTC is already the next morning in Malaysia.
+        assertEquals("15/11/2026 07:59 MYT", DateFormats.malaysiaDateTime(1_794_700_740_000L, use24Hour = true))
+    }
+
     private val repeater = Repeater(
         callsign = "9M4RXA", location = "Sedim (Gunung Bintang)", state = "Kedah", latitude = 5.4, longitude = 100.8,
         band = "70cm", downlinkMhz = 439.675, uplinkMhz = 434.675, offsetMhz = -5.0, tone = "88.5", mode = "FM",

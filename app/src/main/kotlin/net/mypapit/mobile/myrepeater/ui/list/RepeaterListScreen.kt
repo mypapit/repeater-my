@@ -19,10 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -54,6 +54,7 @@ import net.mypapit.mobile.myrepeater.data.db.RepeaterStatus
 import net.mypapit.mobile.myrepeater.data.location.Geo
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.ui.UserPosition
+import net.mypapit.mobile.myrepeater.ui.repeaterContainer
 import net.mypapit.mobile.myrepeater.ui.theme.OffAirRed
 import net.mypapit.mobile.myrepeater.ui.theme.OnAirGreen
 
@@ -220,7 +221,7 @@ private fun RepeaterCard(
     val repeater = item.repeater
     Card(
         onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().repeaterContainer(repeater.id, CardDefaults.shape),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {

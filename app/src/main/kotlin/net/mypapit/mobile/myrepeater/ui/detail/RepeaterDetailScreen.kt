@@ -53,6 +53,7 @@ import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.ui.DateFormats
 import net.mypapit.mobile.myrepeater.ui.UserPosition
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterFormat
+import net.mypapit.mobile.myrepeater.ui.repeaterContainer
 import net.mypapit.mobile.myrepeater.ui.theme.OffAirRed
 import net.mypapit.mobile.myrepeater.ui.theme.OnAirGreen
 
@@ -67,6 +68,7 @@ fun RepeaterDetailScreen(
     onShowOnMap: () -> Unit,
 ) {
     Scaffold(
+        modifier = Modifier.repeaterContainer(repeater.id, CardDefaults.shape),
         topBar = {
             TopAppBar(
                 title = { Text(repeater.callsign) },
@@ -118,9 +120,9 @@ private fun ReportButton(repeater: Repeater) {
             }
         },
     ) {
-        // Android's own "report" menu icon, tinted to match the app bar.
+        // Android's own "edit" menu icon, tinted to match the app bar.
         Icon(
-            painter = painterResource(android.R.drawable.ic_menu_report_image),
+            painter = painterResource(android.R.drawable.ic_menu_edit),
             contentDescription = stringResource(R.string.detail_report),
         )
     }

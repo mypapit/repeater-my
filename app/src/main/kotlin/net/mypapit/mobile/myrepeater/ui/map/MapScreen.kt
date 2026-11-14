@@ -49,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import java.time.ZoneId
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.aprs.AprsSnapshot
 import net.mypapit.mobile.myrepeater.data.aprs.AprsStation
@@ -236,7 +235,7 @@ private fun AprsCard(station: AprsStation, position: UserPosition?, onClose: () 
                     Text(
                         text = stringResource(
                             R.string.map_aprs_heard,
-                            DateFormats.dateTime(heard.toEpochMilli(), ZoneId.systemDefault(), use24Hour),
+                            DateFormats.malaysiaDateTime(heard.toEpochMilli(), use24Hour),
                         ),
                         style = MaterialTheme.typography.bodyMedium,
                     )

@@ -43,7 +43,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import java.time.ZoneId
 import net.mypapit.mobile.myrepeater.BuildConfig
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.location.PresetLocation
@@ -133,7 +132,7 @@ fun SettingsScreen(
                         } else {
                             val use24Hour = DateFormat.is24HourFormat(LocalContext.current)
                             val formatted = remember(lastSync, use24Hour) {
-                                DateFormats.dateTime(lastSync, ZoneId.systemDefault(), use24Hour)
+                                DateFormats.malaysiaDateTime(lastSync, use24Hour)
                             }
                             stringResource(R.string.settings_data_last_updated, formatted)
                         },

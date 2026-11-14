@@ -11,6 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -32,6 +35,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -50,6 +54,8 @@ import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.location.LocationSource
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.sync.SyncState
+import net.mypapit.mobile.myrepeater.ui.LocalNavAnimatedVisibilityScope
+import net.mypapit.mobile.myrepeater.ui.LocalSharedTransitionScope
 import net.mypapit.mobile.myrepeater.ui.MainViewModel
 import net.mypapit.mobile.myrepeater.ui.callsign.CallsignScreen
 import net.mypapit.mobile.myrepeater.ui.detail.RepeaterDetailScreen
@@ -64,6 +70,8 @@ import net.mypapit.mobile.myrepeater.ui.sync.SyncScreen
 import net.mypapit.mobile.myrepeater.ui.theme.RepeaterTheme
 
 private enum class Stage { LOADING, ONBOARDING, FIRST_SYNC, READY }
+
+private const val CONTAINER_FADE_MS = 220
 
 private object Routes {
     const val LIST = "list"
@@ -140,6 +148,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun AppNavigation(
     viewModel: MainViewModel,
@@ -191,6 +200,9 @@ private fun AppNavigation(
             }
         },
     ) { barPadding ->
+        // Lets a list card and its detail screen animate as one growing surface.
+        SharedTransitionLayout {
+        CompositionLocalProvider(LocalSharedTransitionScope provides this) {
         NavHost(
             navController = navController,
             startDestination = Routes.LIST,
@@ -213,6 +225,7 @@ private fun AppNavigation(
                 val filter by viewModel.filter.collectAsStateWithLifecycle()
                 val position by viewModel.position.collectAsStateWithLifecycle()
                 val heading = viewModel.heading.collectAsStateWithLifecycle()
+                CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
                 RepeaterListScreen(
                     items = items,
                     totalCount = all.size,
@@ -227,6 +240,7 @@ private fun AppNavigation(
                     onOpenRepeater = openRepeater,
                     onOpenSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
                 )
+                }
             }
             composable(Routes.MAP) {
                 val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
@@ -247,13 +261,20 @@ private fun AppNavigation(
                 val results by viewModel.callsignResults.collectAsStateWithLifecycle()
                 CallsignScreen(query = query, state = results, onQueryChange = viewModel::setCallsignQuery)
             }
-            composable(Routes.REPEATER, arguments = listOf(navArgument("id") { type = NavType.LongType })) { entry ->
+            composable(
+                route = Routes.REPEATER,
+                arguments = listOf(navArgument("id") { type = NavType.LongType }),
+                // No slide here: the card growing into the page is the whole transition.
+                enterTransition = { fadeIn(tween(CONTAINER_FADE_MS)) },
+                popExitTransition = { fadeOut(tween(CONTAINER_FADE_MS)) },
+            ) { entry ->
                 val id = entry.arguments?.getLong("id")
                 val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
                 val position by viewModel.position.collectAsStateWithLifecycle()
                 val heading = viewModel.heading.collectAsStateWithLifecycle()
                 val repeater = all.firstOrNull { it.id == id }
                 if (repeater != null) {
+                    CompositionLocalProvider(LocalNavAnimatedVisibilityScope provides this) {
                     RepeaterDetailScreen(
                         repeater = repeater,
                         position = position,
@@ -269,6 +290,7 @@ private fun AppNavigation(
                             }
                         },
                     )
+                    }
                 } else if (all.isNotEmpty()) {
                     // A data refresh replaced this repeater's row while the screen was open.
                     LaunchedEffect(Unit) { navController.popBackStack() }
@@ -306,6 +328,8 @@ private fun AppNavigation(
                     },
                 )
             }
+        }
+        }
         }
     }
 }

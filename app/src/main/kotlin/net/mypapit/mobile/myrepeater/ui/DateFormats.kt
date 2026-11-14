@@ -3,6 +3,7 @@ package net.mypapit.mobile.myrepeater.ui
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -42,6 +43,16 @@ object DateFormats {
         val local = Instant.ofEpochMilli(epochMillis).atZone(zone)
         return local.format(dayFirst) + " " + local.format(if (use24Hour) time24 else time12)
     }
+
+    /**
+     * A moment in Malaysian time (UTC+8), marked "MYT". The app is for use in
+     * Malaysia, so times are shown this way whatever zone the phone is set to.
+     */
+    fun malaysiaDateTime(epochMillis: Long, use24Hour: Boolean): String =
+        dateTime(epochMillis, MALAYSIA_TIME, use24Hour) + " MYT"
+
+    /** Malaysia keeps UTC+8 all year, with no daylight saving. */
+    private val MALAYSIA_TIME: ZoneId = ZoneOffset.ofHours(8)
 
     private fun parse(text: String, format: DateTimeFormatter): LocalDate? =
         try {
