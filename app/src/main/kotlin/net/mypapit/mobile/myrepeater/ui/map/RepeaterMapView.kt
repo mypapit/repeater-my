@@ -85,6 +85,7 @@ private const val COLOR_OUTLINE = "#121110"
 private const val TAP_SLOP_PX = 24f
 private const val STYLE_TIMEOUT_MS = 4_000L
 private const val USER_ZOOM = 8.5
+private const val FOCUS_ZOOM = 12.0
 private const val CLUSTER_MAX_ZOOM = 11
 
 /**
@@ -95,6 +96,7 @@ private const val CLUSTER_MAX_ZOOM = 11
  *
  * @param focus where to centre the camera when the map first opens, if known
  * @param savedCamera latitude, longitude and zoom to restore when coming back to the map
+ * @param flyTo a place to move the camera to now; [onFlown] is called once that has started
  */
 @Composable
 fun RepeaterMapView(
@@ -102,6 +104,8 @@ fun RepeaterMapView(
     userPosition: GeoPoint?,
     focus: GeoPoint?,
     savedCamera: DoubleArray?,
+    flyTo: GeoPoint?,
+    onFlown: () -> Unit,
     onCameraIdle: (DoubleArray) -> Unit,
     onSiteTapped: (MapSite?) -> Unit,
     onBasemapUnavailable: (Boolean) -> Unit,
@@ -116,6 +120,7 @@ fun RepeaterMapView(
     val currentOnTap by rememberUpdatedState(onSiteTapped)
     val currentOnUnavailable by rememberUpdatedState(onBasemapUnavailable)
     val currentOnCameraIdle by rememberUpdatedState(onCameraIdle)
+    val currentOnFlown by rememberUpdatedState(onFlown)
     val margin = with(LocalDensity.current) { 12.dp.roundToPx() }
 
     MapLifecycle(mapView)
@@ -178,6 +183,13 @@ fun RepeaterMapView(
         }
         connectivity?.registerDefaultNetworkCallback(callback)
         onDispose { connectivity?.unregisterNetworkCallback(callback) }
+    }
+
+    LaunchedEffect(map, flyTo) {
+        val ready = map ?: return@LaunchedEffect
+        val target = flyTo ?: return@LaunchedEffect
+        ready.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(target.latitude, target.longitude), FOCUS_ZOOM))
+        currentOnFlown()
     }
 
     // (Re)build our layers whenever a style finishes loading, then keep the data current.

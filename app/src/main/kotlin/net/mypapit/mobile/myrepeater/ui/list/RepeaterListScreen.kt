@@ -68,10 +68,16 @@ import net.mypapit.mobile.myrepeater.ui.theme.OnAirGreen
 @Composable
 fun RepeaterListScreen(
     items: List<RepeaterListItem>,
+    totalCount: Int,
+    filter: RepeaterFilter,
+    bands: List<String>,
+    states: List<String>,
     position: UserPosition?,
     waitingForLocation: Boolean,
     heading: () -> Float?,
     refreshing: Boolean,
+    onFilterChange: (RepeaterFilter) -> Unit,
+    onOpenRepeater: (Long) -> Unit,
     onOpenSettings: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -89,7 +95,11 @@ fun RepeaterListScreen(
                         Column {
                             Text(stringResource(R.string.list_title))
                             Text(
-                                text = pluralStringResource(R.plurals.list_count, items.size, items.size),
+                                text = if (filter.isActive) {
+                                    stringResource(R.string.list_count_filtered, items.size, totalCount)
+                                } else {
+                                    pluralStringResource(R.plurals.list_count, items.size, items.size)
+                                },
                                 style = MaterialTheme.typography.labelMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
@@ -102,6 +112,7 @@ fun RepeaterListScreen(
                     },
                     scrollBehavior = scrollBehavior,
                 )
+                FilterBar(filter, bands, states, onFilterChange)
                 if (refreshing) LinearProgressIndicator(Modifier.fillMaxWidth())
             }
         },
@@ -121,15 +132,21 @@ fun RepeaterListScreen(
             }
             if (items.isEmpty()) {
                 item(key = "empty") {
-                    Text(
-                        text = stringResource(R.string.list_empty),
-                        modifier = Modifier.fillMaxWidth().padding(32.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Column(Modifier.fillMaxWidth().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = stringResource(if (filter.isActive) R.string.list_no_match else R.string.list_empty),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        if (filter.isActive) {
+                            TextButton(onClick = { onFilterChange(RepeaterFilter()) }) {
+                                Text(stringResource(R.string.filter_clear))
+                            }
+                        }
+                    }
                 }
             }
             items(items, key = { it.repeater.id }, contentType = { "repeater" }) { item ->
-                RepeaterCard(item, onDevice, compassShown, heading, Modifier.animateItem())
+                RepeaterCard(item, onDevice, compassShown, heading, { onOpenRepeater(item.repeater.id) }, Modifier.animateItem())
             }
         }
     }
@@ -201,10 +218,12 @@ private fun RepeaterCard(
     onDevice: Boolean,
     compassShown: Boolean,
     heading: () -> Float?,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val repeater = item.repeater
     Card(
+        onClick = onClick,
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {

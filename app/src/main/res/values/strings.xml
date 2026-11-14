@@ -4,8 +4,41 @@
     <string name="action_back">Back</string>
     <string name="action_settings">Settings</string>
     <string name="action_close">Close</string>
+    <string name="action_clear">Clear</string>
     <string name="nav_repeaters">Repeaters</string>
     <string name="nav_map">Map</string>
+    <string name="nav_callsigns">Callsigns</string>
+
+    <!-- Repeater detail -->
+    <string name="unit_mhz">MHz</string>
+    <string name="value_mhz">%1$s MHz</string>
+    <string name="detail_listen_on">Listen on</string>
+    <string name="detail_transmit_on">Transmit on</string>
+    <string name="detail_offset">Offset</string>
+    <string name="detail_tone">Tone</string>
+    <string name="detail_tone_none">None</string>
+    <string name="detail_location">Location</string>
+    <string name="detail_unknown">Unknown</string>
+    <string name="detail_no_coordinates">No coordinates are listed for this repeater, so it is not on the map.</string>
+    <string name="detail_distance">%1$s km from you</string>
+    <string name="detail_distance_approx">About %1$s km from your chosen place</string>
+    <string name="detail_coordinates_note">The listed position is an estimate and may be some way from the real site.</string>
+    <string name="detail_show_on_map">Show on map</string>
+    <string name="detail_about">About</string>
+    <string name="detail_club">Club</string>
+    <string name="detail_network">Linked network</string>
+    <string name="detail_last_reviewed">Last reviewed</string>
+    <string name="detail_source">Source</string>
+    <string name="detail_notes">Notes</string>
+
+    <!-- Callsign lookup -->
+    <string name="callsign_title">Callsign lookup</string>
+    <string name="callsign_search_hint">Callsign or name</string>
+    <string name="callsign_hint">Type at least two characters of a callsign or a name. Searches stay on this phone.</string>
+    <string name="callsign_none">No matching callsign.</string>
+    <string name="callsign_more">Showing the first %1$d matches. Type more to narrow it down.</string>
+    <string name="callsign_expires">Valid until %1$s</string>
+    <string name="callsign_expired">Expired %1$s</string>
 
     <!-- Map -->
     <string name="map_legend_2m">2 m</string>
@@ -59,6 +92,12 @@
         <item quantity="one">%1$d repeater</item>
         <item quantity="other">%1$d repeaters</item>
     </plurals>
+    <string name="list_count_filtered">%1$d of %2$d repeaters</string>
+    <string name="list_no_match">No repeaters match.</string>
+    <string name="filter_search_hint">Callsign, place, club or frequency</string>
+    <string name="filter_state">State</string>
+    <string name="filter_state_all">All states</string>
+    <string name="filter_clear">Clear filters</string>
     <string name="list_empty">No repeaters to show.</string>
     <string name="list_nearest_to_you">Nearest to you</string>
     <string name="list_nearest_to_place">Nearest to %1$s</string>

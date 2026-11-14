@@ -11,39 +11,51 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.remember
-import androidx.compose.ui.res.stringResource
-import androidx.navigation.compose.currentBackStackEntryAsState
-import net.mypapit.mobile.myrepeater.ui.map.MapScreen
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.location.LocationSource
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.sync.SyncState
 import net.mypapit.mobile.myrepeater.ui.MainViewModel
+import net.mypapit.mobile.myrepeater.ui.callsign.CallsignScreen
+import net.mypapit.mobile.myrepeater.ui.detail.RepeaterDetailScreen
+import net.mypapit.mobile.myrepeater.ui.list.RepeaterFilter
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterListScreen
+import net.mypapit.mobile.myrepeater.ui.map.MapScreen
 import net.mypapit.mobile.myrepeater.ui.onboarding.OnboardingScreen
 import net.mypapit.mobile.myrepeater.ui.settings.PresetPickerScreen
 import net.mypapit.mobile.myrepeater.ui.settings.SettingsScreen
@@ -57,7 +69,11 @@ private object Routes {
     const val SETTINGS = "settings"
     const val PRESETS = "presets"
     const val MAP = "map"
-    val TOP_LEVEL = setOf(LIST, MAP)
+    const val CALLSIGNS = "callsigns"
+    const val REPEATER = "repeater/{id}"
+    val TOP_LEVEL = setOf(LIST, MAP, CALLSIGNS)
+
+    fun repeater(id: Long) = "repeater/$id"
 }
 
 class MainActivity : ComponentActivity() {
@@ -143,15 +159,16 @@ private fun AppNavigation(
             restoreState = true
         }
     }
+    val openRepeater = { id: Long -> navController.navigate(Routes.repeater(id)) { launchSingleTop = true } }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0),
         bottomBar = {
-            // Only the top-level screens carry the bar; Settings and the place picker are full-height.
+            // Only the top-level screens carry the bar; detail and settings screens are full-height.
             if (route == null || route in Routes.TOP_LEVEL) {
                 NavigationBar {
                     NavigationBarItem(
-                        selected = route != Routes.MAP,
+                        selected = route == null || route == Routes.LIST,
                         onClick = { openTab(Routes.LIST) },
                         icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
                         label = { Text(stringResource(R.string.nav_repeaters)) },
@@ -162,61 +179,122 @@ private fun AppNavigation(
                         icon = { Icon(Icons.Default.Place, contentDescription = null) },
                         label = { Text(stringResource(R.string.nav_map)) },
                     )
+                    NavigationBarItem(
+                        selected = route == Routes.CALLSIGNS,
+                        onClick = { openTab(Routes.CALLSIGNS) },
+                        icon = { Icon(Icons.Default.Person, contentDescription = null) },
+                        label = { Text(stringResource(R.string.nav_callsigns)) },
+                    )
                 }
             }
         },
     ) { barPadding ->
-    NavHost(
-        navController = navController,
-        startDestination = Routes.LIST,
-        modifier = Modifier.padding(barPadding).consumeWindowInsets(barPadding),
-    ) {
-        composable(Routes.MAP) {
-            val items by viewModel.items.collectAsStateWithLifecycle()
-            val position by viewModel.position.collectAsStateWithLifecycle()
-            val repeaters = remember(items) { items.map { it.repeater } }
-            MapScreen(repeaters = repeaters, position = position)
+        NavHost(
+            navController = navController,
+            startDestination = Routes.LIST,
+            modifier = Modifier.padding(barPadding).consumeWindowInsets(barPadding),
+            // Tabs cross-fade; screens opened on top of a tab slide in from the side.
+            enterTransition = {
+                if (targetState.destination.route in Routes.TOP_LEVEL) fadeIn()
+                else slideInHorizontally { it / 4 } + fadeIn()
+            },
+            exitTransition = { fadeOut() },
+            popEnterTransition = { fadeIn() },
+            popExitTransition = {
+                if (initialState.destination.route in Routes.TOP_LEVEL) fadeOut()
+                else slideOutHorizontally { it / 4 } + fadeOut()
+            },
+        ) {
+            composable(Routes.LIST) {
+                val items by viewModel.items.collectAsStateWithLifecycle()
+                val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
+                val filter by viewModel.filter.collectAsStateWithLifecycle()
+                val position by viewModel.position.collectAsStateWithLifecycle()
+                val heading = viewModel.heading.collectAsStateWithLifecycle()
+                RepeaterListScreen(
+                    items = items,
+                    totalCount = all.size,
+                    filter = filter,
+                    bands = remember(all) { RepeaterFilter.bandsIn(all) },
+                    states = remember(all) { RepeaterFilter.statesIn(all) },
+                    position = position,
+                    waitingForLocation = current.locationMode == LocationMode.DEVICE && locationGranted && position == null,
+                    heading = { heading.value },
+                    refreshing = syncState is SyncState.Downloading || syncState is SyncState.Processing,
+                    onFilterChange = viewModel::setFilter,
+                    onOpenRepeater = openRepeater,
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
+                )
+            }
+            composable(Routes.MAP) {
+                val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
+                val position by viewModel.position.collectAsStateWithLifecycle()
+                val focus by viewModel.mapFocus.collectAsStateWithLifecycle()
+                MapScreen(
+                    repeaters = all,
+                    position = position,
+                    focusRequest = focus,
+                    onFocusHandled = viewModel::clearMapFocus,
+                    onOpenRepeater = openRepeater,
+                )
+            }
+            composable(Routes.CALLSIGNS) {
+                val query by viewModel.callsignQuery.collectAsStateWithLifecycle()
+                val results by viewModel.callsignResults.collectAsStateWithLifecycle()
+                CallsignScreen(query = query, state = results, onQueryChange = viewModel::setCallsignQuery)
+            }
+            composable(Routes.REPEATER, arguments = listOf(navArgument("id") { type = NavType.LongType })) { entry ->
+                val id = entry.arguments?.getLong("id")
+                val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
+                val position by viewModel.position.collectAsStateWithLifecycle()
+                val repeater = all.firstOrNull { it.id == id }
+                if (repeater != null) {
+                    RepeaterDetailScreen(
+                        repeater = repeater,
+                        position = position,
+                        onBack = { navController.popBackStack() },
+                        onShowOnMap = {
+                            val lat = repeater.latitude
+                            val lon = repeater.longitude
+                            if (lat != null && lon != null) {
+                                viewModel.showOnMap(GeoPoint(lat, lon))
+                                navController.popBackStack(Routes.LIST, inclusive = false)
+                                openTab(Routes.MAP)
+                            }
+                        },
+                    )
+                } else if (all.isNotEmpty()) {
+                    // A data refresh replaced this repeater's row while the screen was open.
+                    LaunchedEffect(Unit) { navController.popBackStack() }
+                }
+            }
+            composable(Routes.SETTINGS) {
+                val lastSync by viewModel.lastSync.collectAsStateWithLifecycle()
+                SettingsScreen(
+                    settings = current,
+                    locationGranted = locationGranted,
+                    presetName = viewModel.presets.firstOrNull { it.key == current.presetKey }?.name,
+                    lastSync = lastSync,
+                    syncState = syncState,
+                    onBack = { navController.popBackStack() },
+                    onUseDeviceLocation = viewModel::useDeviceLocation,
+                    onRequestLocation = requestLocation,
+                    onOpenSystemSettings = openAppSettings,
+                    onChoosePreset = { navController.navigate(Routes.PRESETS) { launchSingleTop = true } },
+                    onSync = viewModel::sync,
+                )
+            }
+            composable(Routes.PRESETS) {
+                PresetPickerScreen(
+                    presets = viewModel.presets,
+                    selectedKey = current.presetKey.takeIf { current.locationMode == LocationMode.PRESET },
+                    onBack = { navController.popBackStack() },
+                    onPick = {
+                        viewModel.usePreset(it)
+                        navController.popBackStack()
+                    },
+                )
+            }
         }
-        composable(Routes.LIST) {
-            val items by viewModel.items.collectAsStateWithLifecycle()
-            val position by viewModel.position.collectAsStateWithLifecycle()
-            val heading = viewModel.heading.collectAsStateWithLifecycle()
-            RepeaterListScreen(
-                items = items,
-                position = position,
-                waitingForLocation = current.locationMode == LocationMode.DEVICE && locationGranted && position == null,
-                heading = { heading.value },
-                refreshing = syncState is SyncState.Downloading || syncState is SyncState.Processing,
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
-            )
-        }
-        composable(Routes.SETTINGS) {
-            val lastSync by viewModel.lastSync.collectAsStateWithLifecycle()
-            SettingsScreen(
-                settings = current,
-                locationGranted = locationGranted,
-                presetName = viewModel.presets.firstOrNull { it.key == current.presetKey }?.name,
-                lastSync = lastSync,
-                syncState = syncState,
-                onBack = { navController.popBackStack() },
-                onUseDeviceLocation = viewModel::useDeviceLocation,
-                onRequestLocation = requestLocation,
-                onOpenSystemSettings = openAppSettings,
-                onChoosePreset = { navController.navigate(Routes.PRESETS) { launchSingleTop = true } },
-                onSync = viewModel::sync,
-            )
-        }
-        composable(Routes.PRESETS) {
-            PresetPickerScreen(
-                presets = viewModel.presets,
-                selectedKey = current.presetKey.takeIf { current.locationMode == LocationMode.PRESET },
-                onBack = { navController.popBackStack() },
-                onPick = {
-                    viewModel.usePreset(it)
-                    navController.popBackStack()
-                },
-            )
-        }
-    }
     }
 }

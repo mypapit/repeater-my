@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.db.Repeater
 import net.mypapit.mobile.myrepeater.data.location.Geo
+import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.ui.UserPosition
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterFormat
@@ -58,7 +60,13 @@ import net.mypapit.mobile.myrepeater.ui.theme.SkyBlue
 
 /** Map of every repeater with known coordinates. Tapping a pin opens an info card for its site. */
 @Composable
-fun MapScreen(repeaters: List<Repeater>, position: UserPosition?) {
+fun MapScreen(
+    repeaters: List<Repeater>,
+    position: UserPosition?,
+    focusRequest: GeoPoint?,
+    onFocusHandled: () -> Unit,
+    onOpenRepeater: (Long) -> Unit,
+) {
     val sites = remember(repeaters) { MapSites.from(repeaters) }
     var selectedId by rememberSaveable { mutableStateOf<String?>(null) }
     val selected = remember(sites, selectedId) { sites.firstOrNull { it.id == selectedId } }
@@ -69,12 +77,20 @@ fun MapScreen(repeaters: List<Repeater>, position: UserPosition?) {
     val focus = remember { position?.point }
     var savedCamera by rememberSaveable { mutableStateOf<DoubleArray?>(null) }
 
+    // "Show on map" from a repeater: select its site; the map view moves the camera.
+    LaunchedEffect(focusRequest, sites) {
+        val target = focusRequest ?: return@LaunchedEffect
+        sites.firstOrNull { it.point == target }?.let { selectedId = it.id }
+    }
+
     Box(Modifier.fillMaxSize()) {
         RepeaterMapView(
             sites = sites,
             userPosition = position?.takeIf { it.source == LocationMode.DEVICE }?.point,
             focus = focus,
             savedCamera = savedCamera,
+            flyTo = focusRequest,
+            onFlown = onFocusHandled,
             onCameraIdle = { savedCamera = it },
             onSiteTapped = { selectedId = it?.id },
             onBasemapUnavailable = { basemapUnavailable = it },
@@ -99,7 +115,7 @@ fun MapScreen(repeaters: List<Repeater>, position: UserPosition?) {
         ) {
             // Keep showing the last site while the card slides away.
             (selected ?: lastSelected)?.let { site ->
-                SiteCard(site, position, onClose = { selectedId = null })
+                SiteCard(site, position, onOpenRepeater, onClose = { selectedId = null })
             }
         }
     }
@@ -137,7 +153,12 @@ private fun Chip(content: @Composable () -> Unit) {
 
 /** The map's info window: the place, how far it is, and each repeater on the site. */
 @Composable
-private fun SiteCard(site: MapSite, position: UserPosition?, onClose: () -> Unit) {
+private fun SiteCard(
+    site: MapSite,
+    position: UserPosition?,
+    onOpenRepeater: (Long) -> Unit,
+    onClose: () -> Unit,
+) {
     val first = site.repeaters.first()
     Card(
         modifier = Modifier.fillMaxWidth().padding(12.dp),
@@ -175,7 +196,7 @@ private fun SiteCard(site: MapSite, position: UserPosition?, onClose: () -> Unit
             ) {
                 site.repeaters.forEachIndexed { index, repeater ->
                     if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                    SiteRepeaterRow(repeater)
+                    SiteRepeaterRow(repeater) { onOpenRepeater(repeater.id) }
                 }
             }
         }
@@ -183,8 +204,8 @@ private fun SiteCard(site: MapSite, position: UserPosition?, onClose: () -> Unit
 }
 
 @Composable
-private fun SiteRepeaterRow(repeater: Repeater) {
-    Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+private fun SiteRepeaterRow(repeater: Repeater, onClick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
             Text(
                 text = repeater.callsign,
