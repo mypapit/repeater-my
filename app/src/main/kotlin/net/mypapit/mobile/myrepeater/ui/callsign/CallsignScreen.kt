@@ -25,10 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import java.time.LocalDate
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.db.CallsignRecord
+import net.mypapit.mobile.myrepeater.ui.DateFormats
 import net.mypapit.mobile.myrepeater.ui.list.SearchField
-import java.time.LocalDate
 
 /** Look up a Malaysian amateur callsign or its holder. Searches run on the device only. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -112,7 +113,7 @@ private fun CallsignCard(record: CallsignRecord, today: LocalDate, modifier: Mod
                     Text(
                         text = stringResource(
                             if (expired == true) R.string.callsign_expired else R.string.callsign_expires,
-                            record.expiry,
+                            DateFormats.fromDayFirst(record.expiry),
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = if (expired == true) MaterialTheme.colorScheme.error

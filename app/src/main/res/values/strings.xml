@@ -30,6 +30,9 @@
     <string name="detail_last_reviewed">Last reviewed</string>
     <string name="detail_source">Source</string>
     <string name="detail_notes">Notes</string>
+    <string name="detail_menu">More options</string>
+    <string name="detail_report">Report incorrect info</string>
+    <string name="detail_report_no_app">No e-mail app found on this phone.</string>
 
     <!-- Callsign lookup -->
     <string name="callsign_title">Callsign lookup</string>
@@ -145,7 +148,7 @@
     <!-- About -->
     <string name="about_title">About Repeater.MY</string>
     <string name="about_copyright_title">Copyright</string>
-    <string name="about_copyright">Copyright © 2018–2026 Mohammad Hafiz bin Ismail</string>
+    <string name="about_copyright">Copyright (c) 2010-2026, Mohammad Hafiz bin Ismail</string>
     <string name="about_licence_title">Licence</string>
     <string name="about_licence_body">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
     <string name="about_licence_warranty">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</string>

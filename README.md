@@ -14,8 +14,8 @@ jungle trail as on the highway.
 <p>
   <img src="screenshots/01-welcome.png" alt="Welcome screen" width="200">
   <img src="screenshots/02-nearest.png" alt="Nearest repeaters with compass arrows" width="200">
-  <img src="screenshots/03-map.png" alt="Map with repeater pins and an info card" width="200">
-  <img src="screenshots/04-detail.png" alt="Repeater detail" width="200">
+  <img src="screenshots/03-map.png" alt="Map with repeater pins and your position" width="200">
+  <img src="screenshots/04-detail.png" alt="Repeater detail with compass" width="200">
 </p>
 
 ## Features

@@ -1,5 +1,6 @@
 package net.mypapit.mobile.myrepeater.ui.detail
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -32,25 +36,29 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.db.Repeater
 import net.mypapit.mobile.myrepeater.data.db.RepeaterStatus
 import net.mypapit.mobile.myrepeater.data.location.Geo
 import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
+import net.mypapit.mobile.myrepeater.ui.DateFormats
 import net.mypapit.mobile.myrepeater.ui.UserPosition
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterFormat
 import net.mypapit.mobile.myrepeater.ui.theme.OffAirRed
 import net.mypapit.mobile.myrepeater.ui.theme.OnAirGreen
-import kotlin.math.roundToInt
 
 /** Everything the source lists about one repeater, laid out for programming a radio. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,6 +82,7 @@ fun RepeaterDetailScreen(
                         )
                     }
                 },
+                actions = { ReportMenu(repeater) },
             )
         },
     ) { padding ->
@@ -95,6 +104,32 @@ fun RepeaterDetailScreen(
                 }
             }
             Spacer(Modifier.height(8.dp))
+        }
+    }
+}
+
+/**
+ * The app bar menu. "Report incorrect info" opens the phone's e-mail app on a
+ * draft holding this repeater's recorded details; the user edits and sends it.
+ */
+@Composable
+private fun ReportMenu(repeater: Repeater) {
+    val context = LocalContext.current
+    var open by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { open = true }) {
+            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.detail_menu))
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.detail_report)) },
+                onClick = {
+                    open = false
+                    if (!CorrectionEmail.open(context, repeater)) {
+                        Toast.makeText(context, R.string.detail_report_no_app, Toast.LENGTH_LONG).show()
+                    }
+                },
+            )
         }
     }
 }
@@ -254,7 +289,10 @@ private fun AboutCard(repeater: Repeater) {
             first = true,
         )
         Field(stringResource(R.string.detail_network), repeater.linkedNetwork.ifBlank { null })
-        Field(stringResource(R.string.detail_last_reviewed), repeater.lastReviewed.ifBlank { null })
+        Field(
+            stringResource(R.string.detail_last_reviewed),
+            repeater.lastReviewed.ifBlank { null }?.let { DateFormats.fromMonthFirst(it) },
+        )
         Field(stringResource(R.string.detail_source), repeater.source.ifBlank { null })
     }
 }

@@ -1,5 +1,6 @@
 package net.mypapit.mobile.myrepeater.ui.settings
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,17 +37,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import java.time.ZoneId
 import net.mypapit.mobile.myrepeater.BuildConfig
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.location.PresetLocation
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.settings.Settings
 import net.mypapit.mobile.myrepeater.data.sync.SyncState
-import java.text.DateFormat
-import java.util.Date
+import net.mypapit.mobile.myrepeater.ui.DateFormats
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,8 +128,9 @@ fun SettingsScreen(
                         text = if (lastSync == null) {
                             stringResource(R.string.settings_data_never)
                         } else {
-                            val formatted = remember(lastSync) {
-                                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT).format(Date(lastSync))
+                            val use24Hour = DateFormat.is24HourFormat(LocalContext.current)
+                            val formatted = remember(lastSync, use24Hour) {
+                                DateFormats.dateTime(lastSync, ZoneId.systemDefault(), use24Hour)
                             }
                             stringResource(R.string.settings_data_last_updated, formatted)
                         },
