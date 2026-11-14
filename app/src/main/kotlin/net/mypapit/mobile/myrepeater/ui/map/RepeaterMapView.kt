@@ -25,6 +25,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.delay
+import net.mypapit.mobile.myrepeater.data.aprs.AprsStation
 import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import org.maplibre.android.MapLibre
 import org.maplibre.android.camera.CameraUpdateFactory
@@ -66,20 +67,26 @@ private const val OFFLINE_STYLE = "asset://map_style_offline.json"
 
 private const val SOURCE_SITES = "repeater-sites"
 private const val SOURCE_USER = "user-position"
+private const val SOURCE_APRS = "aprs-stations"
 private const val LAYER_CLUSTERS = "repeater-clusters"
 private const val LAYER_CLUSTER_COUNT = "repeater-cluster-count"
 private const val LAYER_SITES = "repeater-pins"
 private const val LAYER_USER = "user-position-dot"
+private const val LAYER_APRS = "aprs-station-dots"
 
 private const val PROP_SITE_ID = "site"
 private const val PROP_BAND = "band"
 private const val PROP_ON_AIR = "onAir"
 private const val PROP_COUNT = "count"
+private const val PROP_APRS_INDEX = "aprs"
 
 private const val COLOR_2M = "#FF8500"
 private const val COLOR_70CM = "#33B5E5"
 private const val COLOR_MIXED = "#C9A0FF"
 private const val COLOR_USER = "#6DD58C"
+
+/** APRS stations are pink, a colour no repeater pin uses. */
+const val COLOR_APRS = "#FF5FA2"
 private const val COLOR_OUTLINE = "#121110"
 
 private const val TAP_SLOP_PX = 24f
@@ -94,6 +101,7 @@ private const val CLUSTER_MAX_ZOOM = 11
  * load in time (first use with no connection), a plain dark background is used
  * so the pins still show, and the online style is retried when a connection returns.
  *
+ * @param aprsStations stations from the experimental APRS layer; empty when it is off
  * @param focus where to centre the camera when the map first opens, if known
  * @param savedCamera latitude, longitude and zoom to restore when coming back to the map
  * @param flyTo a place to move the camera to now; [onFlown] is called once that has started
@@ -101,6 +109,7 @@ private const val CLUSTER_MAX_ZOOM = 11
 @Composable
 fun RepeaterMapView(
     sites: List<MapSite>,
+    aprsStations: List<AprsStation>,
     userPosition: GeoPoint?,
     focus: GeoPoint?,
     savedCamera: DoubleArray?,
@@ -108,6 +117,7 @@ fun RepeaterMapView(
     onFlown: () -> Unit,
     onCameraIdle: (DoubleArray) -> Unit,
     onSiteTapped: (MapSite?) -> Unit,
+    onAprsTapped: (AprsStation) -> Unit,
     onBasemapUnavailable: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -118,6 +128,8 @@ fun RepeaterMapView(
 
     val currentSites by rememberUpdatedState(sites)
     val currentOnTap by rememberUpdatedState(onSiteTapped)
+    val currentAprs by rememberUpdatedState(aprsStations)
+    val currentOnAprsTap by rememberUpdatedState(onAprsTapped)
     val currentOnUnavailable by rememberUpdatedState(onBasemapUnavailable)
     val currentOnCameraIdle by rememberUpdatedState(onCameraIdle)
     val currentOnFlown by rememberUpdatedState(onFlown)
@@ -144,7 +156,7 @@ fun RepeaterMapView(
                 camera.target?.let { currentOnCameraIdle(doubleArrayOf(it.latitude, it.longitude, camera.zoom)) }
             }
             ready.addOnMapClickListener { tapped ->
-                handleTap(ready, tapped, currentSites, currentOnTap)
+                handleTap(ready, tapped, currentSites, currentOnTap, currentAprs, currentOnAprsTap)
                 true
             }
         }
@@ -199,6 +211,9 @@ fun RepeaterMapView(
     LaunchedEffect(style, sites) {
         style?.getSourceAs<GeoJsonSource>(SOURCE_SITES)?.setGeoJson(sites.toFeatureCollection())
     }
+    LaunchedEffect(style, aprsStations) {
+        style?.getSourceAs<GeoJsonSource>(SOURCE_APRS)?.setGeoJson(aprsStations.toAprsFeatureCollection())
+    }
     LaunchedEffect(style, userPosition) {
         style?.getSourceAs<GeoJsonSource>(SOURCE_USER)?.setGeoJson(
             FeatureCollection.fromFeatures(
@@ -248,6 +263,17 @@ private fun addRepeaterLayers(style: Style, withClusterCounts: Boolean) {
         ),
     )
     style.addSource(GeoJsonSource(SOURCE_USER, FeatureCollection.fromFeatures(emptyList())))
+    style.addSource(GeoJsonSource(SOURCE_APRS, FeatureCollection.fromFeatures(emptyList())))
+
+    // Drawn first, so repeater pins always sit on top of APRS dots.
+    style.addLayer(
+        CircleLayer(LAYER_APRS, SOURCE_APRS).withProperties(
+            circleColor(Color.parseColor(COLOR_APRS)),
+            circleRadius(5f),
+            circleStrokeColor(Color.parseColor(COLOR_OUTLINE)),
+            circleStrokeWidth(1.5f),
+        ),
+    )
 
     style.addLayer(
         CircleLayer(LAYER_CLUSTERS, SOURCE_SITES).withProperties(
@@ -306,8 +332,27 @@ private fun List<MapSite>.toFeatureCollection(): FeatureCollection =
         },
     )
 
-/** A tap on a pin selects its site, a tap on a cluster zooms into it, and a tap elsewhere clears the selection. */
-private fun handleTap(map: MapLibreMap, tapped: LatLng, sites: List<MapSite>, onSite: (MapSite?) -> Unit) {
+private fun List<AprsStation>.toAprsFeatureCollection(): FeatureCollection =
+    FeatureCollection.fromFeatures(
+        mapIndexed { index, station ->
+            Feature.fromGeometry(Point.fromLngLat(station.point.longitude, station.point.latitude)).apply {
+                addNumberProperty(PROP_APRS_INDEX, index)
+            }
+        },
+    )
+
+/**
+ * A tap on a repeater pin selects its site; failing that, a tap on an APRS dot selects that
+ * station; a tap on a cluster zooms into it; and a tap elsewhere clears the selection.
+ */
+private fun handleTap(
+    map: MapLibreMap,
+    tapped: LatLng,
+    sites: List<MapSite>,
+    onSite: (MapSite?) -> Unit,
+    aprsStations: List<AprsStation>,
+    onAprs: (AprsStation) -> Unit,
+) {
     val screen: PointF = map.projection.toScreenLocation(tapped)
     val area = RectF(screen.x - TAP_SLOP_PX, screen.y - TAP_SLOP_PX, screen.x + TAP_SLOP_PX, screen.y + TAP_SLOP_PX)
 
@@ -315,6 +360,13 @@ private fun handleTap(map: MapLibreMap, tapped: LatLng, sites: List<MapSite>, on
     if (pin != null) {
         val id = pin.getStringProperty(PROP_SITE_ID)
         onSite(sites.firstOrNull { it.id == id })
+        return
+    }
+
+    val aprsDot = map.queryRenderedFeatures(area, LAYER_APRS).firstOrNull()
+    val station = aprsDot?.getNumberProperty(PROP_APRS_INDEX)?.toInt()?.let { aprsStations.getOrNull(it) }
+    if (station != null) {
+        onAprs(station)
         return
     }
 

@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,16 +24,18 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import net.mypapit.mobile.myrepeater.AppContainer
+import net.mypapit.mobile.myrepeater.data.aprs.AprsRepository
+import net.mypapit.mobile.myrepeater.data.aprs.AprsSnapshot
 import net.mypapit.mobile.myrepeater.data.db.Repeater
-import net.mypapit.mobile.myrepeater.ui.callsign.CallsignSearch
-import net.mypapit.mobile.myrepeater.ui.callsign.CallsignSearchState
-import net.mypapit.mobile.myrepeater.ui.list.RepeaterFilter
 import net.mypapit.mobile.myrepeater.data.location.CompassSource
 import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.location.PresetLocation
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.settings.Settings
 import net.mypapit.mobile.myrepeater.data.sync.SyncState
+import net.mypapit.mobile.myrepeater.ui.callsign.CallsignSearch
+import net.mypapit.mobile.myrepeater.ui.callsign.CallsignSearchState
+import net.mypapit.mobile.myrepeater.ui.list.RepeaterFilter
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterListItem
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterSorter
 
@@ -128,6 +131,28 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), CallsignSearchState.TooShort)
 
+    /**
+     * APRS stations for the map, or null while the experimental feature is off.
+     * Only collected by the map screen, so nothing is downloaded unless the map is
+     * open; the repository then limits the server to one request per 30 minutes.
+     */
+    val aprs: StateFlow<AprsSnapshot?> = container.appSettings.settings
+        .map { it.aprsEnabled }
+        .distinctUntilChanged()
+        .flatMapLatest { enabled ->
+            if (!enabled) {
+                flowOf<AprsSnapshot?>(null)
+            } else {
+                flow<AprsSnapshot?> {
+                    while (true) {
+                        emit(container.aprsRepository.load())
+                        delay(AprsRepository.MAX_AGE_MS)
+                    }
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), null)
+
     private val _mapFocus = MutableStateFlow<GeoPoint?>(null)
 
     /** A place the map should jump to and select, set by "Show on map". */
@@ -176,6 +201,13 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
 
     fun usePreset(preset: PresetLocation) {
         viewModelScope.launch { container.appSettings.usePreset(preset.key) }
+    }
+
+    fun setAprsEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            container.appSettings.setAprsEnabled(enabled)
+            if (!enabled) container.aprsRepository.clear()
+        }
     }
 
     fun setFilter(filter: RepeaterFilter) {

@@ -23,6 +23,8 @@ data class Settings(
     val locationMode: LocationMode = LocationMode.DEVICE,
     /** [net.mypapit.mobile.myrepeater.data.location.PresetLocation.key] of the chosen place, if any. */
     val presetKey: String? = null,
+    /** Experimental: show recently heard APRS stations on the map. Off unless the user turns it on. */
+    val aprsEnabled: Boolean = false,
 )
 
 class AppSettings(private val context: Context) {
@@ -34,6 +36,7 @@ class AppSettings(private val context: Context) {
                 ?.let { name -> LocationMode.entries.firstOrNull { it.name == name } }
                 ?: LocationMode.DEVICE,
             presetKey = prefs[PRESET_KEY],
+            aprsEnabled = prefs[APRS_ENABLED] ?: false,
         )
     }
 
@@ -52,7 +55,12 @@ class AppSettings(private val context: Context) {
         }
     }
 
+    suspend fun setAprsEnabled(enabled: Boolean) {
+        context.settingsStore.edit { it[APRS_ENABLED] = enabled }
+    }
+
     private companion object {
+        val APRS_ENABLED = booleanPreferencesKey("aprs_enabled")
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         val LOCATION_MODE = stringPreferencesKey("location_mode")
         val PRESET_KEY = stringPreferencesKey("preset_key")

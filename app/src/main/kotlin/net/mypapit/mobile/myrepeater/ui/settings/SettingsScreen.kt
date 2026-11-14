@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -30,6 +31,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -64,6 +66,7 @@ fun SettingsScreen(
     onOpenSystemSettings: () -> Unit,
     onChoosePreset: () -> Unit,
     onSync: () -> Unit,
+    onAprsChange: (Boolean) -> Unit,
     onOpenAbout: () -> Unit,
 ) {
     Scaffold(
@@ -155,6 +158,27 @@ fun SettingsScreen(
                             ),
                         )
                     }
+                }
+            }
+
+            Section(stringResource(R.string.settings_experimental_section)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .toggleable(value = settings.aprsEnabled, role = Role.Switch, onValueChange = onAprsChange)
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f)) {
+                        Text(stringResource(R.string.settings_aprs_title), style = MaterialTheme.typography.bodyLarge)
+                        Text(
+                            text = stringResource(R.string.settings_aprs_summary),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Spacer(Modifier.width(16.dp))
+                    Switch(checked = settings.aprsEnabled, onCheckedChange = null)
                 }
             }
 

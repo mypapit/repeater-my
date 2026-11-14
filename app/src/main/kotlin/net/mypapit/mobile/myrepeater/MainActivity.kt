@@ -232,9 +232,11 @@ private fun AppNavigation(
                 val all by viewModel.allRepeaters.collectAsStateWithLifecycle()
                 val position by viewModel.position.collectAsStateWithLifecycle()
                 val focus by viewModel.mapFocus.collectAsStateWithLifecycle()
+                val aprs by viewModel.aprs.collectAsStateWithLifecycle()
                 MapScreen(
                     repeaters = all,
                     position = position,
+                    aprs = aprs,
                     focusRequest = focus,
                     onFocusHandled = viewModel::clearMapFocus,
                     onOpenRepeater = openRepeater,
@@ -286,6 +288,7 @@ private fun AppNavigation(
                     onOpenSystemSettings = openAppSettings,
                     onChoosePreset = { navController.navigate(Routes.PRESETS) { launchSingleTop = true } },
                     onSync = viewModel::sync,
+                    onAprsChange = viewModel::setAprsEnabled,
                     onOpenAbout = { navController.navigate(Routes.ABOUT) { launchSingleTop = true } },
                 )
             }

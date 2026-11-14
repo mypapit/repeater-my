@@ -1,5 +1,6 @@
 package net.mypapit.mobile.myrepeater.ui.map
 
+import android.text.format.DateFormat
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,17 +44,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import java.time.ZoneId
 import net.mypapit.mobile.myrepeater.R
+import net.mypapit.mobile.myrepeater.data.aprs.AprsSnapshot
+import net.mypapit.mobile.myrepeater.data.aprs.AprsStation
 import net.mypapit.mobile.myrepeater.data.db.Repeater
 import net.mypapit.mobile.myrepeater.data.location.Geo
 import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
+import net.mypapit.mobile.myrepeater.ui.DateFormats
 import net.mypapit.mobile.myrepeater.ui.UserPosition
 import net.mypapit.mobile.myrepeater.ui.list.RepeaterFormat
+import net.mypapit.mobile.myrepeater.ui.theme.AprsPink
 import net.mypapit.mobile.myrepeater.ui.theme.MixedBandPurple
 import net.mypapit.mobile.myrepeater.ui.theme.SignalOrange
 import net.mypapit.mobile.myrepeater.ui.theme.SkyBlue
@@ -63,6 +70,7 @@ import net.mypapit.mobile.myrepeater.ui.theme.SkyBlue
 fun MapScreen(
     repeaters: List<Repeater>,
     position: UserPosition?,
+    aprs: AprsSnapshot?,
     focusRequest: GeoPoint?,
     onFocusHandled: () -> Unit,
     onOpenRepeater: (Long) -> Unit,
@@ -73,6 +81,11 @@ fun MapScreen(
     var lastSelected by remember { mutableStateOf<MapSite?>(null) }
     LaunchedEffect(selected) { if (selected != null) lastSelected = selected }
     var basemapUnavailable by remember { mutableStateOf(false) }
+    // A repeater site and an APRS station are never selected together.
+    var selectedStation by remember { mutableStateOf<AprsStation?>(null) }
+    var lastStation by remember { mutableStateOf<AprsStation?>(null) }
+    LaunchedEffect(selectedStation) { if (selectedStation != null) lastStation = selectedStation }
+    LaunchedEffect(aprs) { if (aprs == null) selectedStation = null }
     // Centre on wherever the user was when the map first opened; later moves do not yank the camera.
     val focus = remember { position?.point }
     var savedCamera by rememberSaveable { mutableStateOf<DoubleArray?>(null) }
@@ -86,13 +99,21 @@ fun MapScreen(
     Box(Modifier.fillMaxSize()) {
         RepeaterMapView(
             sites = sites,
+            aprsStations = aprs?.stations.orEmpty(),
             userPosition = position?.takeIf { it.source == LocationMode.DEVICE }?.point,
             focus = focus,
             savedCamera = savedCamera,
             flyTo = focusRequest,
             onFlown = onFocusHandled,
             onCameraIdle = { savedCamera = it },
-            onSiteTapped = { selectedId = it?.id },
+            onSiteTapped = {
+                selectedId = it?.id
+                selectedStation = null
+            },
+            onAprsTapped = {
+                selectedStation = it
+                selectedId = null
+            },
             onBasemapUnavailable = { basemapUnavailable = it },
             modifier = Modifier.fillMaxSize(),
         )
@@ -101,9 +122,19 @@ fun MapScreen(
             modifier = Modifier.align(Alignment.TopStart).statusBarsPadding().padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Legend()
+            Legend(showAprs = aprs != null)
             if (basemapUnavailable) {
                 Chip { Text(stringResource(R.string.map_offline_notice), style = MaterialTheme.typography.labelMedium) }
+            }
+            if (aprs?.failed == true) {
+                Chip {
+                    Text(
+                        text = stringResource(
+                            if (aprs.stations.isEmpty()) R.string.map_aprs_unavailable else R.string.map_aprs_stale,
+                        ),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
             }
         }
 
@@ -118,17 +149,32 @@ fun MapScreen(
                 SiteCard(site, position, onOpenRepeater, onClose = { selectedId = null })
             }
         }
+
+        AnimatedVisibility(
+            visible = selectedStation != null,
+            modifier = Modifier.align(Alignment.BottomCenter),
+            enter = slideInVertically { it } + fadeIn(),
+            exit = slideOutVertically { it } + fadeOut(),
+        ) {
+            (selectedStation ?: lastStation)?.let { station ->
+                AprsCard(station, position, onClose = { selectedStation = null })
+            }
+        }
     }
 }
 
 @Composable
-private fun Legend() {
+private fun Legend(showAprs: Boolean) {
     Chip {
         LegendDot(SignalOrange, stringResource(R.string.map_legend_2m))
         Spacer(Modifier.width(12.dp))
         LegendDot(SkyBlue, stringResource(R.string.map_legend_70cm))
         Spacer(Modifier.width(12.dp))
         LegendDot(MixedBandPurple, stringResource(R.string.map_legend_mixed))
+        if (showAprs) {
+            Spacer(Modifier.width(12.dp))
+            LegendDot(AprsPink, stringResource(R.string.map_legend_aprs))
+        }
     }
 }
 
@@ -147,6 +193,73 @@ private fun Chip(content: @Composable () -> Unit) {
     ) {
         Row(Modifier.padding(horizontal = 12.dp, vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             content()
+        }
+    }
+}
+
+/** Info window for an APRS station: who it is, when it was last heard, and what it sent. */
+@Composable
+private fun AprsCard(station: AprsStation, position: UserPosition?, onClose: () -> Unit) {
+    val use24Hour = DateFormat.is24HourFormat(LocalContext.current)
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+    ) {
+        Column(Modifier.padding(start = 16.dp, end = 4.dp, top = 4.dp, bottom = 16.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(Modifier.size(10.dp).clip(CircleShape).background(AprsPink))
+                Spacer(Modifier.width(10.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = station.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Text(
+                        text = if (station.name == station.callsign) {
+                            stringResource(R.string.map_aprs_station)
+                        } else {
+                            stringResource(R.string.map_aprs_object, station.callsign)
+                        },
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                IconButton(onClick = onClose) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.action_close))
+                }
+            }
+            Column(Modifier.padding(end = 12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                station.receivedAt?.let { heard ->
+                    Text(
+                        text = stringResource(
+                            R.string.map_aprs_heard,
+                            DateFormats.dateTime(heard.toEpochMilli(), ZoneId.systemDefault(), use24Hour),
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                if (position != null) {
+                    Text(
+                        text = stringResource(
+                            if (position.source == LocationMode.DEVICE) R.string.repeater_distance_km
+                            else R.string.repeater_distance_km_approx,
+                            RepeaterFormat.distance(Geo.distanceKm(position.point, station.point)),
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                if (station.comment.isNotBlank()) {
+                    Text(
+                        text = station.comment,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
 }

@@ -30,8 +30,7 @@
     <string name="detail_last_reviewed">Last reviewed</string>
     <string name="detail_source">Source</string>
     <string name="detail_notes">Notes</string>
-    <string name="detail_menu">More options</string>
-    <string name="detail_report">Report incorrect info</string>
+    <string name="detail_report">Report an issue</string>
     <string name="detail_report_no_app">No e-mail app found on this phone.</string>
 
     <!-- Callsign lookup -->
@@ -47,6 +46,12 @@
     <string name="map_legend_2m">2 m</string>
     <string name="map_legend_70cm">70 cm</string>
     <string name="map_legend_mixed">Both</string>
+    <string name="map_legend_aprs">APRS</string>
+    <string name="map_aprs_station">APRS station</string>
+    <string name="map_aprs_object">APRS object, sent by %1$s</string>
+    <string name="map_aprs_heard">Last heard %1$s</string>
+    <string name="map_aprs_unavailable">APRS stations unavailable</string>
+    <string name="map_aprs_stale">APRS stations may be out of date</string>
     <string name="map_offline_notice">Offline: showing a simplified outline</string>
 
     <!-- Onboarding -->
@@ -139,8 +144,11 @@
     <string name="settings_data_update">Update now</string>
     <string name="settings_data_updating">Updating…</string>
     <string name="settings_data_failed">Couldn\'t update. The saved list is still available.</string>
+    <string name="settings_experimental_section">Experimental</string>
+    <string name="settings_aprs_title">APRS stations on the map</string>
+    <string name="settings_aprs_summary">Experimental. Downloads recently heard APRS stations and shows them on the map in pink. Updated at most every 30 minutes, and only while the map is open.</string>
     <string name="settings_privacy_section">Privacy</string>
-    <string name="settings_privacy_body">Repeater.MY has no account, ads or analytics. It connects to the internet only to download the public repeater and callsign lists. Your location is used on this phone to sort the list and is never sent anywhere.</string>
+    <string name="settings_privacy_body">Repeater.MY has no account, ads or analytics. It connects to the internet only to download the public repeater and callsign lists, map tiles, and (if you switch it on) the APRS station list. Your location is used on this phone to sort the list and is never sent anywhere.</string>
     <string name="settings_about_version">Version %1$s</string>
     <string name="presets_title">Choose a place</string>
     <string name="settings_about_summary">Version %1$s · copyright, licence and source code</string>
@@ -148,7 +156,7 @@
     <!-- About -->
     <string name="about_title">About Repeater.MY</string>
     <string name="about_copyright_title">Copyright</string>
-    <string name="about_copyright">Copyright (c) 2010-2026, Mohammad Hafiz bin Ismail</string>
+    <string name="about_copyright">Copyright © 2010-2026, Mohammad Hafiz bin Ismail</string>
     <string name="about_licence_title">Licence</string>
     <string name="about_licence_body">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
     <string name="about_licence_warranty">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</string>

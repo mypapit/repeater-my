@@ -10,6 +10,9 @@ val SignalOrange = Color(0xFFFF8500)
 val SkyBlue = Color(0xFF33B5E5)
 val OnAirGreen = Color(0xFF6DD58C)
 val MixedBandPurple = Color(0xFFC9A0FF)
+
+/** Marks APRS stations on the map; kept apart from every repeater colour. */
+val AprsPink = Color(0xFFFF5FA2)
 val OffAirRed = Color(0xFFFF6B5E)
 
 private val DarkColors = darkColorScheme(

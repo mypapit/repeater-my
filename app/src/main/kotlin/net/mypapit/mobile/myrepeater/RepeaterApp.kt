@@ -2,6 +2,8 @@ package net.mypapit.mobile.myrepeater
 
 import android.app.Application
 import android.content.Context
+import java.util.concurrent.TimeUnit
+import net.mypapit.mobile.myrepeater.data.aprs.AprsRepository
 import net.mypapit.mobile.myrepeater.data.db.AppDatabase
 import net.mypapit.mobile.myrepeater.data.location.CompassSource
 import net.mypapit.mobile.myrepeater.data.location.LocationSource
@@ -11,7 +13,6 @@ import net.mypapit.mobile.myrepeater.data.settings.AppSettings
 import net.mypapit.mobile.myrepeater.data.sync.SyncPrefs
 import net.mypapit.mobile.myrepeater.data.sync.SyncRepository
 import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
 
 class RepeaterApp : Application() {
     val container: AppContainer by lazy { AppContainer(this) }
@@ -32,4 +33,5 @@ class AppContainer(context: Context) {
         .build()
 
     val syncRepository = SyncRepository(http, database, syncPrefs, context.cacheDir)
+    val aprsRepository = AprsRepository(http, context.cacheDir)
 }
