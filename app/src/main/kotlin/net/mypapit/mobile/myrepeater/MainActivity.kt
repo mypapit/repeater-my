@@ -71,7 +71,10 @@ import net.mypapit.mobile.myrepeater.ui.theme.RepeaterTheme
 
 private enum class Stage { LOADING, ONBOARDING, FIRST_SYNC, READY }
 
-private const val CONTAINER_FADE_MS = 220
+private const val CONTAINER_FADE_MS = 150
+
+/** How long moving between screens takes. Short, so the app feels quick on a real phone. */
+private const val NAV_MS = 150
 
 private object Routes {
     const val LIST = "list"
@@ -209,14 +212,14 @@ private fun AppNavigation(
             modifier = Modifier.padding(barPadding).consumeWindowInsets(barPadding),
             // Tabs cross-fade; screens opened on top of a tab slide in from the side.
             enterTransition = {
-                if (targetState.destination.route in Routes.TOP_LEVEL) fadeIn()
-                else slideInHorizontally { it / 4 } + fadeIn()
+                if (targetState.destination.route in Routes.TOP_LEVEL) fadeIn(tween(NAV_MS))
+                else slideInHorizontally(tween(NAV_MS)) { it / 4 } + fadeIn(tween(NAV_MS))
             },
-            exitTransition = { fadeOut() },
-            popEnterTransition = { fadeIn() },
+            exitTransition = { fadeOut(tween(NAV_MS)) },
+            popEnterTransition = { fadeIn(tween(NAV_MS)) },
             popExitTransition = {
-                if (initialState.destination.route in Routes.TOP_LEVEL) fadeOut()
-                else slideOutHorizontally { it / 4 } + fadeOut()
+                if (initialState.destination.route in Routes.TOP_LEVEL) fadeOut(tween(NAV_MS))
+                else slideOutHorizontally(tween(NAV_MS)) { it / 4 } + fadeOut(tween(NAV_MS))
             },
         ) {
             composable(Routes.LIST) {
@@ -236,6 +239,8 @@ private fun AppNavigation(
                     waitingForLocation = current.locationMode == LocationMode.DEVICE && locationGranted && position == null,
                     heading = { heading.value },
                     refreshing = syncState is SyncState.Downloading || syncState is SyncState.Processing,
+                    noticeDismissed = current.listNoticeDismissed,
+                    onDismissNotice = viewModel::dismissListNotice,
                     onFilterChange = viewModel::setFilter,
                     onOpenRepeater = openRepeater,
                     onOpenSettings = { navController.navigate(Routes.SETTINGS) { launchSingleTop = true } },
@@ -298,11 +303,13 @@ private fun AppNavigation(
             }
             composable(Routes.SETTINGS) {
                 val lastSync by viewModel.lastSync.collectAsStateWithLifecycle()
+                val lastAttempt by viewModel.lastAttempt.collectAsStateWithLifecycle()
                 SettingsScreen(
                     settings = current,
                     locationGranted = locationGranted,
                     presetName = viewModel.presets.firstOrNull { it.key == current.presetKey }?.name,
                     lastSync = lastSync,
+                    lastSyncAttempt = lastAttempt,
                     syncState = syncState,
                     onBack = { navController.popBackStack() },
                     onUseDeviceLocation = viewModel::useDeviceLocation,

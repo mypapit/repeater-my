@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
@@ -32,6 +33,7 @@ import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.location.PresetLocation
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.settings.Settings
+import net.mypapit.mobile.myrepeater.data.sync.SyncPolicy
 import net.mypapit.mobile.myrepeater.data.sync.SyncState
 import net.mypapit.mobile.myrepeater.ui.callsign.CallsignSearch
 import net.mypapit.mobile.myrepeater.ui.callsign.CallsignSearchState
@@ -53,6 +55,10 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val lastSync: StateFlow<Long?> = container.syncPrefs.lastSync
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    /** When a download was last started, whether or not it worked. */
+    val lastAttempt: StateFlow<Long?> = container.syncPrefs.lastAttempt
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /**
@@ -175,15 +181,35 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
     private var syncJob: Job? = null
 
     init {
-        sync()
+        // On start the server is asked only when there is nothing saved, or the copy is over a week old.
+        viewModelScope.launch {
+            val prefs = container.syncPrefs
+            val saved = prefs.lastSync.first().takeIf { container.database.repeaterDao().count() > 0 }
+            if (SyncPolicy.autoDue(saved, prefs.lastAttempt.first(), System.currentTimeMillis())) startSync()
+        }
     }
 
-    /** Fetches fresh data. With data already on the device this is a quiet background refresh. */
+    /**
+     * The user asking for fresh data. Ignored while the last download is too
+     * recent, so tapping again and again cannot flood the server. With nothing
+     * saved yet there is no wait: the app is unusable until a download works.
+     */
     fun sync() {
+        val now = System.currentTimeMillis()
+        if (dataReady.value == true && !SyncPolicy.manualAllowed(lastSync.value, lastAttempt.value, now)) return
+        startSync()
+    }
+
+    private fun startSync() {
         if (syncJob?.isActive == true) return
         syncJob = viewModelScope.launch {
+            container.syncPrefs.setLastAttempt(System.currentTimeMillis())
             container.syncRepository.sync().collect { _syncState.value = it }
         }
+    }
+
+    fun dismissListNotice() {
+        viewModelScope.launch { container.appSettings.dismissListNotice() }
     }
 
     /** Call after a permission prompt and whenever the app returns to the foreground. */

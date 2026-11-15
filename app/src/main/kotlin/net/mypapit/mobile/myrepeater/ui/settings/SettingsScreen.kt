@@ -36,10 +36,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -48,7 +53,9 @@ import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.location.PresetLocation
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.settings.Settings
+import net.mypapit.mobile.myrepeater.data.sync.SyncPolicy
 import net.mypapit.mobile.myrepeater.data.sync.SyncState
+import kotlinx.coroutines.delay
 import net.mypapit.mobile.myrepeater.ui.DateFormats
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,6 +65,7 @@ fun SettingsScreen(
     locationGranted: Boolean,
     presetName: String?,
     lastSync: Long?,
+    lastSyncAttempt: Long?,
     syncState: SyncState,
     onBack: () -> Unit,
     onUseDeviceLocation: () -> Unit,
@@ -150,14 +158,39 @@ fun SettingsScreen(
                         LinearProgressIndicator(Modifier.fillMaxWidth())
                         Spacer(Modifier.height(12.dp))
                     }
-                    FilledTonalButton(onClick = onSync, enabled = !updating) {
+                    // The wait counts down while the screen is open, and the button comes back by itself.
+                    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+                    LaunchedEffect(Unit) {
+                        while (true) {
+                            delay(CLOCK_TICK_MS)
+                            now = System.currentTimeMillis()
+                        }
+                    }
+                    val waitMs = if (lastSync == null) 0L else SyncPolicy.manualAllowedAt(lastSync, lastSyncAttempt, now) - now
+
+                    FilledTonalButton(onClick = onSync, enabled = !updating && waitMs <= 0) {
                         Text(
                             stringResource(
                                 if (updating) R.string.settings_data_updating else R.string.settings_data_update,
                             ),
                         )
                     }
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = if (!updating && waitMs > 0) waitText(waitMs) else stringResource(R.string.settings_data_auto),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
+            }
+
+            Section(stringResource(R.string.settings_compass_section)) {
+                Text(
+                    text = stringResource(R.string.list_compass_disclaimer),
+                    modifier = Modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
 
             Section(stringResource(R.string.settings_experimental_section)) {
@@ -251,6 +284,21 @@ fun PresetPickerScreen(
         }
     }
 }
+
+private const val CLOCK_TICK_MS = 20_000L
+private const val MINUTE_MS = 60_000L
+private const val HOUR_MS = 60 * MINUTE_MS
+
+/** "Available again in about 5 hours", rounded up so it never promises too early. */
+@Composable
+private fun waitText(waitMs: Long): String =
+    if (waitMs > HOUR_MS) {
+        val hours = ((waitMs + HOUR_MS - 1) / HOUR_MS).toInt()
+        pluralStringResource(R.plurals.settings_data_wait_hours, hours, hours)
+    } else {
+        val minutes = ((waitMs + MINUTE_MS - 1) / MINUTE_MS).toInt().coerceAtLeast(1)
+        pluralStringResource(R.plurals.settings_data_wait_minutes, minutes, minutes)
+    }
 
 @Composable
 private fun BackButton(onBack: () -> Unit) {

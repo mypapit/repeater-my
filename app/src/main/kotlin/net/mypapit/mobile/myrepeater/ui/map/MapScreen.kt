@@ -2,6 +2,7 @@ package net.mypapit.mobile.myrepeater.ui.map
 
 import android.text.format.DateFormat
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -63,6 +64,9 @@ import net.mypapit.mobile.myrepeater.ui.theme.AprsPink
 import net.mypapit.mobile.myrepeater.ui.theme.MixedBandPurple
 import net.mypapit.mobile.myrepeater.ui.theme.SignalOrange
 import net.mypapit.mobile.myrepeater.ui.theme.SkyBlue
+
+/** How long a site card takes to slide up or away. */
+private const val CARD_MS = 160
 
 /** Map of every repeater with known coordinates. Tapping a pin opens an info card for its site. */
 @Composable
@@ -140,8 +144,8 @@ fun MapScreen(
         AnimatedVisibility(
             visible = selected != null,
             modifier = Modifier.align(Alignment.BottomCenter),
-            enter = slideInVertically { it } + fadeIn(),
-            exit = slideOutVertically { it } + fadeOut(),
+            enter = slideInVertically(tween(CARD_MS)) { it } + fadeIn(tween(CARD_MS)),
+            exit = slideOutVertically(tween(CARD_MS)) { it } + fadeOut(tween(CARD_MS)),
         ) {
             // Keep showing the last site while the card slides away.
             (selected ?: lastSelected)?.let { site ->
@@ -152,8 +156,8 @@ fun MapScreen(
         AnimatedVisibility(
             visible = selectedStation != null,
             modifier = Modifier.align(Alignment.BottomCenter),
-            enter = slideInVertically { it } + fadeIn(),
-            exit = slideOutVertically { it } + fadeOut(),
+            enter = slideInVertically(tween(CARD_MS)) { it } + fadeIn(tween(CARD_MS)),
+            exit = slideOutVertically(tween(CARD_MS)) { it } + fadeOut(tween(CARD_MS)),
         ) {
             (selectedStation ?: lastStation)?.let { station ->
                 AprsCard(station, position, onClose = { selectedStation = null })

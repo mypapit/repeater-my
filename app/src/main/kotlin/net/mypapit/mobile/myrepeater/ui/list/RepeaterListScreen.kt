@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -75,6 +76,8 @@ fun RepeaterListScreen(
     waitingForLocation: Boolean,
     heading: () -> Float?,
     refreshing: Boolean,
+    noticeDismissed: Boolean,
+    onDismissNotice: () -> Unit,
     onFilterChange: (RepeaterFilter) -> Unit,
     onOpenRepeater: (Long) -> Unit,
     onOpenSettings: () -> Unit,
@@ -117,15 +120,15 @@ fun RepeaterListScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
+                start = 12.dp,
+                end = 12.dp,
                 top = padding.calculateTopPadding() + 8.dp,
                 bottom = padding.calculateBottomPadding() + 16.dp,
             ),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             item(key = "header", contentType = "header") {
-                LocationHeader(position, waitingForLocation, compassShown, onOpenSettings)
+                LocationHeader(position, waitingForLocation, noticeDismissed, onDismissNotice, onOpenSettings)
             }
             if (items.isEmpty()) {
                 item(key = "empty") {
@@ -153,18 +156,31 @@ fun RepeaterListScreen(
 private fun LocationHeader(
     position: UserPosition?,
     waiting: Boolean,
-    compassShown: Boolean,
+    noticeDismissed: Boolean,
+    onDismissNotice: () -> Unit,
     onOpenSettings: () -> Unit,
 ) {
     when {
         position?.source == LocationMode.DEVICE -> Column {
             SectionLabel(stringResource(R.string.list_nearest_to_you))
-            if (compassShown) {
-                Text(
-                    text = stringResource(R.string.list_compass_disclaimer),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+            // One line, and it goes away for good once closed. The full note lives in Settings.
+            if (!noticeDismissed) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(R.string.list_local_notice),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    IconButton(onClick = onDismissNotice, modifier = Modifier.size(40.dp)) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = stringResource(R.string.list_local_notice_dismiss),
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
         }
 

@@ -11,8 +11,11 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 
-private const val FADE_IN_MS = 110
-private const val FADE_OUT_MS = 160
+private const val FADE_IN_MS = 70
+private const val FADE_OUT_MS = 90
+
+/** How long a card takes to grow into its page, or shrink back. */
+private const val BOUNDS_MS = 200
 
 /** The scope that links matching elements on two screens; null outside the navigation host. */
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -41,6 +44,7 @@ fun Modifier.repeaterContainer(id: Long, shape: Shape): Modifier {
             // Staggered, not crossed: the new content is fully in before the old starts to
             // leave, so the surface never turns see-through over the cards behind it.
             enter = fadeIn(tween(FADE_IN_MS)),
+            boundsTransform = { _, _ -> tween(BOUNDS_MS) },
             exit = fadeOut(tween(FADE_OUT_MS, delayMillis = FADE_IN_MS)),
             // Lay the content out again at each size, so text is never stretched.
             resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,

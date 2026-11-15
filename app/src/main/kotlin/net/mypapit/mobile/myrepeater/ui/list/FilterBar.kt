@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import net.mypapit.mobile.myrepeater.R
@@ -42,15 +44,17 @@ import net.mypapit.mobile.myrepeater.R
 fun SearchField(
     value: String,
     onValueChange: (String) -> Unit,
-    placeholder: String,
     modifier: Modifier = Modifier,
+    placeholder: String? = null,
+    description: String? = null,
 ) {
     val focusManager = LocalFocusManager.current
     TextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.fillMaxWidth(),
-        placeholder = { Text(placeholder) },
+        // Without a visible hint, a screen reader still needs to be told what the field is for.
+        modifier = modifier.fillMaxWidth().semantics { if (description != null) contentDescription = description },
+        placeholder = placeholder?.let { { Text(it, maxLines = 1) } },
         leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
         trailingIcon = {
             if (value.isNotEmpty()) {
@@ -81,11 +85,12 @@ fun FilterBar(
     onChange: (RepeaterFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.padding(horizontal = 16.dp)) {
+    Column(modifier.padding(horizontal = 12.dp)) {
         SearchField(
             value = filter.query,
             onValueChange = { onChange(filter.copy(query = it)) },
-            placeholder = stringResource(R.string.filter_search_hint),
+            // No visible hint: it wrapped onto several lines on narrow phones.
+            description = stringResource(R.string.filter_search_hint),
         )
         Row(
             modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(top = 4.dp),

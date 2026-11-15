@@ -110,6 +110,8 @@
     <string name="list_nearest_to_you">Nearest to you</string>
     <string name="list_nearest_to_place">Nearest to %1$s</string>
     <string name="list_compass_disclaimer">Compass directions are approximate. The arrow is hidden within 10 km of a repeater to avoid pointing the wrong way.</string>
+    <string name="list_local_notice">Repeaters within 10 km are treated as local repeaters.</string>
+    <string name="list_local_notice_dismiss">Dismiss this note</string>
     <string name="list_locating">Finding your location…</string>
     <string name="list_location_off_title">Location is off</string>
     <string name="list_location_off_body">Choose your area in Settings to see the nearest repeaters first.</string>
@@ -144,6 +146,16 @@
     <string name="settings_data_update">Update now</string>
     <string name="settings_data_updating">Updating…</string>
     <string name="settings_data_failed">Couldn\'t update. The saved list is still available.</string>
+    <string name="settings_data_auto">The list refreshes by itself once a week when you open the app.</string>
+    <plurals name="settings_data_wait_hours">
+        <item quantity="one">Already up to date. You can update again in about %1$d hour.</item>
+        <item quantity="other">Already up to date. You can update again in about %1$d hours.</item>
+    </plurals>
+    <plurals name="settings_data_wait_minutes">
+        <item quantity="one">You can update again in about %1$d minute.</item>
+        <item quantity="other">You can update again in about %1$d minutes.</item>
+    </plurals>
+    <string name="settings_compass_section">Compass and distance</string>
     <string name="settings_experimental_section">Experimental</string>
     <string name="settings_aprs_title">APRS stations on the map</string>
     <string name="settings_aprs_summary">Experimental. Downloads recently heard APRS stations and shows them on the map in pink. Updated at most every 30 minutes, and only while the map is open.</string>

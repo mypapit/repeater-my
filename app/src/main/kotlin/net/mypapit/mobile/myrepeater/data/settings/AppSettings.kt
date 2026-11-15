@@ -25,6 +25,8 @@ data class Settings(
     val presetKey: String? = null,
     /** Experimental: show recently heard APRS stations on the map. Off unless the user turns it on. */
     val aprsEnabled: Boolean = false,
+    /** The one-line note above the repeater list has been closed by the user. */
+    val listNoticeDismissed: Boolean = false,
 )
 
 class AppSettings(private val context: Context) {
@@ -37,6 +39,7 @@ class AppSettings(private val context: Context) {
                 ?: LocationMode.DEVICE,
             presetKey = prefs[PRESET_KEY],
             aprsEnabled = prefs[APRS_ENABLED] ?: false,
+            listNoticeDismissed = prefs[LIST_NOTICE_DISMISSED] ?: false,
         )
     }
 
@@ -59,7 +62,12 @@ class AppSettings(private val context: Context) {
         context.settingsStore.edit { it[APRS_ENABLED] = enabled }
     }
 
+    suspend fun dismissListNotice() {
+        context.settingsStore.edit { it[LIST_NOTICE_DISMISSED] = true }
+    }
+
     private companion object {
+        val LIST_NOTICE_DISMISSED = booleanPreferencesKey("list_notice_dismissed")
         val APRS_ENABLED = booleanPreferencesKey("aprs_enabled")
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         val LOCATION_MODE = stringPreferencesKey("location_mode")
