@@ -97,6 +97,21 @@ class CarScreenTest {
         assertTrue(needLocation.actions[0].onClickDelegate!!.isParkedOnly)
     }
 
+    @Test
+    fun `released builds accept Android Auto and no host outside the list`() {
+        val hosts = androidx.car.app.validation.HostValidator.Builder(context)
+            .addAllowedHosts(net.mypapit.mobile.myrepeater.R.array.car_hosts_allowlist)
+            .build()
+            .allowedHosts
+        assertEquals(
+            setOf("com.google.android.projection.gearhead", "com.google.android.apps.automotive.templates.host"),
+            hosts.keys,
+        )
+        assertEquals(3, hosts.getValue("com.google.android.projection.gearhead").size)
+        // Each entry is a SHA-256 certificate digest: 64 hex digits.
+        assertTrue(hosts.values.flatten().all { Regex("[0-9a-f]{64}").matches(it) })
+    }
+
     private fun picture(name: String, view: DirectionView?, dark: Boolean, width: Int, height: Int, area: Rect): Bitmap {
         val renderer = DirectionRenderer(context)
         renderer.setOutline(MapOutline.load(context))

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -17,8 +19,25 @@ android {
         versionName = "3.0.0"
     }
 
+    // Release signing is read from keystore.properties, which is never committed.
+    // Without that file the release build still compiles, but comes out unsigned.
+    val keystoreFile = rootProject.file("keystore.properties")
+    val keystore = Properties().apply { if (keystoreFile.exists()) keystoreFile.inputStream().use(::load) }
+
+    signingConfigs {
+        if (keystoreFile.exists()) {
+            create("release") {
+                storeFile = rootProject.file(keystore.getProperty("storeFile"))
+                storePassword = keystore.getProperty("storePassword")
+                keyAlias = keystore.getProperty("keyAlias")
+                keyPassword = keystore.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

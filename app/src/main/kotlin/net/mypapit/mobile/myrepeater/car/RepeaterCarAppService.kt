@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.RepeaterApp
 
 /**
@@ -25,8 +26,9 @@ class RepeaterCarAppService : CarAppService() {
             // Debug builds also accept the desktop head unit used for testing.
             HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
         } else {
+            // Released builds draw only for Google's own car hosts, which covers every Android Auto car.
             HostValidator.Builder(applicationContext)
-                .addAllowedHosts(androidx.car.app.R.array.hosts_allowlist_sample)
+                .addAllowedHosts(R.array.car_hosts_allowlist)
                 .build()
         }
 
