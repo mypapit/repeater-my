@@ -184,7 +184,7 @@
     <string name="car_location_off">Location is off. Allow it on your phone, or choose a place in the phone app\'s settings. Check your phone only when it is safe.</string>
     <string name="car_location_allow">Allow on phone</string>
     <string name="car_near_title">Within 10 km</string>
-    <string name="car_near_note">Direction not shown</string>
+    <string name="car_near_note">Repeater is nearby</string>
     <string name="car_north_up">North is up · approximate</string>
     <string name="car_ahead_up">Ahead is up · approximate</string>
     <string name="car_from_place">Measured from %1$s</string>
