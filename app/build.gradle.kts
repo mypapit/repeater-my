@@ -33,6 +33,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -63,6 +67,14 @@ dependencies {
     implementation(libs.maplibre)
     implementation(libs.coroutines.android)
 
+    // Android Auto: the car draws templates the app fills in.
+    implementation(libs.car.app)
+    implementation(libs.car.app.projected)
+
     testImplementation(libs.junit)
     testImplementation(libs.org.json)
+    // Lets the car templates and the car map be built and drawn without a car.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.car.app.testing)
 }

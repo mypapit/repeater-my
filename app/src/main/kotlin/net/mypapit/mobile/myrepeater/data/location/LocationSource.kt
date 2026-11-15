@@ -15,6 +15,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.map
+
+/** A position fix, with the direction and speed of travel when the device reports them. */
+data class LocationFix(val point: GeoPoint, val courseDeg: Float? = null, val speedMps: Float? = null)
 
 /**
  * The device's position, read from the platform location service while the
@@ -28,8 +32,11 @@ class LocationSource(private val context: Context) {
     }
 
     /** Emits the last known position at once (if any), then updates. Needs location permission. */
+    fun updates(): Flow<GeoPoint> = fixes().map { it.point }
+
+    /** As [updates], with the direction and speed of travel. Used by the car screen. */
     @SuppressLint("MissingPermission")
-    fun updates(): Flow<GeoPoint> = callbackFlow {
+    fun fixes(): Flow<LocationFix> = callbackFlow {
         val manager = context.getSystemService(LocationManager::class.java)
         if (manager == null || !hasPermission()) {
             close()
@@ -40,7 +47,13 @@ class LocationSource(private val context: Context) {
         fun offer(location: Location) {
             if (isBetter(location, best)) {
                 best = location
-                trySend(GeoPoint(location.latitude, location.longitude))
+                trySend(
+                    LocationFix(
+                        point = GeoPoint(location.latitude, location.longitude),
+                        courseDeg = if (location.hasBearing()) location.bearing else null,
+                        speedMps = if (location.hasSpeed()) location.speed else null,
+                    ),
+                )
             }
         }
 

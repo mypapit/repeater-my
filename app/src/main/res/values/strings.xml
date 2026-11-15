@@ -176,6 +176,19 @@
     <string name="detail_compass_unavailable">This phone has no compass sensor, so only the bearing is shown.</string>
     <string name="detail_compass_near">This repeater is within 10 km. The compass is switched off at this range, because the listed position is too approximate to point with.</string>
 
+    <!-- Android Auto -->
+    <string name="car_title">Nearby repeaters</string>
+    <string name="car_tone">Tone %1$s</string>
+    <string name="car_none_in_range">No repeater within 100 km.</string>
+    <string name="car_no_data">Open Repeater.MY on your phone to download the repeater list.</string>
+    <string name="car_location_off">Location is off. Allow it on your phone, or choose a place in the phone app\'s settings. Check your phone only when it is safe.</string>
+    <string name="car_location_allow">Allow on phone</string>
+    <string name="car_near_title">Within 10 km</string>
+    <string name="car_near_note">Direction not shown</string>
+    <string name="car_north_up">North is up · approximate</string>
+    <string name="car_ahead_up">Ahead is up · approximate</string>
+    <string name="car_from_place">Measured from %1$s</string>
+
     <string-array name="loading_quotes">
         <item>Tuning the dial…</item>
         <item>CQ CQ CQ, this is your phone calling.</item>

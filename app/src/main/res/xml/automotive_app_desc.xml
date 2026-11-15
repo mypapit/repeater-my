@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tells Android Auto that this app supplies templates for the car screen. -->
+<automotiveApp>
+    <uses name="template" />
+</automotiveApp>
