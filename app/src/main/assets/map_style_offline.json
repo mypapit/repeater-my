@@ -1,0 +1,35 @@
+{
+  "version": 8,
+  "name": "Repeater.MY offline",
+  "sources": {
+    "outline": {
+      "type": "geojson",
+      "data": "asset://map_outline.geojson"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": { "background-color": "#0B0F12" }
+    },
+    {
+      "id": "land",
+      "type": "fill",
+      "source": "outline",
+      "paint": {
+        "fill-color": ["case", ["get", "home"], "#2B2623", "#191715"],
+        "fill-antialias": true
+      }
+    },
+    {
+      "id": "coast",
+      "type": "line",
+      "source": "outline",
+      "paint": {
+        "line-color": ["case", ["get", "home"], "#6B5D50", "#35302B"],
+        "line-width": 1
+      }
+    }
+  ]
+}

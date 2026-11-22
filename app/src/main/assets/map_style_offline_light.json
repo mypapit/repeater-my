@@ -1,0 +1,35 @@
+{
+  "version": 8,
+  "name": "Repeater.MY offline light",
+  "sources": {
+    "outline": {
+      "type": "geojson",
+      "data": "asset://map_outline.geojson"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": { "background-color": "#C9DEEE" }
+    },
+    {
+      "id": "land",
+      "type": "fill",
+      "source": "outline",
+      "paint": {
+        "fill-color": ["case", ["get", "home"], "#F4F1E8", "#E2DFD5"],
+        "fill-antialias": true
+      }
+    },
+    {
+      "id": "coast",
+      "type": "line",
+      "source": "outline",
+      "paint": {
+        "line-color": ["case", ["get", "home"], "#8FA2B2", "#B4C2CC"],
+        "line-width": 1
+      }
+    }
+  ]
+}
