@@ -30,7 +30,10 @@
     <string name="detail_last_reviewed">Last reviewed</string>
     <string name="detail_source">Source</string>
     <string name="detail_notes">Notes</string>
-    <string name="detail_report">Report an issue</string>
+    <string name="detail_report_short">Report</string>
+    <string name="detail_report_title">Report correction</string>
+    <string name="detail_report_body">Spot a wrong frequency, tone, status, or location? Send a correction by e-mail.</string>
+    <string name="detail_report_button">Report Correction</string>
     <string name="detail_report_no_app">No e-mail app found on this phone.</string>
 
     <!-- Callsign lookup -->
@@ -66,6 +69,11 @@
     <string name="onboarding_modes_search_body">Search by callsign, place, state or club.</string>
     <string name="onboarding_modes_offline_title">No signal, no problem</string>
     <string name="onboarding_modes_offline_body">The list is saved on your phone for the trail.</string>
+    <string name="onboarding_experimental_title">Experimental features</string>
+    <string name="onboarding_experimental_android_auto_title">Android Auto (Experimental)</string>
+    <string name="onboarding_experimental_android_auto_body">View nearby repeaters and an interactive direction map on supported Android Auto car displays.</string>
+    <string name="onboarding_experimental_aprs_title">APRS station viewer (Experimental)</string>
+    <string name="onboarding_experimental_aprs_body">Show recently heard Malaysian APRS stations on the map. Switch it on any time in Settings.</string>
     <string name="onboarding_location_title">Let the app find the nearest repeater</string>
     <string name="onboarding_location_body">With location on, the list is sorted nearest first and a compass points the way. Your position is used only on this phone and only while the app is open.</string>
     <string name="onboarding_location_enable">Turn on location</string>
@@ -73,7 +81,7 @@
     <string name="onboarding_location_alternative">Prefer not to? You can pick your area by hand in Settings.</string>
     <string name="onboarding_permissions_title">What the app uses</string>
     <string name="onboarding_permissions_internet_title">Internet</string>
-    <string name="onboarding_permissions_internet_body">Downloads the public repeater and callsign lists, and map tiles.</string>
+    <string name="onboarding_permissions_internet_body">Downloads the public repeater and callsign lists, map tiles, and (if enabled) the APRS station list.</string>
     <string name="onboarding_permissions_location_title">Location (optional)</string>
     <string name="onboarding_permissions_location_body">Sorts repeaters by distance and aims the compass.</string>
     <string name="onboarding_permissions_privacy_title">Your privacy</string>
@@ -159,6 +167,12 @@
     <string name="settings_experimental_section">Experimental</string>
     <string name="settings_aprs_title">APRS stations on the map</string>
     <string name="settings_aprs_summary">Experimental. Downloads recently heard APRS stations and shows them on the map in pink. Updated at most every 30 minutes, and only while the map is open.</string>
+    <string name="settings_car_zoom_title">Android Auto map zoom</string>
+    <string name="settings_car_zoom_summary">Experimental. Default zoom on the car screen; you can also zoom and pan directly on Android Auto.</string>
+    <string name="settings_car_zoom_close">Close</string>
+    <string name="settings_car_zoom_standard">Standard</string>
+    <string name="settings_car_zoom_wide">Wide</string>
+    <string name="settings_car_zoom_custom">Zoom %1$.1f</string>
     <string name="settings_privacy_section">Privacy</string>
     <string name="settings_privacy_body">Repeater.MY has no account, ads or analytics. It connects to the internet only to download the public repeater and callsign lists, map tiles, and (if you switch it on) the APRS station list. Your location is used on this phone to sort the list and is never sent anywhere.</string>
     <string name="settings_about_version">Version %1$s</string>
@@ -200,6 +214,7 @@
     <string name="car_north_up">North is up · approximate</string>
     <string name="car_ahead_up">Ahead is up · approximate</string>
     <string name="car_from_place">Measured from %1$s</string>
+    <string name="car_hud_offline">Offline map</string>
 
     <string-array name="loading_quotes">
         <item>Tuning the dial…</item>

@@ -92,11 +92,15 @@ class NearbyRepeatersTest {
     fun `focus stays on the chosen repeater while it is listed`() {
         val a = repeater("A", north(1.0), 101.687)
         val b = repeater("B", north(2.0), 101.687)
-        val items = NearbyRepeaters.select(listOf(a, b), here)
+        val far = repeater("FAR", north(150.0), 101.687)
+        val all = listOf(a, b, far)
+        val items = NearbyRepeaters.select(all, here)
         assertEquals(b.id, NearbyRepeaters.focus(b.id, items))
         assertEquals(a.id, NearbyRepeaters.focus(null, items))
         assertEquals(a.id, NearbyRepeaters.focus(999L, items))
         assertNull(NearbyRepeaters.focus(b.id, emptyList()))
+        assertEquals(far.id, NearbyRepeaters.resolveFocus(far.id, items, all))
+        assertEquals(a.id, NearbyRepeaters.resolveFocus(999L, items, all))
     }
 
     @Test

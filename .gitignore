@@ -18,4 +18,4 @@ captures/
 /csv/
 
 # Local agent brief, kept out of the repo
-/AGENTS.md
+/AGENTS*.md

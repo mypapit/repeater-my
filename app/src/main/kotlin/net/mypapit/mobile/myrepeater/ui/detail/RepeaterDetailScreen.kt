@@ -1,5 +1,6 @@
 package net.mypapit.mobile.myrepeater.ui.detail
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -38,8 +41,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -101,8 +105,15 @@ fun RepeaterDetailScreen(
                     Text(repeater.notes, style = MaterialTheme.typography.bodyMedium)
                 }
             }
+            ReportCorrectionCard(repeater)
             Spacer(Modifier.height(8.dp))
         }
+    }
+}
+
+private fun openCorrectionEmail(context: Context, repeater: Repeater) {
+    if (!CorrectionEmail.open(context, repeater)) {
+        Toast.makeText(context, R.string.detail_report_no_app, Toast.LENGTH_LONG).show()
     }
 }
 
@@ -113,18 +124,47 @@ fun RepeaterDetailScreen(
 @Composable
 private fun ReportButton(repeater: Repeater) {
     val context = LocalContext.current
-    IconButton(
-        onClick = {
-            if (!CorrectionEmail.open(context, repeater)) {
-                Toast.makeText(context, R.string.detail_report_no_app, Toast.LENGTH_LONG).show()
-            }
-        },
+    val description = stringResource(R.string.detail_report_button)
+    TextButton(
+        onClick = { openCorrectionEmail(context, repeater) },
+        modifier = Modifier.semantics { contentDescription = description },
     ) {
-        // Android's own "edit" menu icon, tinted to match the app bar.
         Icon(
-            painter = painterResource(android.R.drawable.ic_menu_edit),
-            contentDescription = stringResource(R.string.detail_report),
+            imageVector = Icons.Default.Edit,
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
         )
+        Spacer(Modifier.width(6.dp))
+        Text(stringResource(R.string.detail_report_short))
+    }
+}
+
+/**
+ * A prominent action card in the detail body so users never miss the option to
+ * report wrong repeater information.
+ */
+@Composable
+private fun ReportCorrectionCard(repeater: Repeater) {
+    val context = LocalContext.current
+    DetailCard(stringResource(R.string.detail_report_title)) {
+        Text(
+            text = stringResource(R.string.detail_report_body),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(12.dp))
+        FilledTonalButton(
+            onClick = { openCorrectionEmail(context, repeater) },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Edit,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.detail_report_button))
+        }
     }
 }
 

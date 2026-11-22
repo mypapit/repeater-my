@@ -236,6 +236,10 @@ class MainViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
+    fun setCarMapZoom(zoom: Double) {
+        viewModelScope.launch { container.appSettings.setCarMapZoom(zoom) }
+    }
+
     fun setFilter(filter: RepeaterFilter) {
         _filter.value = filter
     }

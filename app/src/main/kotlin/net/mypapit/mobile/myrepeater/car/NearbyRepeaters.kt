@@ -45,6 +45,11 @@ object NearbyRepeaters {
     /** Keeps the repeater the driver chose while it is still listed; otherwise the nearest. */
     fun focus(previousId: Long?, items: List<RepeaterListItem>): Long? =
         items.firstOrNull { it.repeater.id == previousId }?.repeater?.id ?: items.firstOrNull()?.repeater?.id
+
+    /** Keeps a map-tapped repeater focused as long as it remains active, even outside the top 5 list. */
+    fun resolveFocus(previousId: Long?, items: List<RepeaterListItem>, allRepeaters: List<Repeater>): Long? =
+        if (previousId != null && allRepeaters.any { it.id == previousId }) previousId
+        else focus(previousId, items)
 }
 
 /** The short texts shown on the car screen. */

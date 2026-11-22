@@ -8,10 +8,6 @@ import androidx.car.app.CarAppService
 import androidx.car.app.Screen
 import androidx.car.app.Session
 import androidx.car.app.validation.HostValidator
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.RepeaterApp
 
@@ -36,17 +32,13 @@ class RepeaterCarAppService : CarAppService() {
 }
 
 class RepeaterSession : Session() {
-    private var renderer: DirectionRenderer? = null
+    private var renderer: CarMapSurface? = null
 
     override fun onCreateScreen(intent: Intent): Screen {
         val container = (carContext.applicationContext as RepeaterApp).container
-        val renderer = DirectionRenderer(carContext).also { this.renderer = it }
+        val renderer = CarMapLibreRenderer(carContext, lifecycle).also { this.renderer = it }
         renderer.setDark(carContext.isDarkMode)
         carContext.getCarService(AppManager::class.java).setSurfaceCallback(renderer)
-
-        lifecycleScope.launch {
-            renderer.setOutline(withContext(Dispatchers.Default) { MapOutline.load(carContext) })
-        }
         return NearbyScreen(carContext, container, renderer)
     }
 

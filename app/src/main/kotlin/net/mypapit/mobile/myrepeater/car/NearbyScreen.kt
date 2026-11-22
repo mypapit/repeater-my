@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import net.mypapit.mobile.myrepeater.AppContainer
 import net.mypapit.mobile.myrepeater.data.db.Repeater
+import net.mypapit.mobile.myrepeater.data.db.RepeaterStatus
 import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import net.mypapit.mobile.myrepeater.data.location.LocationFix
 import net.mypapit.mobile.myrepeater.data.location.LocationSource
@@ -57,8 +58,8 @@ private sealed interface CarState {
 }
 
 /**
- * The one screen of the car app: the five nearest repeaters in a list, with a
- * map and direction arrow for the one in focus beside it.
+ * The one screen of the car app: the five nearest repeaters in a list, with an
+ * interactive map and compact direction HUD beside it.
  *
  * Location is read only while this screen is showing, and is used on the
  * device to order the list and aim the arrow. Nothing is sent anywhere.
@@ -67,13 +68,19 @@ private sealed interface CarState {
 class NearbyScreen(
     carContext: CarContext,
     private val container: AppContainer,
-    private val renderer: DirectionRenderer,
+    private val renderer: CarMapSurface,
 ) : Screen(carContext) {
 
     private val permission = MutableStateFlow(container.locationSource.hasPermission())
     private val focusRequest = MutableStateFlow(CarMemory.focusedRepeaterId)
     private val handler = Handler(Looper.getMainLooper())
     private val templates = NearbyTemplates(carContext)
+    private val mapActions = CarMapActions(
+        onZoomIn = renderer::zoomIn,
+        onZoomOut = renderer::zoomOut,
+        onRecenter = renderer::recenter,
+        onPanModeChanged = renderer::setPanMode,
+    )
 
     private var state: CarState = CarState.Loading
 
@@ -87,6 +94,22 @@ class NearbyScreen(
     private var lastShown: Any? = null
 
     init {
+        renderer.setCallbacks(
+            onZoomChanged = { zoom ->
+                lifecycleScope.launch { container.appSettings.setCarMapZoom(zoom) }
+            },
+            onRepeaterTapped = { id -> focusOn(id, fromMapTap = true) },
+        )
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                container.appSettings.settings
+                    .map { it.carMapZoom }
+                    .distinctUntilChanged()
+                    .collect(renderer::setPreferredZoom)
+            }
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 permission.value = container.locationSource.hasPermission()
@@ -143,13 +166,15 @@ class NearbyScreen(
         } else {
             ordered = NearbyRepeaters.remeasure(ordered, point)
         }
+        val activeWithCoords = repeaters.filter { it.status != RepeaterStatus.OFF_AIR && it.hasCoordinates }
         return DirectionView(
             origin = point,
             placeName = where.placeName,
             items = ordered,
-            focusedId = NearbyRepeaters.focus(focus, ordered),
+            focusedId = NearbyRepeaters.resolveFocus(focus, ordered, activeWithCoords),
             // A chosen place is not where the car is, so the car's heading says nothing about it.
             heading = if (where.placeName != null) null else Headings.pick(compass, where.fix.courseDeg, where.fix.speedMps),
+            allRepeaters = activeWithCoords,
         )
     }
 
@@ -195,7 +220,7 @@ class NearbyScreen(
         state = next
         renderer.show((next as? CarState.Ready)?.view)
 
-        // The car is asked to redraw the list only when its words have changed.
+        // The car is asked to redraw the list only when its words or selection have changed.
         val shown: Any = when (next) {
             is CarState.Ready -> next.view.items.map(::rowKey) to next.view.focusedId
             else -> next
@@ -210,7 +235,7 @@ class NearbyScreen(
         listOf(CarRowText.title(item.repeater), templates.tuning(item), CarRowText.whereabouts(item))
 
     override fun onGetTemplate(): Template = when (val current = state) {
-        CarState.Loading -> loading()
+        CarState.Loading -> loading(withMapControls = false)
         CarState.NoData -> templates.noData().also { sentTitles = null }
         CarState.NeedLocation -> templates.needLocation {
             carContext.requestPermissions(LocationSource.PERMISSIONS.toList()) { _, _ ->
@@ -220,9 +245,9 @@ class NearbyScreen(
         is CarState.Ready -> list(current.view)
     }
 
-    private fun loading(): Template {
+    private fun loading(withMapControls: Boolean): Template {
         sentTitles = null
-        return templates.loading()
+        return templates.loading(if (withMapControls) mapActions else null)
     }
 
     private fun list(view: DirectionView): Template {
@@ -234,15 +259,23 @@ class NearbyScreen(
         val previous = sentTitles
         if (previous != null && previous != titles) {
             handler.post(::invalidate)
-            return loading()
+            return loading(withMapControls = true)
         }
         sentTitles = titles
-        return templates.list(view.items, view.focusedId, ::focusOn)
+        return templates.list(
+            items = view.items,
+            focusedId = view.focusedId,
+            onFocus = { id -> focusOn(id, fromMapTap = false) },
+            mapActions = mapActions,
+        )
     }
 
-    private fun focusOn(repeaterId: Long) {
+    private fun focusOn(repeaterId: Long, fromMapTap: Boolean) {
         CarMemory.focusedRepeaterId = repeaterId
         focusRequest.value = repeaterId
+        if (!fromMapTap) {
+            renderer.focusRepeater(repeaterId)
+        }
     }
 
     private companion object {

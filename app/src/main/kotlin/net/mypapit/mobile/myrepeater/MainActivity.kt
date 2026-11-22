@@ -318,6 +318,7 @@ private fun AppNavigation(
                     onChoosePreset = { navController.navigate(Routes.PRESETS) { launchSingleTop = true } },
                     onSync = viewModel::sync,
                     onAprsChange = viewModel::setAprsEnabled,
+                    onCarMapZoomChange = viewModel::setCarMapZoom,
                     onOpenAbout = { navController.navigate(Routes.ABOUT) { launchSingleTop = true } },
                 )
             }

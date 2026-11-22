@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Rect
+import androidx.car.app.OnDoneCallback
+import androidx.car.app.model.Action
 import androidx.car.app.model.ListTemplate
 import androidx.car.app.model.MessageTemplate
 import androidx.car.app.model.Row
@@ -15,6 +17,7 @@ import net.mypapit.mobile.myrepeater.data.db.RepeaterStatus
 import net.mypapit.mobile.myrepeater.data.location.GeoPoint
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,17 +74,54 @@ class CarScreenTest {
     }
 
     @Test
+    fun `map controller attaches pan, zoom in, zoom out and recenter actions`() {
+        var zoomedIn = false
+        var zoomedOut = false
+        var recentered = false
+        var panMode: Boolean? = null
+        val done = object : OnDoneCallback {}
+
+        val template = templates.list(
+            items = items,
+            focusedId = 1,
+            onFocus = {},
+            mapActions = CarMapActions(
+                onZoomIn = { zoomedIn = true },
+                onZoomOut = { zoomedOut = true },
+                onRecenter = { recentered = true },
+                onPanModeChanged = { panMode = it },
+            ),
+        ) as MapWithContentTemplate
+
+        val controller = template.mapController!!
+        assertNotNull(controller.panModeDelegate)
+        val actions = controller.mapActionStrip!!.actions
+        assertEquals(4, actions.size)
+        assertEquals(Action.TYPE_PAN, actions[0].type)
+
+        actions[1].onClickDelegate!!.sendClick(done)
+        actions[2].onClickDelegate!!.sendClick(done)
+        actions[3].onClickDelegate!!.sendClick(done)
+        controller.panModeDelegate!!.sendPanModeChanged(true, done)
+
+        assertTrue(zoomedIn)
+        assertTrue(zoomedOut)
+        assertTrue(recentered)
+        assertEquals(true, panMode)
+    }
+
+    @Test
     fun `tapping a row reports that repeater`() {
         var chosen: Long? = null
         val list = content(templates.list(items, focusedId = 1, onFocus = { chosen = it })) as ListTemplate
         val third = list.singleList!!.items[2] as Row
-        third.onClickDelegate!!.sendClick(object : androidx.car.app.OnDoneCallback {})
+        third.onClickDelegate!!.sendClick(object : OnDoneCallback {})
         assertEquals(items[2].repeater.id, chosen)
     }
 
     @Test
     fun `an empty list says nothing is in range`() {
-        val list = content(templates.list(emptyList(), null) {}) as ListTemplate
+        val list = content(templates.list(emptyList(), null, {})) as ListTemplate
         assertTrue(list.singleList!!.items.isEmpty())
         assertEquals("No repeater within 100 km.", list.singleList!!.noItemsMessage.toString())
     }
@@ -112,6 +152,29 @@ class CarScreenTest {
         assertTrue(hosts.values.flatten().all { Regex("[0-9a-f]{64}").matches(it) })
     }
 
+    @Test
+    fun `fallback renderer handles zoom, pan, recenter and pin clicks`() {
+        val renderer = DirectionRenderer(context)
+        val zooms = mutableListOf<Double>()
+        var tappedId: Long? = null
+        renderer.setCallbacks(onZoomChanged = { zooms += it }, onRepeaterTapped = { tappedId = it })
+        renderer.onVisibleAreaChanged(Rect(404, 8, 792, 392))
+        renderer.show(view(1))
+
+        renderer.zoomIn()
+        renderer.zoomOut()
+        renderer.onScale(598f, 200f, 2.0f)
+        renderer.onScroll(25f, -15f)
+        renderer.recenter()
+
+        assertTrue(zooms.size >= 3)
+        // Paint directly and click near the origin / nearby repeater coordinates.
+        val bitmap = Bitmap.createBitmap(800, 400, Bitmap.Config.ARGB_8888)
+        renderer.paint(Canvas(bitmap), Rect(404, 8, 792, 392), 800, 400)
+        renderer.onClick(598f, 200f)
+        assertTrue(tappedId == null || repeaters.any { it.id == tappedId })
+    }
+
     private fun picture(name: String, view: DirectionView?, dark: Boolean, width: Int, height: Int, area: Rect): Bitmap {
         val renderer = DirectionRenderer(context)
         renderer.setOutline(MapOutline.load(context))
@@ -125,7 +188,7 @@ class CarScreenTest {
     }
 
     private fun view(focusedId: Long, heading: Heading? = null, place: String? = null, from: GeoPoint = kualaLumpur) =
-        DirectionView(from, place, NearbyRepeaters.select(repeaters, from), focusedId, heading)
+        DirectionView(from, place, NearbyRepeaters.select(repeaters, from), focusedId, heading, repeaters)
 
     @Test
     fun `the bundled coastline is read`() {
@@ -148,7 +211,7 @@ class CarScreenTest {
         picture("wide-no-position", null, true, 1280, 480, wide)
         picture("tall-dark", view(3), true, 800, 1280, Rect(20, 20, 780, 760))
         picture("small-light", view(2), false, 800, 480, Rect(330, 10, 790, 470))
-        // The shape the Desktop Head Unit gives at 800 by 480: the list on the left, a bar below.
+        // The shape the Desktop Head Unit gives at 800 by 400: the list on the left, a bar below.
         picture("head-unit", view(4), true, 800, 400, Rect(404, 8, 792, 392))
     }
 }

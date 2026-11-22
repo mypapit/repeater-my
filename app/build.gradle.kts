@@ -12,11 +12,10 @@ android {
 
     defaultConfig {
         applicationId = "net.mypapit.mobile.myrepeater"
-        minSdk = 26
+        minSdk = 29
         targetSdk = 37
-        // The last legacy release was 237 (2.3.7).
-        versionCode = 300
-        versionName = "3.0.0"
+        versionCode = 301
+        versionName = "3.0.1"
     }
 
     // Release signing is read from keystore.properties, which is never committed.

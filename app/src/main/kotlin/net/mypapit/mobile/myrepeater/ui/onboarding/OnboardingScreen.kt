@@ -1,5 +1,6 @@
 package net.mypapit.mobile.myrepeater.ui.onboarding
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -41,7 +42,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -53,12 +56,13 @@ import kotlinx.coroutines.launch
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.ui.theme.AppLogo
 
-private const val PAGE_COUNT = 4
-private const val LOCATION_PAGE = 2
+private const val PAGE_COUNT = 5
+private const val LOCATION_PAGE = 3
 
 /**
- * Four pages: welcome, ways to find a repeater, why location helps (with the
- * permission request), and what the app uses plus the privacy promise.
+ * Five pages: welcome, ways to find a repeater, experimental features (Android Auto
+ * and APRS station viewer), why location helps (with the permission request), and
+ * what the app uses plus the privacy promise.
  */
 @Composable
 fun OnboardingScreen(
@@ -83,6 +87,7 @@ fun OnboardingScreen(
                     when (page) {
                         0 -> WelcomePage()
                         1 -> ModesPage()
+                        2 -> ExperimentalPage()
                         LOCATION_PAGE -> LocationPage(locationGranted, onRequestLocation)
                         else -> PermissionsPage()
                     }
@@ -144,6 +149,21 @@ private fun ModesPage() {
     Feature(Icons.Default.Place, R.string.onboarding_modes_map_title, R.string.onboarding_modes_map_body)
     Feature(Icons.Default.Search, R.string.onboarding_modes_search_title, R.string.onboarding_modes_search_body)
     Feature(Icons.Default.Star, R.string.onboarding_modes_offline_title, R.string.onboarding_modes_offline_body)
+}
+
+@Composable
+private fun ExperimentalPage() {
+    PageTitle(R.string.onboarding_experimental_title)
+    Feature(
+        R.drawable.ic_onboarding_car,
+        R.string.onboarding_experimental_android_auto_title,
+        R.string.onboarding_experimental_android_auto_body,
+    )
+    Feature(
+        R.drawable.ic_onboarding_aprs,
+        R.string.onboarding_experimental_aprs_title,
+        R.string.onboarding_experimental_aprs_body,
+    )
 }
 
 @Composable
@@ -212,6 +232,16 @@ private fun PageTitle(text: Int) {
 
 @Composable
 private fun Feature(icon: ImageVector, title: Int, body: Int) {
+    Feature(rememberVectorPainter(icon), title, body)
+}
+
+@Composable
+private fun Feature(@DrawableRes iconRes: Int, title: Int, body: Int) {
+    Feature(painterResource(iconRes), title, body)
+}
+
+@Composable
+private fun Feature(painter: Painter, title: Int, body: Int) {
     Row(Modifier.padding(vertical = 12.dp), verticalAlignment = Alignment.Top) {
         Box(
             modifier = Modifier
@@ -220,7 +250,7 @@ private fun Feature(icon: ImageVector, title: Int, body: Int) {
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
+            Icon(painter, contentDescription = null, tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Spacer(Modifier.width(16.dp))
         Column {

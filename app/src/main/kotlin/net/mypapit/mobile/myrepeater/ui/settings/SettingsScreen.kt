@@ -4,6 +4,7 @@ import android.text.format.DateFormat
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,6 +26,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -48,9 +51,11 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
 import net.mypapit.mobile.myrepeater.BuildConfig
 import net.mypapit.mobile.myrepeater.R
 import net.mypapit.mobile.myrepeater.data.location.PresetLocation
+import net.mypapit.mobile.myrepeater.data.settings.AppSettings
 import net.mypapit.mobile.myrepeater.data.settings.LocationMode
 import net.mypapit.mobile.myrepeater.data.settings.Settings
 import net.mypapit.mobile.myrepeater.data.sync.SyncPolicy
@@ -74,6 +79,7 @@ fun SettingsScreen(
     onChoosePreset: () -> Unit,
     onSync: () -> Unit,
     onAprsChange: (Boolean) -> Unit,
+    onCarMapZoomChange: (Double) -> Unit,
     onOpenAbout: () -> Unit,
 ) {
     Scaffold(
@@ -212,6 +218,11 @@ fun SettingsScreen(
                     Spacer(Modifier.width(16.dp))
                     Switch(checked = settings.aprsEnabled, onCheckedChange = null)
                 }
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                CarZoomSettingsRow(
+                    zoom = settings.carMapZoom,
+                    onZoomChange = onCarMapZoomChange,
+                )
             }
 
             Section(stringResource(R.string.settings_privacy_section)) {
@@ -280,6 +291,55 @@ fun PresetPickerScreen(
                         onClick = { onPick(place) },
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CarZoomSettingsRow(zoom: Double, onZoomChange: (Double) -> Unit) {
+    val presets = remember {
+        listOf(
+            R.string.settings_car_zoom_close to AppSettings.CAR_ZOOM_CLOSE,
+            R.string.settings_car_zoom_standard to AppSettings.CAR_ZOOM_STANDARD,
+            R.string.settings_car_zoom_wide to AppSettings.CAR_ZOOM_WIDE,
+        )
+    }
+    Column(Modifier.fillMaxWidth().padding(16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                text = stringResource(R.string.settings_car_zoom_title),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.settings_car_zoom_custom, zoom),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = stringResource(R.string.settings_car_zoom_summary),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(Modifier.height(10.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            presets.forEach { (labelRes, value) ->
+                FilterChip(
+                    selected = abs(zoom - value) < 0.25,
+                    onClick = { onZoomChange(value) },
+                    label = { Text(stringResource(labelRes)) },
+                )
             }
         }
     }
