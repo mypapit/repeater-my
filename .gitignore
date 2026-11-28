@@ -1,1 +1,21 @@
-AGENTS.md
+# Build output
+.gradle/
+build/
+.kotlin/
+
+# Local configuration and secrets
+local.properties
+*.jks
+*.keystore
+keystore.properties
+
+# IDE
+.idea/
+*.iml
+captures/
+
+# Unversioned seed data (contains licence-holder names)
+/csv/
+
+# Local agent brief, kept out of the repo
+/AGENTS*.md
